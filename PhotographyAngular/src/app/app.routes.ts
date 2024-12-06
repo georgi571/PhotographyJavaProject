@@ -19,7 +19,7 @@ export const routes: Routes = [
   { path: 'contacts', component: ContactComponent },
   { path: 'auth', component: AuthComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegistrationComponent },
+  { path: 'users/register', component: RegistrationComponent },
 ];
 
 @NgModule({

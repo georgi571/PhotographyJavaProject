@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PhotographyAngular/PhotographyAngular.iml" filepath="$PROJECT_DIR$/PhotographyAngular/PhotographyAngular.iml" />
       <module fileurl="file://$PROJECT_DIR$/PhotographyJava/PhotographyJava.iml" filepath="$PROJECT_DIR$/PhotographyJava/PhotographyJava.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/PhotographyJavaProject.iml" filepath="$PROJECT_DIR$/.idea/PhotographyJavaProject.iml" />
     </modules>
   </component>
 </project>
