@@ -1,6 +1,7 @@
-package bg.photographyjava.entity.enums;
+package bg.photographyjava.model.enums;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public enum CountryEnum {
@@ -217,6 +218,19 @@ public enum CountryEnum {
             countries.add(country.getCountryName());
         }
         return countries;
+    }
+
+    public static CountryEnum fromString(String countryName) {
+        for (CountryEnum country : CountryEnum.values()) {
+            if (country.getCountryName().equalsIgnoreCase(countryName)) {
+                return country;
+            }
+        }
+        throw new IllegalArgumentException("No enum constant for country name: " + countryName);
+    }
+
+    public static List<CountryEnum> getCountries() {
+        return new ArrayList<>(Arrays.asList(CountryEnum.values()));
     }
 }
 

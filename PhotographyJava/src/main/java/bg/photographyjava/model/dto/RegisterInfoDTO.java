@@ -1,4 +1,4 @@
-package bg.photographyjava.entity.dto;
+package bg.photographyjava.model.dto;
 
 import java.io.Serializable;
 import java.util.List;
