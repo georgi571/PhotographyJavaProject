@@ -49,6 +49,7 @@ public class UserServiceImpl implements UserService {
             admin.setGender(GenderEnum.MALE);
             admin.setRank(this.userRankRepository.findByRank(UserRank.MASTER));
             admin.setRole(this.userRoleRepository.findByRole(UserRole.ADMIN));
+            admin.setApproved(true);
             this.userRepository.saveAndFlush(admin);
         }
     }
@@ -71,6 +72,7 @@ public class UserServiceImpl implements UserService {
         user.setGender(GenderEnum.fromString(userRegisterDTO.getGender()));
         user.setRank(this.userRankRepository.findByRank(UserRank.BEGINNER));
         user.setRole(this.userRoleRepository.findByRole(UserRole.USER));
+        user.setApproved(false);
         this.userRepository.saveAndFlush(user);
     }
 

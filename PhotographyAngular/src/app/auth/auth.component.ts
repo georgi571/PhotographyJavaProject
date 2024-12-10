@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import {HeaderComponent} from "../core/header/header.component";
+import {FooterComponent} from "../core/footer/footer.component";
 
 @Component({
   selector: 'app-auth',
     imports: [
-        HeaderComponent
+        HeaderComponent,
+        FooterComponent
     ],
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.css'

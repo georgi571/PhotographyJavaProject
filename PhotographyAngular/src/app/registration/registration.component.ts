@@ -4,6 +4,7 @@ import {ApiService} from '../services/api.service';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {confirmPasswordValidator} from './validators';
+import {FooterComponent} from '../core/footer/footer.component';
 
 @Component({
   selector: 'app-registration',
@@ -12,6 +13,7 @@ import {confirmPasswordValidator} from './validators';
     HeaderComponent,
     FormsModule,
     ReactiveFormsModule,
+    FooterComponent,
   ],
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.css'

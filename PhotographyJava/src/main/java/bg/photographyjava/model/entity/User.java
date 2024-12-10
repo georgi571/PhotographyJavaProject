@@ -48,6 +48,9 @@ public class User {
     @JoinColumn(name = "rank_id", referencedColumnName = "id")
     private Rank rank;
 
+    @Column(name = "is_approved")
+    private boolean isApproved;
+
     public UUID getId() {
         return id;
     }
@@ -126,5 +129,13 @@ public class User {
 
     public void setRank(Rank rank) {
         this.rank = rank;
+    }
+
+    public boolean isApproved() {
+        return isApproved;
+    }
+
+    public void setApproved(boolean approved) {
+        isApproved = approved;
     }
 }
