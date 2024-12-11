@@ -41,6 +41,12 @@
   text-decoration: none;
 }
 
+.nav-links a.active {
+  color: #ff5722;
+  font-weight: bold;
+  border-bottom: 2px solid #ff5722;
+}
+
 .nav-links a:hover {
   color: #e64a19;
 }

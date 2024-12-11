@@ -1,4 +1,5 @@
 body {
+  padding: 2em 0;
   text-align: center;
   background:url('../../assets/images/login.jpg') no-repeat center center;
   background-size: cover;

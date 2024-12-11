@@ -1,5 +1,5 @@
 body {
-  font-family: 'Arial', sans-serif;
+    font-family: 'Arial', sans-serif;
   background:url('../../assets/images/contact-us.webp') no-repeat center center;
   background-size: cover;
   min-height: calc(100vh - 90px);
