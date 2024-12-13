@@ -9,6 +9,7 @@ import {ContactComponent} from './contact/contact.component';
 import {AuthComponent} from './auth/auth.component';
 import {LoginComponent} from './login/login.component';
 import {RegistrationComponent} from './registration/registration.component';
+import {ProfileComponent} from './profile/profile.component';
 
 export const routes: Routes = [
   { path: '', component: IntroComponent },
@@ -20,6 +21,7 @@ export const routes: Routes = [
   { path: 'auth', component: AuthComponent },
   { path: 'users/login', component: LoginComponent },
   { path: 'users/register', component: RegistrationComponent },
+  { path: 'profile', component: ProfileComponent },
 ];
 
 @NgModule({
