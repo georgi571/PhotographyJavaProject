@@ -1,3 +1,148 @@
 <app-header />
 
+<body>
+  <div class="container">
+
+    <section class="leaderboard-section">
+      <h2>Users by Points</h2>
+      <div class="filters">
+        <label for="country-filter">Filter by Country:</label>
+        <select id="country-filter">
+          <option value="all">All Countries</option>
+          <option value="bg">Bulgaria</option>
+        </select>
+      </div>
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>User</th>
+            <th>Country</th>
+            <th>Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>User 1</td>
+            <td>Bulgaria</td>
+            <td>1500</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>User 2</td>
+            <td>Bulgaria</td>
+            <td>1450</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="leaderboard-section">
+      <h2>Users with Most Challenges Won</h2>
+      <div class="filters">
+        <label for="challenge-type-filter">Filter by Challenge Type:</label>
+        <select id="challenge-type-filter">
+          <option value="all">All Types</option>
+          <option value="daily">Daily</option>
+          <option value="themed">Themed</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>User</th>
+            <th>Challenges Won</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>User 1</td>
+            <td>25</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>User 2</td>
+            <td>20</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="leaderboard-section">
+      <h2>Top Photographers of the Month</h2>
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>User</th>
+            <th>Points Earned This Month</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>User 1</td>
+            <td>500</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>User 2</td>
+            <td>450</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="leaderboard-section">
+      <h2>Most Active Users</h2>
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>User</th>
+            <th>Activities Completed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>User 1</td>
+            <td>120</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>User 2</td>
+            <td>110</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="leaderboard-section">
+      <h2>Rising Stars</h2>
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>User</th>
+            <th>Points Gained (Last 30 Days)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>User 1</td>
+            <td>300</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>User 2</td>
+            <td>280</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+</body>
+
 <app-footer />

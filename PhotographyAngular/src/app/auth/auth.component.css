@@ -47,21 +47,25 @@ body {
 }
 
 .btn-primary:hover {
-  background-color: #e64a19;
+  background-color: #d43f00;
+  box-shadow: 0 0 10px rgba(230, 74, 25, 0.6);
+  border-color: #d43f00;
   cursor: pointer;
   transform: translateY(-2px);
 }
 
 
 .btn-secondary {
-  background-color: #333;
+  background-color: #007bff;
   color: white;
   border: none;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .btn-secondary:hover {
-  background-color: #222;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.6);
+  background-color: #0056b3;
+  border-color: #0056b3;
   transform: translateY(-2px);
   cursor: pointer;
 }
