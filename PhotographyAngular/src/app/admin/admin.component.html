@@ -1,0 +1,26 @@
+<app-header/>
+
+<body>
+  <div class="admin-panel">
+    <header class="header">
+      <h1>Admin Panel</h1>
+    </header>
+
+    <nav class="sidebar">
+      <ul>
+        <li><a routerLink="/admin/approve-users" routerLinkActive="active">Approve Users</a></li>
+        <li><a routerLink="/admin/change-roles" routerLinkActive="active">Change User Roles</a></li>
+        <li><a routerLink="/admin/ban-users" routerLinkActive="active">Ban Users</a></li>
+        <li><a routerLink="/admin/feedback" routerLinkActive="active">Feedback Messages</a></li>
+        <li><a routerLink="/admin/admin-permission" routerLinkActive="active">Admin Permission</a></li>
+        <li><a routerLink="/admin/moderator-permission" routerLinkActive="active">Moderator Permission</a></li>
+      </ul>
+    </nav>
+
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</body>
+
+<app-footer />
