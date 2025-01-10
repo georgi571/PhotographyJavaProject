@@ -21,7 +21,7 @@ public class Role {
     private UserRole role;
 
     @OneToMany(mappedBy = "role")
-    private Set<User> users;
+    private Set<UserEntity> users;
 
     public Role() {
         this.users = new HashSet<>();
@@ -48,11 +48,11 @@ public class Role {
         this.role = role;
     }
 
-    public Set<User> getUsers() {
+    public Set<UserEntity> getUsers() {
         return users;
     }
 
-    public void setUsers(Set<User> users) {
+    public void setUsers(Set<UserEntity> users) {
         this.users = users;
     }
 }

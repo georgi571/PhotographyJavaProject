@@ -19,32 +19,33 @@ import {AdminPermissionsComponent} from './admin-permissions/admin-permissions.c
 import {ModeratorPermissionsComponent} from './moderator-permissions/moderator-permissions.component';
 
 export const routes: Routes = [
-  { path: '', component: IntroComponent },
-  { path: 'home', component: HomeComponent },
-  { path: 'challenges', component: ChallengesComponent },
-  { path: 'leaderboards', component: LeaderboardsComponent },
-  { path: 'about', component: AboutComponent },
-  { path: 'contacts', component: ContactComponent },
-  { path: 'auth', component: AuthComponent },
-  { path: 'users/login', component: LoginComponent },
-  { path: 'users/register', component: RegistrationComponent },
-  { path: 'profile', component: ProfileComponent },
-  {
-    path: 'admin',
-    component: AdminComponent,
-    children: [
-      { path: 'approve-users', component: ApproveUsersComponent },
-      { path: 'change-roles', component: ChangeRolesComponent },
-      { path: 'ban-users', component: BanUsersComponent },
-      { path: 'feedback', component: FeedbackMessagesComponent },
-      { path: 'admin-permission', component: AdminPermissionsComponent },
-      { path: 'moderator-permission', component: ModeratorPermissionsComponent },
-    ]
-  },
+    {path: '', component: IntroComponent},
+    {path: 'home', component: HomeComponent},
+    {path: 'challenges', component: ChallengesComponent},
+    {path: 'leaderboards', component: LeaderboardsComponent},
+    {path: 'about', component: AboutComponent},
+    {path: 'contacts', component: ContactComponent},
+    {path: 'auth', component: AuthComponent},
+    {path: 'users/login', component: LoginComponent},
+    {path: 'users/register', component: RegistrationComponent},
+    {path: 'profile', component: ProfileComponent},
+    {
+        path: 'admin',
+        component: AdminComponent,
+        children: [
+            {path: 'approve-users', component: ApproveUsersComponent},
+            {path: 'change-roles', component: ChangeRolesComponent},
+            {path: 'ban-users', component: BanUsersComponent},
+            {path: 'feedback', component: FeedbackMessagesComponent},
+            {path: 'admin-permission', component: AdminPermissionsComponent},
+            {path: 'moderator-permission', component: ModeratorPermissionsComponent},
+        ]
+    },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forRoot(routes)],
+    exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+}

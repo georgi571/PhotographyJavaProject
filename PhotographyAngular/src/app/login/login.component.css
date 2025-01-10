@@ -1,84 +1,84 @@
 body {
-  padding: 2em 0;
-  text-align: center;
-  background:url('../../assets/images/login.jpg') no-repeat center center;
-  background-size: cover;
-  min-height: calc(100vh - 90px);
-  min-width: calc(100vw - 100px);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: #FFFFFF;
+    padding: 2em 0;
+    text-align: center;
+    background: url('../../assets/images/login.jpg') no-repeat center center;
+    background-size: cover;
+    min-height: calc(100vh - 90px);
+    min-width: calc(100vw - 100px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #FFFFFF;
 }
 
 .auth-container {
-  max-width: 400px;
-  margin: 50px auto;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 50px auto;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .auth-container h2 {
-  color: #333;
-  margin-bottom: 20px;
+    color: #333;
+    margin-bottom: 20px;
 }
 
 .auth-container p {
-  color: #777;
-  margin-bottom: 20px;
+    color: #777;
+    margin-bottom: 20px;
 }
 
 .auth-form {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .form-group {
-  margin-bottom: 15px;
-  text-align: left;
+    margin-bottom: 15px;
+    text-align: left;
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: 5px;
-  color: #555;
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
 }
 
 .form-group input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
 }
 
 .btn-primary {
-  background-color: #ff5722;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 10px;
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
 }
 
 .btn-primary:hover {
-  background-color: #e64a19;
+    background-color: #e64a19;
 }
 
 .switch-link {
-  margin-top: 15px;
-  font-size: 14px;
+    margin-top: 15px;
+    font-size: 14px;
 }
 
 .switch-link a {
-  color: #ff5722;
-  text-decoration: none;
+    color: #ff5722;
+    text-decoration: none;
 }
 
 .switch-link a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }

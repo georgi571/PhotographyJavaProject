@@ -1,25 +1,27 @@
 <app-header/>
 
 <body>
-  <div class="auth-container">
-    <h2>Welcome Back</h2>
-    <p>Log in to access your account and continue your journey!</p>
+    <div class="auth-container">
+        <h2>Welcome Back</h2>
+        <p>Log in to access your account and continue your journey!</p>
 
-    <form class="auth-form">
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" placeholder="Enter your username" required/>
-      </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Enter your password" required/>
-      </div>
-      <button type="submit" class="btn btn-primary">Login</button>
-      <p class="switch-link">
-        Don't have an account? <a href="/users/register">Register here</a>
-      </p>
-    </form>
-  </div>
+        <form class="auth-form" #loginForm='ngForm' (ngSubmit)="formSubmit()">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" ngModel #usernameInput="ngModel"
+                       placeholder="Enter your username" required/>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" ngModel #passwordInput="ngModel"
+                       placeholder="Enter your password" required/>
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+            <p class="switch-link">
+                Don't have an account? <a href="/users/register">Register here</a>
+            </p>
+        </form>
+    </div>
 </body>
 
-<app-footer />
+<app-footer/>

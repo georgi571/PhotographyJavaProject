@@ -1,6 +1,8 @@
 package bg.photographyjava.web.controllers;
 
+import bg.photographyjava.model.dto.LoginResponseDTO;
 import bg.photographyjava.model.dto.RegisterInfoDTO;
+import bg.photographyjava.model.dto.UserLoginDTO;
 import bg.photographyjava.model.dto.UserRegisterDTO;
 import bg.photographyjava.model.enums.CountryEnum;
 import bg.photographyjava.service.UserService;
@@ -23,6 +25,20 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    //login user and return the twt token to FE
+
+    @PostMapping("login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody UserLoginDTO userLoginDTO) {
+        String jwtToken = this.userService.verify(userLoginDTO);
+
+        if (jwtToken != null) {
+            LoginResponseDTO loginResponse = new LoginResponseDTO(jwtToken);
+            return ResponseEntity.ok(loginResponse);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     // Send all country names to the FE

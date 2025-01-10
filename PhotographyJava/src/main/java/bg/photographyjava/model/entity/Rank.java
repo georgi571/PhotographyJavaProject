@@ -20,7 +20,7 @@ public class Rank {
     private UserRank rank;
 
     @OneToMany(mappedBy = "rank")
-    private Set<User> users;
+    private Set<UserEntity> users;
 
     public Rank() {
         this.users = new HashSet<>();
@@ -47,11 +47,11 @@ public class Rank {
         this.rank = rank;
     }
 
-    public Set<User> getUsers() {
+    public Set<UserEntity> getUsers() {
         return users;
     }
 
-    public void setUsers(Set<User> users) {
+    public void setUsers(Set<UserEntity> users) {
         this.users = users;
     }
 }

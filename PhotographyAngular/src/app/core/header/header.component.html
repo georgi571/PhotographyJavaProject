@@ -1,21 +1,27 @@
 <header class="header">
-  <div class="logo">
-    <h1>Gamified Photography</h1>
-  </div>
-  <nav class="nav">
-    <ul class="nav-links">
-      <li><a routerLink="/home" routerLinkActive="active">Home</a></li>
-      <li><a routerLink="/challenges" routerLinkActive="active">Challenges</a></li>
-      <li><a routerLink="/leaderboards" routerLinkActive="active">Leaderboards</a></li>
-      <li><a routerLink="/about" routerLinkActive="active">About Us</a></li>
-      <li><a routerLink="/contacts" routerLinkActive="active">Contacts</a></li>
-    </ul>
-    <ul class="nav-links">
-      <li><a routerLink="/profile" routerLinkActive="active">Profile</a></li>
-      <li><a routerLink="/admin" routerLinkActive="active">Admin Panel</a></li>
-    </ul>
-  </nav>
-  <div class="join">
-    <a href="/auth" class="btn btn-primary">Join Now</a>
-  </div>
+    <div class="logo">
+        <h1>Gamified Photography</h1>
+    </div>
+    <nav class="nav">
+        <ul class="nav-links">
+            <li><a routerLink="/home" routerLinkActive="active">Home</a></li>
+            <li><a routerLink="/challenges" routerLinkActive="active">Challenges</a></li>
+            <li><a routerLink="/leaderboards" routerLinkActive="active">Leaderboards</a></li>
+            <li><a routerLink="/about" routerLinkActive="active">About Us</a></li>
+            <li><a routerLink="/contacts" routerLinkActive="active">Contacts</a></li>
+            <li><a routerLink="/admin" routerLinkActive="active">Admin Panel</a></li>
+        </ul>
+        <ul class="nav-links">
+        </ul>
+    </nav>
+    <div class="join">
+        @if (username) {
+            <ul class="profile-links">
+                <li><a routerLink="/profile" routerLinkActive="active">Welcome, {{ username }}</a></li>
+                <li><a routerLink="/logout" routerLinkActive="active" (click)="logout()">Logout</a></li>
+            </ul>
+        } @else {
+            <a href="/auth" class="btn btn-primary">Join Now</a>
+        }
+    </div>
 </header>

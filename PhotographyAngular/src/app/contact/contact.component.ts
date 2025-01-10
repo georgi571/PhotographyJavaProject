@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import {HeaderComponent} from "../core/header/header.component";
 import {FooterComponent} from "../core/footer/footer.component";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {ContactService} from '../services/contact.service';
+import {ContactService} from '../services/contact-service/contact.service';
 import {Router} from '@angular/router';
 
 @Component({
