@@ -1,14 +1,13 @@
 package bg.photographyjava.web.controllers;
 
-import bg.photographyjava.model.dto.LoginResponseDTO;
-import bg.photographyjava.model.dto.RegisterInfoDTO;
-import bg.photographyjava.model.dto.UserLoginDTO;
-import bg.photographyjava.model.dto.UserRegisterDTO;
-import bg.photographyjava.model.enums.CountryEnum;
-import bg.photographyjava.service.UserService;
+import bg.photographyjava.user.model.UserEntity;
+import bg.photographyjava.web.dto.*;
+import bg.photographyjava.user.property.enums.CountryEnum;
+import bg.photographyjava.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -75,5 +74,15 @@ public class UserController {
         response.put("message", "User registered successfully");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    // return full information about the user details
+
+    @GetMapping("profile")
+    public ResponseEntity<?> getUserInfo(Authentication authentication) {
+        String username = authentication.getName();
+        UserProfileDTO userProfileDTO = this.userService.getProfileDetails(username);
+
+        return ResponseEntity.ok(userProfileDTO);
     }
 }

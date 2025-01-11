@@ -1,0 +1,132 @@
+<app-header/>
+
+<body>
+    <div class="profile-container">
+        <div class="left-section">
+            <a href="#">
+                <img src="{{userDetails.picture}}" alt="User Profile Picture">
+            </a>
+            <div class="profile-button">
+                <a href="#">Edit Profile</a>
+                <a href="#">Add Friend</a>
+                <a href="#">Follow</a>
+            </div>
+            <div class="info">
+                <p><strong>Username:</strong> {{userDetails.username}} </p>
+                <p><strong>Name:</strong> {{userDetails.name}} </p>
+                <p><strong>Country:</strong> {{userDetails.country}} </p>
+                <p><strong>City:</strong> {{userDetails.city}} </p>
+                <p><strong>Gender:</strong> {{userDetails.gender}} </p>
+                <p><strong>Age:</strong> {{userDetails.age}} </p>
+                <p><strong>Rank:</strong> {{userDetails.rank}} </p>
+                <p><strong>Points collected:</strong> {{userDetails.points}} </p>
+            </div>
+            <div class="friends-followers">
+                <h3>Friends - <span>4</span></h3>
+                <div class="list">
+                    <div class="list-item">
+                        <img src="../../../assets/images/male-profile-picture.avif" alt="Friend 1">
+                        <p>Friend 1</p>
+                    </div>
+                    <div class="list-item">
+                        <img src="../../../assets/images/male-profile-picture.avif" alt="Friend 2">
+                        <p>Friend 2</p>
+                    </div>
+                    <div class="list-item">
+                        <img src="../../../assets/images/male-profile-picture.avif" alt="Friend 3">
+                        <p>Friend 3</p>
+                    </div>
+                    <div class="list-item">
+                        <img src="../../../assets/images/male-profile-picture.avif" alt="Friend 4">
+                        <p>Friend 4</p>
+                    </div>
+                </div>
+                <div class="view-all">
+                    <a href="#">See All Friends</a>
+                </div>
+                <h3>Followers - <span>4</span></h3>
+                <div class="list">
+                    <div class="list-item">
+                        <img src="../../../assets/images/male-profile-picture.avif" alt="Follower 1">
+                        <p>Follower 1</p>
+                    </div>
+                    <div class="list-item">
+                        <img src="../../../assets/images/male-profile-picture.avif" alt="Follower 2">
+                        <p>Follower 2</p>
+                    </div>
+                    <div class="list-item">
+                        <img src="../../../assets/images/male-profile-picture.avif" alt="Follower 3">
+                        <p>Follower 3</p>
+                    </div>
+                    <div class="list-item">
+                        <img src="../../../assets/images/male-profile-picture.avif" alt="Follower 4">
+                        <p>Follower 4</p>
+                    </div>
+                </div>
+                <div class="view-all">
+                    <a href="#">See All Followers</a>
+                </div>
+            </div>
+        </div>
+        <div class="main-section">
+            <div class="inner-section trophies">
+                <h2>Achievement</h2>
+                <div class="content">
+                    <div class="trophy">
+                        <img src="../../../assets/images/gold-winner.png" alt="Gold Winner">
+                        <strong>1st Place:</strong>
+                        <a href="#">1 time</a>
+                    </div>
+                    <div class="trophy">
+                        <img src="../../../assets/images/silver-winner.png" alt="Silver Winner">
+                        <strong>2nd Place:</strong>
+                        <a href="#">1 time</a>
+                    </div>
+                    <div class="trophy">
+                        <img src="../../../assets/images/bronze-winner.png" alt="Bronze Winner">
+                        <strong>3rd Place:</strong>
+                        <a href="#">1 time</a>
+                    </div>
+                </div>
+            </div>
+            <div class="inner-section events">
+                <h2>Recent Events</h2>
+                <div class="content">
+                    <div class="item">
+                        <img src="../../../assets/images/gold-winner.png" alt="Gold Winner">
+                        <a href="#">Event 1</a>
+                    </div>
+                    <div class="item">
+                        <img src="../../../assets/images/silver-winner.png" alt="Silver Winner">
+                        <a href="#">Event 2</a>
+                    </div>
+                    <div class="item">
+                        <img src="../../../assets/images/bronze-winner.png" alt="Bronze Winner">
+                        <a href="#">Event 3</a>
+                    </div>
+                </div>
+                <a href="#" class="button">See All Events</a>
+            </div>
+            <div class="inner-section pictures">
+                <h2>Most Liked Pictures</h2>
+                <div class="content">
+                    <div class="item">
+                        <img src="../../../assets/images/gold-winner.png" alt="Gold Winner">
+                        <a href="#">Picture 1</a>
+                    </div>
+                    <div class="item">
+                        <img src="../../../assets/images/silver-winner.png" alt="Silver Winner">
+                        <a href="#">Picture 2</a>
+                    </div>
+                    <div class="item">
+                        <img src="../../../assets/images/bronze-winner.png" alt="Bronze Winner">
+                        <a href="#">Picture 3</a>
+                    </div>
+                </div>
+                <a href="#" class="button">See All Pictures</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+<app-footer/>

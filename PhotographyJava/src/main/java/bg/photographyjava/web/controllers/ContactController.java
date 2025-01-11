@@ -1,7 +1,7 @@
 package bg.photographyjava.web.controllers;
 
-import bg.photographyjava.model.dto.ContactMessageDTO;
-import bg.photographyjava.service.ContactMessageService;
+import bg.photographyjava.web.dto.ContactMessageDTO;
+import bg.photographyjava.contact.service.ContactMessageService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
