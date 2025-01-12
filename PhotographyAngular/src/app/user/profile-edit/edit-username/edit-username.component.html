@@ -1,0 +1,63 @@
+<body>
+    <div class="information-section">
+        <h3>Update Username</h3>
+        @if (errorMessage) {
+            <div class="error-message">
+                <p>{{ errorMessage }}</p>
+            </div>
+        }
+
+        <form (ngSubmit)="onSubmitUsernameUpdate()" #usernameForm="ngForm">
+            <div class="form-group">
+                <label for="currentUsername">Current Username</label>
+                <input
+                    type="text"
+                    id="currentUsername"
+                    [(ngModel)]="userDetails.oldUsername"
+                    name="currentUsername"
+                    readonly
+                    required
+                />
+                @if (fieldErrors['oldUsername']) {
+                    <div class="error-message">
+                        <small>{{ fieldErrors['oldUsername'] }}</small>
+                    </div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="newUsername">New Username</label>
+                <input
+                    type="text"
+                    id="newUsername"
+                    [(ngModel)]="userDetails.newUsername"
+                    name="newUsername"
+                    required
+                />
+                @if (fieldErrors['newUsername']) {
+                    <div class="error-message">
+                        <small>{{ fieldErrors['newUsername'] }}</small>
+                    </div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="currentPassword">Current Password</label>
+                <input
+                    type="password"
+                    id="currentPassword"
+                    [(ngModel)]="userDetails.currentPassword"
+                    name="currentPassword"
+                    required
+                />
+                @if (fieldErrors['currentPassword']) {
+                    <div class="error-message">
+                        <small>{{ fieldErrors['currentPassword'] }}</small>
+                    </div>
+                }
+            </div>
+
+            <button type="submit" [disabled]="!usernameForm.form.valid">Save Changes</button>
+        </form>
+    </div>
+</body>

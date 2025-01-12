@@ -1,6 +1,8 @@
 package bg.photographyjava.web.dto;
 
-public class UserProfileDTO {
+import java.io.Serializable;
+
+public class UserProfileDTO implements Serializable {
 
     private String username;
 

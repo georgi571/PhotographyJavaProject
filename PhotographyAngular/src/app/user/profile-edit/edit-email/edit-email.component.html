@@ -1,0 +1,45 @@
+<body>
+    <div class="email-section">
+        <h3>Update Email</h3>
+        @if (errorMessage) {
+            <div class="error-message">
+                <p>{{ errorMessage }}</p>
+            </div>
+        }
+
+        <form (ngSubmit)="onSubmitEmailUpdate()" #emailForm="ngForm">
+            <div class="form-group">
+                <label for="oldEmail">Old Email</label>
+                <input type="email" id="oldEmail" [(ngModel)]="userDetails.oldEmail" name="oldEmail" readonly required/>
+                @if (fieldErrors['oldEmail']) {
+                    <div class="error-message">
+                        <small>{{ fieldErrors['oldEmail'] }}</small>
+                    </div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="newEmail">New Email</label>
+                <input type="email" id="newEmail" [(ngModel)]="userDetails.newEmail" name="newEmail" required/>
+                @if (fieldErrors['newEmail']) {
+                    <div class="error-message">
+                        <small>{{ fieldErrors['newEmail'] }}</small>
+                    </div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="currentPassword">Current Password</label>
+                <input type="password" id="currentPassword" [(ngModel)]="userDetails.currentPassword"
+                       name="currentPassword" required/>
+                @if (fieldErrors['currentPassword']) {
+                    <div class="error-message">
+                        <small>{{ fieldErrors['currentPassword'] }}</small>
+                    </div>
+                }
+            </div>
+
+            <button type="submit" [disabled]="!emailForm.form.valid">Save Changes</button>
+        </form>
+    </div>
+</body>

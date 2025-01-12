@@ -1,0 +1,37 @@
+<body>
+    <div class="information-section">
+        <h3>Update Profile Picture</h3>
+        @if (errorMessage) {
+            <div class="error-message">
+                <p>{{ errorMessage }}</p>
+            </div>
+        }
+
+        <form (ngSubmit)="onSubmitPictureUpdate()" #pictureForm="ngForm">
+            <div class="form-group">
+                <label for="picture">Upload New Profile Picture</label>
+                <input
+                    type="file"
+                    id="picture"
+                    (change)="onFileChange($event)"
+                    name="profilePicture"
+                    required
+                />
+                @if (fieldErrors['profilePicturePath']) {
+                    <div class="error-message">
+                        <small>{{ fieldErrors['profilePicturePath'] }}</small>
+                    </div>
+                }
+            </div>
+
+            @if (selectedImage) {
+                <div class="form-group preview-section">
+                    <label>Preview:</label>
+                    <img [src]="selectedImage" alt="Profile Preview" class="preview-image"/>
+                </div>
+            }
+
+            <button type="submit" [disabled]="!pictureForm.form.valid">Save Picture</button>
+        </form>
+    </div>
+</body>

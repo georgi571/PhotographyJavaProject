@@ -1,0 +1,25 @@
+<app-header/>
+
+<body>
+    <div class="edit-profile">
+        <header class="header">
+            <h1>Edit Profile</h1>
+        </header>
+
+        <nav class="sidebar">
+            <ul>
+                <li><a routerLink="/profile/edit/information" routerLinkActive="active">Information</a></li>
+                <li><a routerLink="/profile/edit/password" routerLinkActive="active">Password</a></li>
+                <li><a routerLink="/profile/edit/username" routerLinkActive="active">Username</a></li>
+                <li><a routerLink="/profile/edit/email" routerLinkActive="active">Email</a></li>
+                <li><a routerLink="/profile/edit/picture" routerLinkActive="active">Profile Picture</a></li>
+            </ul>
+        </nav>
+
+        <main class="content">
+            <router-outlet></router-outlet>
+        </main>
+    </div>
+</body>
+
+<app-footer/>

@@ -1,9 +1,7 @@
 package bg.photographyjava.user.service.impl;
 
-import bg.photographyjava.web.dto.UserLoginDTO;
+import bg.photographyjava.web.dto.*;
 import bg.photographyjava.user.model.UserEntity;
-import bg.photographyjava.web.dto.UserProfileDTO;
-import bg.photographyjava.web.dto.UserRegisterDTO;
 import bg.photographyjava.user.property.enums.CountryEnum;
 import bg.photographyjava.user.property.enums.GenderEnum;
 import bg.photographyjava.user.property.enums.UserRank;
@@ -111,6 +109,65 @@ public class UserServiceImpl implements UserService {
         userProfileDTO.setPoints(user.getPoints());
 
         return userProfileDTO;
+    }
+
+    @Override
+    public UserEditProfileDTO getProfileEditDetails(String username) {
+        UserEntity user = this.getUserByUsername(username).get();
+
+        return this.modelMapper.map(user, UserEditProfileDTO.class);
+    }
+
+    @Override
+    public void editUserDetails(String username, UserEditProfileDTO userEditProfileDTO) {
+        UserEntity user = this.getUserByUsername(username).get();
+        user.setRealName(userEditProfileDTO.getRealName());
+        user.setCity(userEditProfileDTO.getCity());
+        user.setAge(userEditProfileDTO.getAge());
+
+        this.userRepository.saveAndFlush(user);
+    }
+
+    @Override
+    public UserChangeUsernameDTO getUserUsernameDetails(String username) {
+        UserEntity user = this.getUserByUsername(username).get();
+        UserChangeUsernameDTO userChangeUsernameDTO = new UserChangeUsernameDTO();
+        userChangeUsernameDTO.setOldUsername(user.getUsername());
+
+        return userChangeUsernameDTO;
+    }
+
+    @Override
+    public UserChangeEmailDTO getUserEmailDetails(String username) {
+        UserEntity user = this.getUserByUsername(username).get();
+
+        UserChangeEmailDTO userChangeEmailDTO = new UserChangeEmailDTO();
+        userChangeEmailDTO.setOldEmail(user.getEmail());
+        return userChangeEmailDTO;
+    }
+
+    @Override
+    public void editUserUsernameDetails(String username, UserChangeUsernameDTO userChangeUsernameDTO) {
+        UserEntity user = this.getUserByUsername(username).get();
+        user.setUsername(userChangeUsernameDTO.getNewUsername());
+
+        this.userRepository.saveAndFlush(user);
+    }
+
+    @Override
+    public void editUserEmailDetails(String username, UserChangeEmailDTO userChangeEmailDTO) {
+        UserEntity user = this.getUserByUsername(username).get();
+        user.setEmail(userChangeEmailDTO.getNewEmail());
+
+        this.userRepository.saveAndFlush(user);
+    }
+
+    @Override
+    public void updatePassword(String username, String encodedNewPassword) {
+        UserEntity user = this.getUserByUsername(username).get();
+        user.setPassword(encodedNewPassword);
+
+        this.userRepository.saveAndFlush(user);
     }
 
 

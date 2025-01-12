@@ -63,7 +63,8 @@ public class SecurityConfiguration {
 //                        .requestMatchers("*").permitAll()
                         .requestMatchers("/", "/api/home", "/api/users/login",
                                 "/api/users/register", "/api/users/profile",
-                                        "/img/**").permitAll()
+                                "/api/users/profile/edit", "/img/**",
+                        "/api/users/profile/edit/**" ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

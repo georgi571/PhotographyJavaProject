@@ -1,22 +1,22 @@
 import {Component} from '@angular/core';
-import {HeaderComponent} from "../core/header/header.component";
+import {HeaderComponent} from '../../core/header/header.component';
+import {FooterComponent} from '../../core/footer/footer.component';
 import {Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
-import {FooterComponent} from '../core/footer/footer.component';
 
 @Component({
-    selector: 'app-admin',
+    selector: 'app-profile-edit',
     standalone: true,
     imports: [
         HeaderComponent,
         RouterOutlet,
+        FooterComponent,
         RouterLink,
-        RouterLinkActive,
-        FooterComponent
+        RouterLinkActive
     ],
-    templateUrl: './admin.component.html',
-    styleUrl: './admin.component.css'
+    templateUrl: './profile-edit.component.html',
+    styleUrl: './profile-edit.component.css'
 })
-export class AdminComponent {
+export class ProfileEditComponent {
     constructor(private router: Router) {
         this.router.events.subscribe(event => console.log(event));
     }

@@ -5,6 +5,7 @@ import {ProfileService} from '../../services/profile-service/profile.service';
 
 @Component({
     selector: 'app-profile',
+    standalone: true,
     imports: [
         HeaderComponent,
         FooterComponent
@@ -13,6 +14,8 @@ import {ProfileService} from '../../services/profile-service/profile.service';
     styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
+
+    showPopup: boolean = false;
 
     userDetails: any = {};
     friends: any[] = [];
@@ -54,6 +57,14 @@ export class ProfileComponent implements OnInit {
                 console.error(error);
             }
         });
+    }
+
+    openPopup() {
+        this.showPopup = true;
+    }
+
+    closePopup() {
+        this.showPopup = false;
     }
 
 }

@@ -3,11 +3,18 @@
 <body>
     <div class="profile-container">
         <div class="left-section">
-            <a href="#">
-                <img src="{{userDetails.picture}}" alt="User Profile Picture">
+            <a (click)="openPopup()">
+                <img [src]="userDetails.picture" alt="User Profile Picture" class="profile-picture">
             </a>
+            @if (showPopup) {
+                <div class="modal" (click)="closePopup()">
+                    <div class="modal-content" (click)="$event.stopPropagation()">
+                        <img [src]="userDetails.picture" alt="User Profile Picture" class="modal-picture">
+                    </div>
+                </div>
+            }
             <div class="profile-button">
-                <a href="#">Edit Profile</a>
+                <a href="profile/edit">Edit Profile</a>
                 <a href="#">Add Friend</a>
                 <a href="#">Follow</a>
             </div>

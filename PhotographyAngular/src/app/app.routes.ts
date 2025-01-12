@@ -15,8 +15,14 @@ import {ApproveUsersComponent} from './approve-users/approve-users.component';
 import {ChangeRolesComponent} from './change-roles/change-roles.component';
 import {BanUsersComponent} from './ban-users/ban-users.component';
 import {FeedbackMessagesComponent} from './feedback-messages/feedback-messages.component';
-import {AdminPermissionsComponent} from './admin-permissions/admin-permissions.component';
+import {AdminPermissionsComponent} from './admin/admin-permissions/admin-permissions.component';
 import {ModeratorPermissionsComponent} from './moderator-permissions/moderator-permissions.component';
+import {ProfileEditComponent} from './user/profile-edit/profile-edit.component';
+import {EditInformationComponent} from './user/profile-edit/edit-information/edit-information.component';
+import {EditEmailComponent} from './user/profile-edit/edit-email/edit-email.component';
+import {EditUsernameComponent} from './user/profile-edit/edit-username/edit-username.component';
+import {EditPasswordComponent} from './user/profile-edit/edit-password/edit-password.component';
+import {EditPictureComponent} from './user/profile-edit/edit-picture/edit-picture.component';
 
 export const routes: Routes = [
     {path: '', component: IntroComponent},
@@ -29,6 +35,16 @@ export const routes: Routes = [
     {path: 'users/login', component: LoginComponent},
     {path: 'users/register', component: RegistrationComponent},
     {path: 'profile', component: ProfileComponent},
+    {path: 'profile/edit',
+        component: ProfileEditComponent,
+        children: [
+            {path: 'information', component: EditInformationComponent},
+            {path: 'password', component: EditPasswordComponent},
+            {path: 'username', component: EditUsernameComponent},
+            {path: 'email', component: EditEmailComponent},
+            {path: 'picture', component: EditPictureComponent},
+        ]
+    },
     {
         path: 'admin',
         component: AdminComponent,

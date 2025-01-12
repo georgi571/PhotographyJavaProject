@@ -1,6 +1,8 @@
 <header class="header">
     <div class="logo">
-        <h1>Gamified Photography</h1>
+        <a href="/" style="text-decoration: none; color: inherit;">
+            <h1>Gamified Photography</h1>
+        </a>
     </div>
     <nav class="nav">
         <ul class="nav-links">
@@ -16,10 +18,13 @@
     </nav>
     <div class="join">
         @if (username) {
-            <ul class="profile-links">
-                <li><a routerLink="/profile" routerLinkActive="active">Welcome, {{ username }}</a></li>
-                <li><a routerLink="/logout" routerLinkActive="active" (click)="logout()">Logout</a></li>
-            </ul>
+            <div class="dropdown">
+                <span class="dropdown-toggle"> Welcome, {{ username }}</span>
+                <ul class="dropdown-menu">
+                    <li><a routerLink="/profile" routerLinkActive="active">Profile</a></li>
+                    <li><a routerLink="/logout" routerLinkActive="active" (click)="logout()">Logout</a></li>
+                </ul>
+            </div>
         } @else {
             <a href="/auth" class="btn btn-primary">Join Now</a>
         }

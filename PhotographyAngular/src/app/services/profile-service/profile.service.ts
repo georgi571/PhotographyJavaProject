@@ -38,4 +38,73 @@ export class ProfileService {
         }
         return throwError(() => new Error(message));
     }
+
+    getUserEditDetails() {
+        const token = this.authService.getToken();
+        return this.http.get<string[]>(`${this.apiUrl}/users/profile/edit`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    editUserDetail(data: any) {
+        const token = this.authService.getToken();
+        return this.http.put(`${this.apiUrl}/users/profile/edit`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
+    getUserOldUsernameDetails() {
+        const token = this.authService.getToken();
+        return this.http.get<string[]>(`${this.apiUrl}/users/profile/edit/username`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    editUsernameDetail(data: any) {
+        const token = this.authService.getToken();
+        return this.http.put(`${this.apiUrl}/users/profile/edit/username`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
+    getUserOldEmailDetails() {
+        const token = this.authService.getToken();
+        return this.http.get<string[]>(`${this.apiUrl}/users/profile/edit/email`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    editUserEmailDetail(data: any) {
+        const token = this.authService.getToken();
+        return this.http.put(`${this.apiUrl}/users/profile/edit/email`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
+    editUserPasswordDetail(data: any) {
+        const token = this.authService.getToken();
+        return this.http.put(`${this.apiUrl}/users/profile/edit/password`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
 }

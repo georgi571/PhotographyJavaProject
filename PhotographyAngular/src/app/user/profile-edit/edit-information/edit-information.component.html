@@ -1,0 +1,44 @@
+<body>
+    <div class="information-section">
+        <h3>Information</h3>
+        @if (errorMessage) {
+            <div class="error-message">
+                <p>{{ errorMessage }}</p>
+            </div>
+        }
+
+        <form (ngSubmit)="onSubmitInformation()" #infoForm="ngForm">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" [(ngModel)]="userDetails.realName" name="name" required/>
+                @if (fieldErrors['realName']) {
+                    <div class="error-message">
+                        <small>{{ fieldErrors['realName'] }}</small>
+                    </div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" id="city" [(ngModel)]="userDetails.city" name="city" required/>
+                @if (fieldErrors['city']) {
+                    <div class="error-message">
+                        <small>{{ fieldErrors['city'] }}</small>
+                    </div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" id="age" [(ngModel)]="userDetails.age" name="age" required/>
+                @if (fieldErrors['age']) {
+                    <div class="error-message">
+                        <small>{{ fieldErrors['age'] }}</small>
+                    </div>
+                }
+            </div>
+
+            <button type="submit" [disabled]="!infoForm.form.valid">Save Information</button>
+        </form>
+    </div>
+</body>
