@@ -36,13 +36,14 @@ public class ContactMessageServiceImpl implements ContactMessageService {
         ContactMessage contactMessage = this.modelMapper.map(contactMessageDTO, ContactMessage.class);
         contactMessage.setSentAt(LocalDateTime.now());
         contactMessage.setAnswered(false);
+        contactMessage.setDeleted(false);
         this.contactMessageRepository.saveAndFlush(contactMessage);
     }
 
     @Override
     public List<ContactMessageDTO> getNotAnsweredMessages() {
         List<ContactMessageDTO> notAnsweredMessages = new ArrayList<>();
-        List<ContactMessage> contactMessages = this.contactMessageRepository.findAll().stream().filter(contactMessage -> !contactMessage.isAnswered()).toList();
+        List<ContactMessage> contactMessages = this.contactMessageRepository.findAll();
         for (ContactMessage contactMessage : contactMessages) {
             notAnsweredMessages.add(this.modelMapper.map(contactMessage, ContactMessageDTO.class));
         }
@@ -72,6 +73,15 @@ public class ContactMessageServiceImpl implements ContactMessageService {
         contactMessage.setAnswer(contactReplayDTO.getAnswer());
         contactMessage.setWhoAnswer(admin);
         contactMessage.setAnswered(true);
+        this.contactMessageRepository.saveAndFlush(contactMessage);
+    }
+
+    @Override
+    public void deleteMessage(UUID id, String username) {
+        UserEntity admin = this.userService.getUserByUsername(username).get();
+        ContactMessage contactMessage = this.contactMessageRepository.findById(id).get();
+        contactMessage.setDeleted(true);
+
         this.contactMessageRepository.saveAndFlush(contactMessage);
     }
 

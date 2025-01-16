@@ -41,7 +41,7 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:4200"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
 
@@ -65,7 +65,8 @@ public class SecurityConfiguration {
                                 "/api/users/register", "/api/users/profile",
                                 "/api/users/profile/edit", "/img/**",
                         "/api/users/profile/edit/**", "/api/contacts/receive",
-                                "/api/contacts/reply").permitAll()
+                                "/api/contacts/reply", "api/admin/change-roles",
+                                "/api/contacts/delete/{id}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

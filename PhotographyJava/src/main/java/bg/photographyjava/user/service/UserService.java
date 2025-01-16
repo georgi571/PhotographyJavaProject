@@ -4,7 +4,9 @@ import bg.photographyjava.web.dto.*;
 import bg.photographyjava.user.model.UserEntity;
 import jakarta.validation.Valid;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface UserService {
     void seedUsers();
@@ -32,4 +34,8 @@ public interface UserService {
     void editUserEmailDetails(String username, UserChangeEmailDTO userChangeEmailDTO);
 
     void updatePassword(String username, String encodedNewPassword);
+
+    List<ChangeRoleUserDTO> getAllUsers();
+
+    void updateUserRole(UUID userId, String role, String username);
 }

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class ContactMessageDTO implements Serializable {
@@ -22,6 +23,12 @@ public class ContactMessageDTO implements Serializable {
     @NotNull
     @Size(min = 1, max = 2000)
     private String message;
+
+    private boolean isAnswered;
+
+    private LocalDateTime sentAt;
+
+    private boolean isDeleted;
 
     public UUID getId() {
         return id;
@@ -53,5 +60,29 @@ public class ContactMessageDTO implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public boolean isAnswered() {
+        return isAnswered;
+    }
+
+    public void setAnswered(boolean answered) {
+        isAnswered = answered;
+    }
+
+    public LocalDateTime getSentAt() {
+        return sentAt;
+    }
+
+    public void setSentAt(LocalDateTime sentAt) {
+        this.sentAt = sentAt;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }

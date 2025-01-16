@@ -1,5 +1,6 @@
 package bg.photographyjava.user.service.impl;
 
+import bg.photographyjava.user.model.Role;
 import bg.photographyjava.web.dto.*;
 import bg.photographyjava.user.model.UserEntity;
 import bg.photographyjava.user.property.enums.CountryEnum;
@@ -19,7 +20,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -168,6 +171,28 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encodedNewPassword);
 
         this.userRepository.saveAndFlush(user);
+    }
+
+    @Override
+    public List<ChangeRoleUserDTO> getAllUsers() {
+        return userRepository.findAll().stream().map(user -> new ChangeRoleUserDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getRole().getRole().name()
+        )).toList();
+    }
+
+    @Override
+    public void updateUserRole(UUID userId, String roleToChange, String username) {
+        UserEntity admin = this.getUserByUsername(username).get();
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        UserRole userRole = Enum.valueOf(UserRole.class, roleToChange);
+        Role role = this.userRoleRepository.findByRole(userRole);
+
+        user.setRole(role);
+        userRepository.saveAndFlush(user);
     }
 
 

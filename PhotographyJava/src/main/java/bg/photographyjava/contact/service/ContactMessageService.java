@@ -15,4 +15,6 @@ public interface ContactMessageService {
     ContactMessageDTO getContactMessageByID(UUID id);
 
     void sendAnswer(ContactReplayDTO contactReplayDTO, String username);
+
+    void deleteMessage(UUID id, String username);
 }

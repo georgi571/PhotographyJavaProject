@@ -40,6 +40,9 @@ public class ContactMessage {
     @JoinColumn(name = "who_answer_id")
     private UserEntity whoAnswer;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
     public UUID getId() {
         return id;
     }
@@ -102,5 +105,13 @@ public class ContactMessage {
 
     public void setWhoAnswer(UserEntity whoAnswer) {
         this.whoAnswer = whoAnswer;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }

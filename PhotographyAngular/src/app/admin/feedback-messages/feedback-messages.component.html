@@ -5,11 +5,42 @@
     </div>
 }
 
-@if (messages && messages.length > 0) {
-    @for (message of messages; track message.id) {
+<div class="button-row">
+    <div class="filter-buttons">
+        <button class="filter-btn"
+                [class.active]="filter === 'unanswered'"
+                (click)="setFilter('unanswered')">
+            Pending Feedback
+        </button>
+        <button class="filter-btn"
+                [class.active]="filter === 'answered'"
+                (click)="setFilter('answered')">
+            Resolved Feedback
+        </button>
+        <button class="filter-btn"
+                [class.active]="filter === 'deleted'"
+                (click)="setFilter('deleted')">
+            Deleted Feedback
+        </button>
+        <button class="filter-btn"
+                [class.active]="filter === 'all'"
+                (click)="setFilter('all')">
+            Show All
+        </button>
+    </div>
+    <div class="sort-buttons">
+        <button (click)="toggleSortOrder()">
+            Sort by Date: {{ isSortDescending ? 'Newest First' : 'Oldest First' }}
+        </button>
+    </div>
+</div>
+
+@if (messages && filteredMessages.length > 0) {
+    @for (message of filteredMessages; track message.id) {
         <div class="feedback">
             <p><strong>From:</strong> {{ message.name }} </p>
             <p><strong>Email:</strong> {{ message.email }} </p>
+            <p><strong>Date:</strong> {{ message.sentAt | date:'dd/MM/yyyy, HH:mm' }} </p>
             <p><strong>Message:</strong> {{ message.message }} </p>
             <textarea [(ngModel)]="message.answer" placeholder="Write your response..."></textarea>
             <button class="reply-btn"
@@ -17,10 +48,13 @@
                     [disabled]="!message.answer || message.answer.trim() === ''">
                 Send Reply
             </button>
+            <button class="delete-btn" (click)="markAsDeleted(message)">
+                Delete
+            </button>
         </div>
     }
 } @else {
     <div class="no-messages-container">
-        <p class="no-messages-text">Great! You don't have any unanswered messages right now.</p>
+        <p class="no-messages-text">Great! You don't have any messages right now.</p>
     </div>
 }

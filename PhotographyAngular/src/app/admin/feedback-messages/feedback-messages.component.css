@@ -20,3 +20,96 @@
     font-family: 'Arial', sans-serif;
     padding: 10px;
 }
+
+.filter-buttons {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.filter-btn {
+    padding: 8px 15px;
+    font-size: 1rem;
+    background-color: #bdc3c7;
+    color: #333;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.filter-btn:hover {
+    background-color: #7f8c8d;
+    color: #fff;
+}
+
+.filter-btn.active {
+    background-color: #2980b9;
+    color: #fff;
+}
+
+.sort-buttons button {
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    outline: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.sort-buttons button:hover {
+    background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+    transform: scale(1.05);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.sort-buttons button:active {
+    transform: scale(0.95);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.sort-buttons button:focus-visible {
+    outline: 2px solid #a29bfe;
+}
+
+.sort-buttons button::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.5);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    border-radius: 50%;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    opacity: 0;
+}
+
+.sort-buttons button:active::after {
+    transform: translate(-50%, -50%) scale(4);
+    opacity: 0;
+}
+
+.feedback .delete-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+}
+
+.feedback .delete-btn:hover {
+    background-color: #c0392b;
+}

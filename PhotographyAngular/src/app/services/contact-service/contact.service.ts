@@ -30,4 +30,13 @@ export class ContactService {
             }
         });
     }
+
+    deleteMessage(id: string): Observable<any> {
+        const token = this.authService.getToken();
+        return this.http.patch(`${this.apiUrl}/contacts/delete/${id}`, {}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
 }

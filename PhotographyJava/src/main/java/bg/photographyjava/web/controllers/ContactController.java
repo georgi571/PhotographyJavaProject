@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 
 @RestController
@@ -72,5 +73,13 @@ public class ContactController {
         response.put("message", "Reply sent successfully!");
 
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/delete/{id}")
+    public ResponseEntity<?> softDeleteMessage(@PathVariable UUID id, Authentication authentication) {
+        String username = authentication.getName();
+        this.contactMessageService.deleteMessage(id, username);
+
+        return ResponseEntity.ok().build();
     }
 }

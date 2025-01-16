@@ -12,7 +12,7 @@ import {RegistrationComponent} from './auth/registration/registration.component'
 import {ProfileComponent} from './user/profile/profile.component';
 import {AdminComponent} from './admin/admin.component';
 import {ApproveUsersComponent} from './approve-users/approve-users.component';
-import {ChangeRolesComponent} from './change-roles/change-roles.component';
+import {ChangeRolesComponent} from './admin/change-roles/change-roles.component';
 import {BanUsersComponent} from './ban-users/ban-users.component';
 import {FeedbackMessagesComponent} from './admin/feedback-messages/feedback-messages.component';
 import {AdminPermissionsComponent} from './admin/admin-permissions/admin-permissions.component';
