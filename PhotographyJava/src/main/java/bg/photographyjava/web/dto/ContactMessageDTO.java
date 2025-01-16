@@ -5,8 +5,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 public class ContactMessageDTO implements Serializable {
+
+    private UUID id;
 
     @NotNull
     @Size(min = 1, max = 50)
@@ -19,6 +22,14 @@ public class ContactMessageDTO implements Serializable {
     @NotNull
     @Size(min = 1, max = 2000)
     private String message;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

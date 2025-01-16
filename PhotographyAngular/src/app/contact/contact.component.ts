@@ -45,7 +45,7 @@ export class ContactComponent {
       this.contactService.sendContactMessage(this.contactForm.value).subscribe({
         next: (response) => {
           console.log('Send successful:', response);
-          this.router.navigate(['contacts']);
+          this.router.navigate(['home']);
         },
         error: (error) => {
           if (error.status === 404 && error.error) {

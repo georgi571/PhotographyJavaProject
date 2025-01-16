@@ -1,21 +1,15 @@
 import {Component, OnInit} from '@angular/core';
-import {FooterComponent} from '../../../core/footer/footer.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {HeaderComponent} from '../../../core/header/header.component';
 import {HttpClient} from '@angular/common/http';
 import {ProfileService} from '../../../services/profile-service/profile.service';
 import {Router} from '@angular/router';
-import {NgClass} from '@angular/common';
 
 @Component({
     selector: 'app-edit-information',
     standalone: true,
     imports: [
-        FooterComponent,
         FormsModule,
-        HeaderComponent,
-        ReactiveFormsModule,
-        NgClass
+        ReactiveFormsModule
     ],
     templateUrl: './edit-information.component.html',
     styleUrl: './edit-information.component.css'

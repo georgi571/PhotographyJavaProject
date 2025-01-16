@@ -1,5 +1,6 @@
 package bg.photographyjava.contact.model;
 
+import bg.photographyjava.user.model.UserEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
@@ -26,11 +27,18 @@ public class ContactMessage {
     @Column(name = "message", nullable = false, columnDefinition = "TEXT")
     private String message;
 
+    @Column(name = "answer", columnDefinition = "TEXT")
+    private String answer;
+
     @Column(name = "sent_at")
     private LocalDateTime sentAt;
 
     @Column(name = "is_answered")
     private boolean isAnswered;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "who_answer_id")
+    private UserEntity whoAnswer;
 
     public UUID getId() {
         return id;
@@ -40,19 +48,19 @@ public class ContactMessage {
         this.id = id;
     }
 
-    public @Size(min = 1, max = 50) String getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(@Size(min = 1, max = 50) String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public @Email String getEmail() {
+    public String getEmail() {
         return email;
     }
 
-    public void setEmail(@Email String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 
@@ -62,6 +70,14 @@ public class ContactMessage {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
     }
 
     public LocalDateTime getSentAt() {
@@ -78,5 +94,13 @@ public class ContactMessage {
 
     public void setAnswered(boolean answered) {
         isAnswered = answered;
+    }
+
+    public UserEntity getWhoAnswer() {
+        return whoAnswer;
+    }
+
+    public void setWhoAnswer(UserEntity whoAnswer) {
+        this.whoAnswer = whoAnswer;
     }
 }

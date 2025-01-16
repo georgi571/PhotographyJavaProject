@@ -1,0 +1,26 @@
+<h2>Feedback Messages</h2>
+@if (errorMessage) {
+    <div class="error-message">
+        {{ errorMessage }}
+    </div>
+}
+
+@if (messages && messages.length > 0) {
+    @for (message of messages; track message.id) {
+        <div class="feedback">
+            <p><strong>From:</strong> {{ message.name }} </p>
+            <p><strong>Email:</strong> {{ message.email }} </p>
+            <p><strong>Message:</strong> {{ message.message }} </p>
+            <textarea [(ngModel)]="message.answer" placeholder="Write your response..."></textarea>
+            <button class="reply-btn"
+                    (click)="sendReply(message)"
+                    [disabled]="!message.answer || message.answer.trim() === ''">
+                Send Reply
+            </button>
+        </div>
+    }
+} @else {
+    <div class="no-messages-container">
+        <p class="no-messages-text">Great! You don't have any unanswered messages right now.</p>
+    </div>
+}

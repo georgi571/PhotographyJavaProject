@@ -14,7 +14,7 @@ import {AdminComponent} from './admin/admin.component';
 import {ApproveUsersComponent} from './approve-users/approve-users.component';
 import {ChangeRolesComponent} from './change-roles/change-roles.component';
 import {BanUsersComponent} from './ban-users/ban-users.component';
-import {FeedbackMessagesComponent} from './feedback-messages/feedback-messages.component';
+import {FeedbackMessagesComponent} from './admin/feedback-messages/feedback-messages.component';
 import {AdminPermissionsComponent} from './admin/admin-permissions/admin-permissions.component';
 import {ModeratorPermissionsComponent} from './moderator-permissions/moderator-permissions.component';
 import {ProfileEditComponent} from './user/profile-edit/profile-edit.component';
