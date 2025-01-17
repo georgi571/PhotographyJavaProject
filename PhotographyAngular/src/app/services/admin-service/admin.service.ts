@@ -26,4 +26,26 @@ export class AdminService {
             }
         });
     }
+
+    getUsersForBan() {
+        return this.http.get<any[]>(`${this.apiUrl}/admin/ban-users`);
+    }
+
+    banUser(userId: string): Observable<any> {
+        const token = this.authService.getToken();
+        return this.http.put(`${this.apiUrl}/admin/ban-users/${userId}`, { action: 'ban' }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
+    unbanUser(userId: string): Observable<any> {
+        const token = this.authService.getToken();
+        return this.http.put(`${this.apiUrl}/admin/ban-users/${userId}`, { action: 'unban' }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
 }

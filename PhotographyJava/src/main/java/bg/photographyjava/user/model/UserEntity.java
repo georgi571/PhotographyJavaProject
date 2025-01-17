@@ -61,6 +61,8 @@ public class UserEntity {
     @Column(name = "profile_picture")
     private String profilePicturePath;
 
+    private boolean isBanned;
+
     public UUID getId() {
         return id;
     }
@@ -171,5 +173,13 @@ public class UserEntity {
 
     public void setProfilePicturePath(String profilePicturePath) {
         this.profilePicturePath = profilePicturePath;
+    }
+
+    public boolean isBanned() {
+        return isBanned;
+    }
+
+    public void setBanned(boolean banned) {
+        isBanned = banned;
     }
 }

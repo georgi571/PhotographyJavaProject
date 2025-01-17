@@ -2,7 +2,6 @@ package bg.photographyjava.user.service;
 
 import bg.photographyjava.web.dto.*;
 import bg.photographyjava.user.model.UserEntity;
-import jakarta.validation.Valid;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,4 +37,10 @@ public interface UserService {
     List<ChangeRoleUserDTO> getAllUsers();
 
     void updateUserRole(UUID userId, String role, String username);
+
+    List<BanUserDTO> getAllUsersForBan();
+
+    void banUserAction(UUID id, String action, String username);
+
+    BanUserDTO getUserForBan(UUID id);
 }

@@ -5,6 +5,7 @@ import {DatePipe} from '@angular/common';
 
 @Component({
     selector: 'app-feedback-messages',
+    standalone: true,
     imports: [
         FormsModule,
         DatePipe
@@ -20,7 +21,8 @@ export class FeedbackMessagesComponent implements OnInit {
 
     isSortDescending: boolean = true;
 
-    constructor(private contactService: ContactService) {}
+    constructor(private contactService: ContactService) {
+    }
 
     ngOnInit(): void {
         this.loadMessages();
@@ -91,7 +93,7 @@ export class FeedbackMessagesComponent implements OnInit {
             return;
         }
 
-        this.contactService.sendReply({ id: message.id, answer: message.answer }).subscribe({
+        this.contactService.sendReply({id: message.id, answer: message.answer}).subscribe({
             next: () => {
                 alert('Reply sent successfully!');
                 message.answered = true;

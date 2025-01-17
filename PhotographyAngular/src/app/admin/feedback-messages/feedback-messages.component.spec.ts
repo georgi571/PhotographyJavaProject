@@ -1,23 +1,23 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { FeedbackMessagesComponent } from './feedback-messages.component';
+import {FeedbackMessagesComponent} from './feedback-messages.component';
 
 describe('FeedbackMessagesComponent', () => {
-  let component: FeedbackMessagesComponent;
-  let fixture: ComponentFixture<FeedbackMessagesComponent>;
+    let component: FeedbackMessagesComponent;
+    let fixture: ComponentFixture<FeedbackMessagesComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [FeedbackMessagesComponent]
-    })
-    .compileComponents();
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [FeedbackMessagesComponent]
+        })
+            .compileComponents();
 
-    fixture = TestBed.createComponent(FeedbackMessagesComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+        fixture = TestBed.createComponent(FeedbackMessagesComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

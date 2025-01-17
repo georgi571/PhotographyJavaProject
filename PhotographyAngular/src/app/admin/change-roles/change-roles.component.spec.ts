@@ -1,23 +1,23 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ChangeRolesComponent } from './change-roles.component';
+import {ChangeRolesComponent} from './change-roles.component';
 
 describe('ChangeRolesComponent', () => {
-  let component: ChangeRolesComponent;
-  let fixture: ComponentFixture<ChangeRolesComponent>;
+    let component: ChangeRolesComponent;
+    let fixture: ComponentFixture<ChangeRolesComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [ChangeRolesComponent]
-    })
-    .compileComponents();
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [ChangeRolesComponent]
+        })
+            .compileComponents();
 
-    fixture = TestBed.createComponent(ChangeRolesComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+        fixture = TestBed.createComponent(ChangeRolesComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

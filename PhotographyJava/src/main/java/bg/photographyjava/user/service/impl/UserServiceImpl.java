@@ -63,6 +63,7 @@ public class UserServiceImpl implements UserService {
             admin.setApproved(true);
             admin.setRealName("Admin Admin");
             admin.setPoints(2500);
+            admin.setBanned(false);
             admin.setProfilePicturePath("/img/male-profile-picture.avif");
             this.userRepository.saveAndFlush(admin);
         }
@@ -89,6 +90,7 @@ public class UserServiceImpl implements UserService {
         user.setApproved(false);
         user.setRealName("Anonymous");
         user.setPoints(0);
+        user.setBanned(false);
         this.userRepository.saveAndFlush(user);
     }
 
@@ -193,6 +195,31 @@ public class UserServiceImpl implements UserService {
 
         user.setRole(role);
         userRepository.saveAndFlush(user);
+    }
+
+    @Override
+    public List<BanUserDTO> getAllUsersForBan() {
+        return userRepository.findAll().stream().map(user -> new BanUserDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.isBanned()
+        )).toList();
+    }
+
+    @Override
+    public void banUserAction(UUID id, String action, String username) {
+        UserEntity user = this.userRepository.findById(id).get();
+        user.setBanned(action.equals("ban"));
+
+        this.userRepository.saveAndFlush(user);
+    }
+
+    @Override
+    public BanUserDTO getUserForBan(UUID id) {
+        UserEntity user = this.userRepository.findById(id).get();
+
+        return this.modelMapper.map(user, BanUserDTO.class);
     }
 
 

@@ -113,3 +113,8 @@
 .feedback .delete-btn:hover {
     background-color: #c0392b;
 }
+
+button:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
