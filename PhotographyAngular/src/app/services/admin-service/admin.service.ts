@@ -31,9 +31,12 @@ export class AdminService {
         return this.http.get<any[]>(`${this.apiUrl}/admin/ban-users`);
     }
 
-    banUser(userId: string): Observable<any> {
+    banUser(userId: string, reason: string): Observable<any> {
         const token = this.authService.getToken();
-        return this.http.put(`${this.apiUrl}/admin/ban-users/${userId}`, { action: 'ban' }, {
+        return this.http.put(`${this.apiUrl}/admin/ban-users/${userId}`, {
+            action: 'ban',
+            reason: reason
+        }, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -43,6 +46,31 @@ export class AdminService {
     unbanUser(userId: string): Observable<any> {
         const token = this.authService.getToken();
         return this.http.put(`${this.apiUrl}/admin/ban-users/${userId}`, { action: 'unban' }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
+    getUsersForApprove() {
+        return this.http.get<any[]>(`${this.apiUrl}/admin/approve-users`);
+    }
+
+    approveUser(userId: number): Observable<void> {
+        const token = this.authService.getToken();
+        return this.http.put<void>(`${this.apiUrl}/admin/approve-users/${userId}`, { action: 'approve' }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
+    rejectUser(userId: number, reason: string): Observable<void> {
+        const token = this.authService.getToken();
+        return this.http.put<void>(`${this.apiUrl}/admin/approve-users/${userId}`, {
+            action: 'reject',
+            reason: reason
+        }, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

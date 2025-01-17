@@ -1,5 +1,6 @@
 <h2>Ban Users</h2>
-<input type="text" placeholder="Search by username or email" [(ngModel)]="searchTerm" (input)="filterUsers()" class="search-box"/>
+<input type="text" placeholder="Search by username or email" [(ngModel)]="searchTerm" (input)="filterUsers()"
+       class="search-box"/>
 <table>
     <thead>
         <tr>
@@ -18,7 +19,7 @@
                     <button
                         class="ban-btn"
                         [disabled]="user.banned"
-                        (click)="banUser(user.id)">
+                        (click)="openBanModal(user)">
                         Ban User
                     </button>
 
@@ -26,7 +27,7 @@
                     <button
                         class="un-ban-btn"
                         [disabled]="!user.banned"
-                        (click)="unbanUser(user.id)">
+                        (click)="openUnbanModal(user)">
                         Unban User
                     </button>
                 </td>
@@ -34,3 +35,29 @@
         }
     </tbody>
 </table>
+
+@if (selectedUser) {
+    @if (isBanModalOpen) {
+        <div class="ban-modal-overlay">
+            <div class="ban-modal">
+                <h3>Ban User - {{ selectedUser.username }}</h3>
+                <label for="banReason">Reason for Ban</label>
+                <textarea id="banReason" [(ngModel)]="banReason"></textarea>
+                <button class="confirm-ban" (click)="confirmBan()" [disabled]="!banReason">Confirm Ban</button>
+                <button (click)="closeBanModal()">Cancel</button>
+            </div>
+        </div>
+    }
+
+    @if (isUnbanModalOpen) {
+        <div class="ban-modal-overlay">
+            <div class="ban-modal">
+                <h3>Unban User - {{ selectedUser.username }}</h3>
+                <p><strong>Reason for Banning:</strong></p>
+                <p>{{ selectedUser.reasonForBan }}</p>
+                <button class="confirm-unban" (click)="unbanUser()">Confirm Unban</button>
+                <button (click)="closeUnbanModal()">Cancel</button>
+            </div>
+        </div>
+    }
+}

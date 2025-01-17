@@ -15,6 +15,10 @@ export class BanUsersComponent implements OnInit {
     users: any[] = [];
     filteredUsers: any[] = [];
     searchTerm: string = '';
+    selectedUser: any = null;
+    banReason: string = '';
+    isBanModalOpen: boolean = false;
+    isUnbanModalOpen: boolean = false;
 
     constructor(private adminService: AdminService) {}
 
@@ -27,7 +31,7 @@ export class BanUsersComponent implements OnInit {
             next: (data) => {
                 this.users = data;
                 this.filteredUsers = data;
-                console.log('Loaded users:', this.filteredUsers); // Debug log
+                console.log('Loaded users:', this.filteredUsers);
             },
             error: (err) => {
                 console.error('Error fetching users:', err);
@@ -44,28 +48,60 @@ export class BanUsersComponent implements OnInit {
         );
     }
 
-    banUser(userId: string): void {
-        this.adminService.banUser(userId).subscribe({
+    openBanModal(user: any): void {
+        this.selectedUser = user;
+        this.isBanModalOpen = true;
+    }
+
+    closeBanModal(): void {
+        this.isBanModalOpen = false;
+        this.selectedUser = null;
+        this.banReason = '';
+    }
+
+    openUnbanModal(user: any): void {
+        this.selectedUser = user;
+        this.isUnbanModalOpen = true;
+    }
+
+    closeUnbanModal(): void {
+        this.isUnbanModalOpen = false;
+        this.selectedUser = null;
+    }
+
+    confirmBan(): void {
+        if (this.banReason.trim() === '') {
+            alert('Please provide a reason for banning the user.');
+            return;
+        }
+
+        this.adminService.banUser(this.selectedUser.id, this.banReason).subscribe({
             next: () => {
                 console.log('User banned successfully');
-                this.updateUserStatus(userId, true);
+                this.selectedUser.banned = true;  // Update the banned status locally
+                this.closeBanModal();
             },
-            error: (err) => console.error('Error banning user:', err),
+            error: (err) => {
+                console.error('Error banning user:', err);
+            }
         });
     }
 
-    unbanUser(userId: string): void {
-        this.adminService.unbanUser(userId).subscribe({
+    unbanUser(): void {
+        this.adminService.unbanUser(this.selectedUser.id).subscribe({
             next: () => {
                 console.log('User unbanned successfully');
-                this.updateUserStatus(userId, false);
+                this.selectedUser.banned = false;  // Update the banned status locally
+                this.closeUnbanModal();
             },
-            error: (err) => console.error('Error unbanning user:', err),
+            error: (err) => {
+                console.error('Error unbanning user:', err);
+            }
         });
     }
 
     private updateUserStatus(userId: string, isBanned: boolean): void {
-        const user = this.users.find((u) => u.id === userId);
+        const user = this.users.find(u => u.id === userId);
         if (user) {
             user.banned = isBanned;
         }

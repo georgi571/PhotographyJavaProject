@@ -11,7 +11,7 @@ import {LoginComponent} from './auth/login/login.component';
 import {RegistrationComponent} from './auth/registration/registration.component';
 import {ProfileComponent} from './user/profile/profile.component';
 import {AdminComponent} from './admin/admin.component';
-import {ApproveUsersComponent} from './approve-users/approve-users.component';
+import {ApproveUsersComponent} from './admin/approve-users/approve-users.component';
 import {ChangeRolesComponent} from './admin/change-roles/change-roles.component';
 import {BanUsersComponent} from './admin/ban-users/ban-users.component';
 import {FeedbackMessagesComponent} from './admin/feedback-messages/feedback-messages.component';

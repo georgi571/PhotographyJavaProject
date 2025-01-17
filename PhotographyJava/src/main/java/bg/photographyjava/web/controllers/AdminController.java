@@ -1,10 +1,7 @@
 package bg.photographyjava.web.controllers;
 
 import bg.photographyjava.user.service.UserService;
-import bg.photographyjava.web.dto.BanUserDTO;
-import bg.photographyjava.web.dto.BanUserReasonDTO;
-import bg.photographyjava.web.dto.ChangeRoleUserDTO;
-import bg.photographyjava.web.dto.RoleDTO;
+import bg.photographyjava.web.dto.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +34,7 @@ public class AdminController {
     }
 
     @GetMapping("/ban-users")
-    public ResponseEntity<?> getUsers() {
+    public ResponseEntity<?> getUsersForBan() {
         return ResponseEntity.ok(this.userService.getAllUsersForBan());
     }
 
@@ -47,10 +44,28 @@ public class AdminController {
                                             @RequestBody BanUserReasonDTO request,
                                             Authentication authentication) {
         String username = authentication.getName();
-        this.userService.banUserAction(id, request.getAction(), username);
+        this.userService.banUserAction(id, request, username);
 
         BanUserDTO userForBan = this.userService.getUserForBan(id);
 
         return ResponseEntity.ok(userForBan);
+    }
+
+    @GetMapping("/approve-users")
+    public ResponseEntity<?> getUsersForApprove() {
+        return ResponseEntity.ok(this.userService.getAllUsersForApprove());
+    }
+
+
+    @PutMapping("/approve-users/{id}")
+    public ResponseEntity<?> approvingUser(@PathVariable UUID id,
+                                            @RequestBody ApproveUserReasonDTO request,
+                                            Authentication authentication) {
+        String username = authentication.getName();
+        this.userService.approveUserAction(id, request, username);
+
+        ApproveUsersDTO userForApprove = this.userService.getUserForApprove(id);
+
+        return ResponseEntity.ok(userForApprove);
     }
 }

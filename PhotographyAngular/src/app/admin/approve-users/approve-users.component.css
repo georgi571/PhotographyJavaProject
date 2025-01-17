@@ -1,25 +1,7 @@
 @import '../admin.component.css';
 
-.search-box {
-    margin-bottom: 15px;
-    padding: 8px;
-    width: 100%;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
 
-.two-buttons {
-    display: flex;
-    gap: 10px;
-}
-
-button:disabled {
-    pointer-events: none;
-    opacity: 0.5;
-}
-
-.ban-modal-overlay {
+.reject-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -32,7 +14,7 @@ button:disabled {
     z-index: 10000;
 }
 
-.ban-modal {
+.reject-modal {
     background-color: white;
     padding: 20px;
     border-radius: 8px;
@@ -41,7 +23,7 @@ button:disabled {
     max-width: 100%;
 }
 
-.ban-modal textarea {
+.reject-modal textarea {
     width: 100%;
     height: 100px;
     margin-bottom: 10px;
@@ -50,7 +32,7 @@ button:disabled {
     border: 1px solid #ccc;
 }
 
-.ban-modal button {
+.reject-modal button {
     padding: 10px 20px;
     margin: 5px;
     border: none;
@@ -60,37 +42,28 @@ button:disabled {
     border-radius: 5px;
 }
 
-.ban-modal .confirm-ban {
+.reject-modal .confirm-reject {
     background-color: #dc3545;
     color: white;
 }
 
-.ban-modal .confirm-unban {
-    background-color: green;
-    color: white;
-}
-
-.ban-modal button:hover {
+.reject-modal button:hover {
     background-color: #0056b3;
 }
 
-.ban-modal .confirm-ban:hover {
+.reject-modal .confirm-reject:hover {
     background-color: #c82333;
 }
 
-.ban-modal .confirm-unban:hover {
-    background-color: darkgreen;
-}
-
-.ban-modal button:nth-child(2) {
+.reject-modal button:nth-child(2) {
     background-color: #ccc;
 }
 
-.ban-modal button:nth-child(2):hover {
+.reject-modal button:nth-child(2):hover {
     background-color: #999;
 }
 
-.ban-modal button:disabled {
+.reject-modal button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }

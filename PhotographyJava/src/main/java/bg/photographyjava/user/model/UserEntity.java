@@ -61,7 +61,11 @@ public class UserEntity {
     @Column(name = "profile_picture")
     private String profilePicturePath;
 
+    @Column(name = "is_banned")
     private boolean isBanned;
+
+    @Column(name = "reason_for_ban")
+    private String reasonForBan;
 
     public UUID getId() {
         return id;
@@ -181,5 +185,13 @@ public class UserEntity {
 
     public void setBanned(boolean banned) {
         isBanned = banned;
+    }
+
+    public String getReasonForBan() {
+        return reasonForBan;
+    }
+
+    public void setReasonForBan(String reasonForBan) {
+        this.reasonForBan = reasonForBan;
     }
 }

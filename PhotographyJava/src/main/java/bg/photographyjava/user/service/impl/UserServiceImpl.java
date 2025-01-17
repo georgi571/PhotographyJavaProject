@@ -63,6 +63,7 @@ public class UserServiceImpl implements UserService {
             admin.setApproved(true);
             admin.setRealName("Admin Admin");
             admin.setPoints(2500);
+            admin.setApproved(true);
             admin.setBanned(false);
             admin.setProfilePicturePath("/img/male-profile-picture.avif");
             this.userRepository.saveAndFlush(admin);
@@ -91,6 +92,7 @@ public class UserServiceImpl implements UserService {
         user.setRealName("Anonymous");
         user.setPoints(0);
         user.setBanned(false);
+        user.setApproved(false);
         this.userRepository.saveAndFlush(user);
     }
 
@@ -203,14 +205,22 @@ public class UserServiceImpl implements UserService {
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
-                user.isBanned()
+                user.isBanned(),
+                user.getReasonForBan()
         )).toList();
     }
 
     @Override
-    public void banUserAction(UUID id, String action, String username) {
+    public void banUserAction(UUID id, BanUserReasonDTO reasonDTO, String username) {
+        UserEntity admin = this.userRepository.findByUsername(username).get();
         UserEntity user = this.userRepository.findById(id).get();
-        user.setBanned(action.equals("ban"));
+        if (reasonDTO.getAction().equals("ban")) {
+            user.setBanned(true);
+            user.setReasonForBan(reasonDTO.getReason());
+        } else {
+            user.setBanned(false);
+            user.setReasonForBan(null);
+        }
 
         this.userRepository.saveAndFlush(user);
     }
@@ -220,6 +230,37 @@ public class UserServiceImpl implements UserService {
         UserEntity user = this.userRepository.findById(id).get();
 
         return this.modelMapper.map(user, BanUserDTO.class);
+    }
+
+    @Override
+    public List<ApproveUsersDTO> getAllUsersForApprove() {
+        return userRepository.findAll().stream().filter(userEntity -> !userEntity.isApproved() && !userEntity.isBanned()).map(user -> new ApproveUsersDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail()
+        )).toList();
+    }
+
+    @Override
+    public void approveUserAction(UUID id, ApproveUserReasonDTO reasonDTO, String username) {
+        UserEntity admin = this.userRepository.findByUsername(username).get();
+        UserEntity user = this.userRepository.findById(id).get();
+        if (reasonDTO.getAction().equals("approve")) {
+            user.setApproved(true);
+        } else {
+            user.setApproved(false);
+            user.setBanned(true);
+            user.setReasonForBan(reasonDTO.getReason());
+        }
+
+        this.userRepository.saveAndFlush(user);
+    }
+
+    @Override
+    public ApproveUsersDTO getUserForApprove(UUID id) {
+        UserEntity user = this.userRepository.findById(id).get();
+
+        return this.modelMapper.map(user, ApproveUsersDTO.class);
     }
 
 

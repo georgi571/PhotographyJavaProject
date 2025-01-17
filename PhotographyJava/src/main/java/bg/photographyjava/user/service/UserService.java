@@ -40,7 +40,13 @@ public interface UserService {
 
     List<BanUserDTO> getAllUsersForBan();
 
-    void banUserAction(UUID id, String action, String username);
+    void banUserAction(UUID id, BanUserReasonDTO reasonDTO, String username);
 
     BanUserDTO getUserForBan(UUID id);
+
+    List<ApproveUsersDTO> getAllUsersForApprove();
+
+    void approveUserAction(UUID id, ApproveUserReasonDTO reasonDTO, String username);
+
+    ApproveUsersDTO getUserForApprove(UUID id);
 }
