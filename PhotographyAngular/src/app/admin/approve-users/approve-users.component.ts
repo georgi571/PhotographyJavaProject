@@ -3,20 +3,21 @@ import {AdminService} from '../../services/admin-service/admin.service';
 import {FormsModule} from '@angular/forms';
 
 @Component({
-  selector: 'app-approve-users',
+    selector: 'app-approve-users',
     imports: [
         FormsModule
     ],
-  templateUrl: './approve-users.component.html',
-  styleUrl: './approve-users.component.css',
+    templateUrl: './approve-users.component.html',
+    styleUrl: './approve-users.component.css',
 })
-export class ApproveUsersComponent implements OnInit{
+export class ApproveUsersComponent implements OnInit {
     users: any[] = [];
     selectedUser: any = null;
     isRejectModalOpen: boolean = false;
     rejectReason: string = '';
 
-    constructor(private adminService: AdminService) { }
+    constructor(private adminService: AdminService) {
+    }
 
     ngOnInit(): void {
         this.loadUsers();
@@ -31,7 +32,11 @@ export class ApproveUsersComponent implements OnInit{
     approveUser(user: any): void {
         this.adminService.approveUser(user.id).subscribe(() => {
             user.isApproved = true;
+
+            this.users = this.users.filter(u => u.id !== user.id);
+
             console.log(`User ${user.username} approved.`);
+            alert('User was approved.');
         });
     }
 

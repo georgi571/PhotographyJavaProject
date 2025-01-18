@@ -1,12 +1,9 @@
 package bg.photographyjava.user.service.impl;
 
 import bg.photographyjava.user.model.Role;
+import bg.photographyjava.user.property.enums.*;
 import bg.photographyjava.web.dto.*;
 import bg.photographyjava.user.model.UserEntity;
-import bg.photographyjava.user.property.enums.CountryEnum;
-import bg.photographyjava.user.property.enums.GenderEnum;
-import bg.photographyjava.user.property.enums.UserRank;
-import bg.photographyjava.user.property.enums.UserRole;
 import bg.photographyjava.user.repository.CountryRepository;
 import bg.photographyjava.user.repository.RankRepository;
 import bg.photographyjava.user.repository.RoleRepository;
@@ -22,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -195,6 +193,8 @@ public class UserServiceImpl implements UserService {
         UserRole userRole = Enum.valueOf(UserRole.class, roleToChange);
         Role role = this.userRoleRepository.findByRole(userRole);
 
+        user.getPermissions().clear();
+
         user.setRole(role);
         userRepository.saveAndFlush(user);
     }
@@ -261,6 +261,56 @@ public class UserServiceImpl implements UserService {
         UserEntity user = this.userRepository.findById(id).get();
 
         return this.modelMapper.map(user, ApproveUsersDTO.class);
+    }
+
+    @Override
+    public List<AdminPermissionsDTO> getAllAdminsWithPermissions() {
+        return this.userRepository.findAll().stream()
+                .filter(user -> user.getRole() != null && user.getRole().getRole() == UserRole.ADMIN)
+                .map(admin -> new AdminPermissionsDTO(
+                        admin.getId(),
+                        admin.getUsername(),
+                        admin.getPermissions()
+                ))
+                .toList();
+    }
+
+    @Override
+    public AdminPermissionsDTO updateAdminPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username) {
+        UserEntity superAdmin = this.userRepository.findByUsername(username).get();
+        UserEntity admin = this.userRepository.findById(id).get();
+
+        admin.getPermissions().addAll(permissionsToAdd);
+        admin.getPermissions().removeAll(permissionsToRemove);
+
+        this.userRepository.saveAndFlush(admin);
+
+        return this.modelMapper.map(admin, AdminPermissionsDTO.class);
+    }
+
+    @Override
+    public List<ModeratorPermissionsDTO> getAllModeratorsWithPermissions() {
+        return this.userRepository.findAll().stream()
+                .filter(user -> user.getRole() != null && user.getRole().getRole() == UserRole.MODERATOR)
+                .map(admin -> new ModeratorPermissionsDTO(
+                        admin.getId(),
+                        admin.getUsername(),
+                        admin.getPermissions()
+                ))
+                .toList();
+    }
+
+    @Override
+    public ModeratorPermissionsDTO updateModerationPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username) {
+        UserEntity superAdmin = this.userRepository.findByUsername(username).get();
+        UserEntity moderator = this.userRepository.findById(id).get();
+
+        moderator.getPermissions().addAll(permissionsToAdd);
+        moderator.getPermissions().removeAll(permissionsToRemove);
+
+        this.userRepository.saveAndFlush(moderator);
+
+        return this.modelMapper.map(moderator, ModeratorPermissionsDTO.class);
     }
 
 

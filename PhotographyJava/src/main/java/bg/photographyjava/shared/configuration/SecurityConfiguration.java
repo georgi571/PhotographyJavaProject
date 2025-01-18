@@ -68,7 +68,9 @@ public class SecurityConfiguration {
                                 "/api/contacts/reply", "api/admin/change-roles",
                                 "/api/contacts/delete/{id}", "/api/admin/ban-users",
                                 "/api/admin/ban-users/{id}", "/api/admin/approve-users",
-                                "api/admin/approve-users/{id}").permitAll()
+                                "/api/admin/approve-users/{id}", "/api/admin/admin-permissions",
+                                "/api/admin/admin-permissions/{id}", "/api/admin/moderator-permissions",
+                                "/api/admin/moderator-permissions/{id}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

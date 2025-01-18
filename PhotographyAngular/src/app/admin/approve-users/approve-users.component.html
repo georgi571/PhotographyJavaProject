@@ -1,25 +1,32 @@
 <h2>Approve User Registration</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Username</th>
-      <th>Email</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody>
-      @for (user of users; track user.id) {
-          <tr>
-              <td>{{ user.username }}</td>
-              <td>{{ user.email }}</td>
-              <td class="two-buttons">
-                  <button (click)="approveUser(user)" class="approve-btn">Approve</button>
-                  <button (click)="openRejectModal(user)" class="reject-btn">Reject</button>
-              </td>
-          </tr>
-      }
-  </tbody>
-</table>
+@if (users.length > 0) {
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @for (user of users; track user.id) {
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td class="two-buttons">
+                        <button (click)="approveUser(user)" class="approve-btn">Approve</button>
+                        <button (click)="openRejectModal(user)" class="reject-btn">Reject</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+} @else {
+    <div class="no-users-container">
+        <p class="no-users-text">No users for approving</p>
+    </div>
+}
 
 @if (isRejectModalOpen) {
     <div class="reject-modal-overlay">
@@ -27,7 +34,8 @@
             <h3>Reject User - {{ selectedUser?.username }}</h3>
             <label for="rejectReason">Reason for Rejecting</label>
             <textarea id="rejectReason" [(ngModel)]="rejectReason"></textarea>
-            <button class="confirm-reject" (click)="rejectUser()" [disabled]="!rejectReason.trim()">Confirm Reject</button>
+            <button class="confirm-reject" (click)="rejectUser()" [disabled]="!rejectReason.trim()">Confirm Reject
+            </button>
             <button (click)="closeRejectModal()">Cancel</button>
         </div>
     </div>

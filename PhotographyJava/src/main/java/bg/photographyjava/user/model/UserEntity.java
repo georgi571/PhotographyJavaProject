@@ -1,10 +1,12 @@
 package bg.photographyjava.user.model;
 
 import bg.photographyjava.user.property.enums.GenderEnum;
+import bg.photographyjava.user.property.enums.UserPermission;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -66,6 +68,11 @@ public class UserEntity {
 
     @Column(name = "reason_for_ban")
     private String reasonForBan;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_permissions", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "permission")
+    private Set<UserPermission> permissions;
 
     public UUID getId() {
         return id;
@@ -193,5 +200,17 @@ public class UserEntity {
 
     public void setReasonForBan(String reasonForBan) {
         this.reasonForBan = reasonForBan;
+    }
+
+    public Set<UserPermission> getPermissions() {
+        return permissions;
+    }
+
+    public void addPermission(UserPermission permission) {
+        this.permissions.add(permission);
+    }
+
+    public void removePermission(UserPermission permission) {
+        this.permissions.remove(permission);
     }
 }

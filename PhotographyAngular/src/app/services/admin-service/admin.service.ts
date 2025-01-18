@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment.development';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {AuthService} from '../auth-service/auth.service';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class AdminService {
     private apiUrl = environment.apiUrl;
@@ -20,7 +20,7 @@ export class AdminService {
 
     updateUserRole(userId: string, role: string): Observable<any> {
         const token = this.authService.getToken();
-        return this.http.put(`${this.apiUrl}/admin/change-roles/${userId}`, { role }, {
+        return this.http.put(`${this.apiUrl}/admin/change-roles/${userId}`, {role}, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -45,7 +45,7 @@ export class AdminService {
 
     unbanUser(userId: string): Observable<any> {
         const token = this.authService.getToken();
-        return this.http.put(`${this.apiUrl}/admin/ban-users/${userId}`, { action: 'unban' }, {
+        return this.http.put(`${this.apiUrl}/admin/ban-users/${userId}`, {action: 'unban'}, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -58,7 +58,7 @@ export class AdminService {
 
     approveUser(userId: number): Observable<void> {
         const token = this.authService.getToken();
-        return this.http.put<void>(`${this.apiUrl}/admin/approve-users/${userId}`, { action: 'approve' }, {
+        return this.http.put<void>(`${this.apiUrl}/admin/approve-users/${userId}`, {action: 'approve'}, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -75,5 +75,39 @@ export class AdminService {
                 Authorization: `Bearer ${token}`
             }
         });
+    }
+
+    getAdminsWithPermissions() {
+        return this.http.get<any[]>(`${this.apiUrl}/admin/admin-permissions`);
+    }
+
+    updateAdminPermissions(adminId: string, permissionsToAdd: string[], permissionsToRemove: string[]): Observable<any> {
+        const token = this.authService.getToken();
+        return this.http.put<any>(
+            `${this.apiUrl}/admin/admin-permissions/${adminId}`,
+            {permissionsToAdd, permissionsToRemove},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+    }
+
+    getModeratorsWithPermissions() {
+        return this.http.get<any[]>(`${this.apiUrl}/admin/moderator-permissions`);
+    }
+
+    updateModeratorPermissions(moderatorId: string, permissionsToAdd: string[], permissionsToRemove: string[]): Observable<any> {
+        const token = this.authService.getToken();
+        return this.http.put<any>(
+            `${this.apiUrl}/admin/moderator-permissions/${moderatorId}`,
+            {permissionsToAdd, permissionsToRemove},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
     }
 }

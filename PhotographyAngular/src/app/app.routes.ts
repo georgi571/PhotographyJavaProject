@@ -16,7 +16,7 @@ import {ChangeRolesComponent} from './admin/change-roles/change-roles.component'
 import {BanUsersComponent} from './admin/ban-users/ban-users.component';
 import {FeedbackMessagesComponent} from './admin/feedback-messages/feedback-messages.component';
 import {AdminPermissionsComponent} from './admin/admin-permissions/admin-permissions.component';
-import {ModeratorPermissionsComponent} from './moderator-permissions/moderator-permissions.component';
+import {ModeratorPermissionsComponent} from './admin/moderator-permissions/moderator-permissions.component';
 import {ProfileEditComponent} from './user/profile-edit/profile-edit.component';
 import {EditInformationComponent} from './user/profile-edit/edit-information/edit-information.component';
 import {EditEmailComponent} from './user/profile-edit/edit-email/edit-email.component';

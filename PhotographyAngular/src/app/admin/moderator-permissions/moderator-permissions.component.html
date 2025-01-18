@@ -1,0 +1,35 @@
+<h2>Manage Moderator Permissions</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Permissions</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (moderator of moderators; track moderator.id) {
+            <tr>
+                <td>{{ moderator.username }}</td>
+                <td>
+                    <div class="permissions">
+                        <label>
+                            <input
+                                type="checkbox"
+                                [(ngModel)]="moderator.permissions.deleteMessage"
+                            />
+                            Delete Message
+                        </label>
+                        <label>
+                            <input type="checkbox" [(ngModel)]="moderator.permissions.deletePicture"> Delete Picture
+                        </label>
+                    </div>
+                </td>
+                <td>
+                    <button class="save-role-btn" (click)="saveModeratorPermissions(moderator)">Save</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

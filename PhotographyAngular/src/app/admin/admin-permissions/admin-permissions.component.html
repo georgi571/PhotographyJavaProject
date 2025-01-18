@@ -9,33 +9,35 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>testAdmin</td>
-            <td>
-                <div class="permissions">
-                    <label>
-                        <input type="checkbox"> Approve Users
-                    </label>
-                    <label>
-                        <input type="checkbox"> Change User Roles
-                    </label>
-                    <label>
-                        <input type="checkbox"> Ban Users
-                    </label>
-                    <label>
-                        <input type="checkbox"> Answer Feedback
-                    </label>
-                    <label>
-                        <input type="checkbox"> Delete Message
-                    </label>
-                    <label>
-                        <input type="checkbox"> Delete Picture
-                    </label>
-                </div>
-            </td>
-            <td>
-                <button class="save-role-btn">Save</button>
-            </td>
-        </tr>
+        @for (admin of admins; track admin.id) {
+            <tr>
+                <td>{{ admin.username }}</td>
+                <td>
+                    <div class="permissions">
+                        <label>
+                            <input type="checkbox" [(ngModel)]="admin.permissions.approveUsers"> Approve Users
+                        </label>
+                        <label>
+                            <input type="checkbox" [(ngModel)]="admin.permissions.changeUserRoles"> Change User Roles
+                        </label>
+                        <label>
+                            <input type="checkbox" [(ngModel)]="admin.permissions.banUsers"> Ban Users
+                        </label>
+                        <label>
+                            <input type="checkbox" [(ngModel)]="admin.permissions.answerFeedback"> Answer Feedback
+                        </label>
+                        <label>
+                            <input type="checkbox" [(ngModel)]="admin.permissions.deleteMessage"> Delete Message
+                        </label>
+                        <label>
+                            <input type="checkbox" [(ngModel)]="admin.permissions.deletePicture"> Delete Picture
+                        </label>
+                    </div>
+                </td>
+                <td>
+                    <button class="save-role-btn" (click)="savePermissions(admin)">Save</button>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

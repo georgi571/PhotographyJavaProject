@@ -1,10 +1,12 @@
 package bg.photographyjava.user.service;
 
+import bg.photographyjava.user.property.enums.UserPermission;
 import bg.photographyjava.web.dto.*;
 import bg.photographyjava.user.model.UserEntity;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public interface UserService {
@@ -49,4 +51,12 @@ public interface UserService {
     void approveUserAction(UUID id, ApproveUserReasonDTO reasonDTO, String username);
 
     ApproveUsersDTO getUserForApprove(UUID id);
+
+    AdminPermissionsDTO updateAdminPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username);
+
+    List<AdminPermissionsDTO> getAllAdminsWithPermissions();
+
+    List<ModeratorPermissionsDTO> getAllModeratorsWithPermissions();
+
+    ModeratorPermissionsDTO updateModerationPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username);
 }

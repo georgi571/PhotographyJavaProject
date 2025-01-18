@@ -68,4 +68,50 @@ public class AdminController {
 
         return ResponseEntity.ok(userForApprove);
     }
+
+    @GetMapping("/admin-permissions")
+    public ResponseEntity<?> getAdminsWithPermissions() {
+        List<AdminPermissionsDTO> admins = this.userService.getAllAdminsWithPermissions();
+        return ResponseEntity.ok(admins);
+    }
+
+    @PutMapping("/admin-permissions/{id}")
+    public ResponseEntity<?> updateAdminPermissions(
+            @PathVariable UUID id,
+            @RequestBody AdminPermissionsUpdateDTO updateDTO,
+            Authentication authentication) {
+        String username = authentication.getName();
+
+        AdminPermissionsDTO updatedAdmin = this.userService.updateAdminPermissions(
+                id,
+                updateDTO.getPermissionsToAdd(),
+                updateDTO.getPermissionsToRemove(),
+                username
+        );
+
+        return ResponseEntity.ok(updatedAdmin);
+    }
+
+    @GetMapping("/moderator-permissions")
+    public ResponseEntity<?> getModeratorWithPermissions() {
+        List<ModeratorPermissionsDTO> admins = this.userService.getAllModeratorsWithPermissions();
+        return ResponseEntity.ok(admins);
+    }
+
+    @PutMapping("/moderator-permissions/{id}")
+    public ResponseEntity<?> updateModeratorPermissions(
+            @PathVariable UUID id,
+            @RequestBody ModeratorPermissionsUpdateDTO updateDTO,
+            Authentication authentication) {
+        String username = authentication.getName();
+
+        ModeratorPermissionsDTO updatedModerator = this.userService.updateModerationPermissions(
+                id,
+                updateDTO.getPermissionsToAdd(),
+                updateDTO.getPermissionsToRemove(),
+                username
+        );
+
+        return ResponseEntity.ok(updatedModerator);
+    }
 }
