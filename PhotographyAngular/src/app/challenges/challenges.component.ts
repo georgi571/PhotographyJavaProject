@@ -1,15 +1,18 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {HeaderComponent} from "../core/header/header.component";
 import {FooterComponent} from "../core/footer/footer.component";
+import {RouterLink} from '@angular/router';
 
 @Component({
-  selector: 'app-challenges',
+    selector: 'app-challenges',
+    standalone: true,
     imports: [
         HeaderComponent,
-        FooterComponent
+        FooterComponent,
+        RouterLink
     ],
-  templateUrl: './challenges.component.html',
-  styleUrl: './challenges.component.css'
+    templateUrl: './challenges.component.html',
+    styleUrl: './challenges.component.css'
 })
 export class ChallengesComponent {
 

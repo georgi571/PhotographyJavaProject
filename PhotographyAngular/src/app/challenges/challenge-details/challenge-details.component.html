@@ -1,0 +1,111 @@
+<app-header/>
+
+<body>
+    @if (challengeDetails) {
+        <div class="challenge-detail-container">
+            <div class="challenge-header">
+                <h1>{{ challengeDetails.title }}</h1>
+                <button class="add-picture-btn" (click)="toggleAddPictureModal()">
+                    Add Picture
+                </button>
+                <button class="toggle-btn" (click)="toggleDetails()">
+                    {{ showDetails ? 'Show Less' : 'Show More' }}
+                </button>
+            </div>
+            @if (showDetails) {
+                <div class="details-content">
+                    <p><strong>Activity Status:</strong> {{ challengeDetails.activity }}</p>
+                    <p><strong>Description:</strong> {{ challengeDetails.description }}</p>
+                    <p><strong>Details:</strong> {{ challengeDetails.details }}</p>
+                    <p><strong>Start Date:</strong> {{ challengeDetails.createdAt | date: 'yyyy-MM-dd HH:mm:ss' }}</p>
+                    <p><strong>End Date:</strong> {{ challengeDetails.endAt | date: 'yyyy-MM-dd HH:mm:ss' }}</p>
+                    <p><strong>Type:</strong> {{ challengeDetails.type }}</p>
+                </div>
+            }
+        </div>
+
+        <div class="picture-gallery">
+            @for (picture of challengeDetails.pictures; track picture.id) {
+                <div class="picture-item" (click)="selectPicture(picture)">
+                    <div class="picture-section">
+                        <div class="picture-info">
+                            <img [src]="picture.imageUrl" alt="User Picture" class="picture-image">
+                        </div>
+                    </div>
+
+                    <div class="like-section">
+                        <button
+                            class="like-btn"
+                            [ngClass]="{'liked': picture.liked, 'unliked': !picture.liked}"
+                            (click)="likePicture($event, picture)">
+                            {{ picture.liked ? 'Unlike' : 'Like' }}
+                        </button>
+                        <p class="likes-count">{{ picture.likes }} Likes</p>
+                        <p class="comment-count">{{ picture.comments.length }} Comments</p>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (selectedPicture) {
+            <div class="picture-details-content">
+                <div class="left-side">
+                    <img [src]="selectedPicture.imageUrl" alt="User Picture" class="picture-image">
+                    <div class="picture-info">
+                        <div class="user-info">
+                            <img [src]="selectedPicture.user.profilePictureUrl" alt="User Profile" class="user-profile">
+                            <p>{{ selectedPicture.user.username }}</p>
+                        </div>
+                        <p><strong>Caption:</strong> {{ selectedPicture.caption }}</p>
+                        <p><strong>Story:</strong> {{ selectedPicture.story }}</p>
+                        <p><strong>Likes:</strong> {{ selectedPicture.likes }}</p>
+                    </div>
+                </div>
+
+                <div class="right-side">
+                    <h3>Comments</h3>
+                    <div class="comments-container">
+                        @for (comment of selectedComments; track comment.id) {
+                            <div class="comment">
+                                <p><strong>{{ comment.user.username }}:</strong> {{ comment.text }}</p>
+                            </div>
+                        }
+                    </div>
+                    <textarea [(ngModel)]="newComment" placeholder="Add a comment..." rows="4"></textarea>
+                    <button (click)="addComment()" class="add-comment-btn">Add Comment</button>
+                </div>
+
+                <button class="close-btn" (click)="closePictureDetails()">X</button>
+            </div>
+        }
+    } @else {
+        <div class="loading-spinner">
+            <p>Loading challenge details...</p>
+            <div class="spinner"></div>
+        </div>
+    }
+
+    @if (showAddPictureModal) {
+        <div class="modal-backdrop">
+            <div class="modal">
+                <h2>Add a Picture</h2>
+                <form (ngSubmit)="submitPicture()">
+                    <label for="picture">Select Picture:</label>
+                    <input type="file" id="picture" (change)="onFileSelected($event)" required/>
+
+                    <label for="caption">Caption:</label>
+                    <input type="text" id="caption" [(ngModel)]="newPicture.caption" name="caption" required/>
+
+                    <label for="story">More Information / Story:</label>
+                    <textarea id="story" [(ngModel)]="newPicture.story" name="story"
+                              placeholder="Tell us a short story about this picture..." rows="4"></textarea>
+
+                    <button type="submit" class="submit-btn">Upload Picture</button>
+                    <button type="button" class="cancel-btn" (click)="toggleAddPictureModal()">Cancel</button>
+                </form>
+            </div>
+        </div>
+    }
+</body>
+
+<app-footer/>

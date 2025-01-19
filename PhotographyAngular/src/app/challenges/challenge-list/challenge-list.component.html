@@ -1,0 +1,50 @@
+<app-header/>
+
+<body>
+    <div class="challenge-filter">
+        <div class="filter-options">
+            <label for="status">Status:</label>
+            <select id="status" [(ngModel)]="selectedStatus" (change)="filterChallenges()">
+                <option value="all">All</option>
+                <option value="active">Active</option>
+                <option value="past">Past</option>
+            </select>
+
+            <label for="type">Type:</label>
+            <select id="type" [(ngModel)]="selectedType" (change)="filterChallenges()">
+                <option value="all">All</option>
+                <option value="daily">Daily</option>
+                <option value="themed">Themed</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+
+        <div class="create-event">
+            <button class="btn create-event-btn">Create Event</button>
+        </div>
+    </div>
+
+    <div class="challenges-list">
+        @for (challenge of filteredChallenges; track challenge.id) {
+            <div class="challenge-card">
+                <div class="left">
+                    <h3>{{ challenge.title }}</h3>
+                    <p>{{ challenge.description }}</p>
+                    <p>{{ challenge.details }}</p>
+                </div>
+
+                <div class="middle">
+                    <p>Start: {{ challenge.createdAt | date:'yyyy-MM-dd HH:mm:ss' }}</p>
+                    <br>
+                    <p>End: {{ challenge.endAt | date:'yyyy-MM-dd HH:mm:ss' }}</p>
+                </div>
+
+                <div class="right">
+                    <a [routerLink]="['/challenge', challenge.id]" class="btn">View Details</a>
+                </div>
+            </div>
+        }
+    </div>
+</body>
+
+<app-footer/>

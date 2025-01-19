@@ -59,19 +59,20 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
 //                        .requestMatchers("*").permitAll()
-                        .requestMatchers("/", "/api/home", "/api/users/login",
-                                "/api/users/register", "/api/users/profile",
-                                "/api/users/profile/edit", "/img/**",
-                        "/api/users/profile/edit/**", "/api/contacts/receive",
-                                "/api/contacts/reply", "api/admin/change-roles",
-                                "/api/contacts/delete/{id}", "/api/admin/ban-users",
-                                "/api/admin/ban-users/{id}", "/api/admin/approve-users",
-                                "/api/admin/approve-users/{id}", "/api/admin/admin-permissions",
-                                "/api/admin/admin-permissions/{id}", "/api/admin/moderator-permissions",
-                                "/api/admin/moderator-permissions/{id}").permitAll()
-                        .anyRequest().authenticated()
+                                .requestMatchers("/", "/api/home", "/api/users/login",
+                                        "/api/users/register", "/api/users/profile",
+                                        "/api/users/profile/edit", "/img/**",
+                                        "/api/users/profile/edit/**", "/api/contacts/receive",
+                                        "/api/contacts/reply", "api/admin/change-roles",
+                                        "/api/contacts/delete/{id}", "/api/admin/ban-users",
+                                        "/api/admin/ban-users/{id}", "/api/admin/approve-users",
+                                        "/api/admin/approve-users/{id}", "/api/admin/admin-permissions",
+                                        "/api/admin/admin-permissions/{id}", "/api/admin/moderator-permissions",
+                                        "/api/admin/moderator-permissions/{id}", "/api/challenges/list",
+                                        "/api/challenges/{id}").permitAll()
+                                .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
 //                .formLogin(formLogin ->

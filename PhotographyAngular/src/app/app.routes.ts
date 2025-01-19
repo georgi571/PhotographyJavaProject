@@ -23,11 +23,15 @@ import {EditEmailComponent} from './user/profile-edit/edit-email/edit-email.comp
 import {EditUsernameComponent} from './user/profile-edit/edit-username/edit-username.component';
 import {EditPasswordComponent} from './user/profile-edit/edit-password/edit-password.component';
 import {EditPictureComponent} from './user/profile-edit/edit-picture/edit-picture.component';
+import {ChallengeListComponent} from './challenges/challenge-list/challenge-list.component';
+import {ChallengeDetailsComponent} from './challenges/challenge-details/challenge-details.component';
 
 export const routes: Routes = [
     {path: '', component: IntroComponent},
     {path: 'home', component: HomeComponent},
     {path: 'challenges', component: ChallengesComponent},
+    { path: 'challenges/list', component: ChallengeListComponent },
+    { path: 'challenge/:id', component: ChallengeDetailsComponent },
     {path: 'leaderboards', component: LeaderboardsComponent},
     {path: 'about', component: AboutComponent},
     {path: 'contacts', component: ContactComponent},
