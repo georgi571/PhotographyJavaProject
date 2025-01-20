@@ -9,9 +9,13 @@
         <module name="PhotographyJava" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="PhotographStorage" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="PhotographStorage" options="-parameters" />
       <module name="PhotographyJava" options="-parameters" />
     </option>
   </component>

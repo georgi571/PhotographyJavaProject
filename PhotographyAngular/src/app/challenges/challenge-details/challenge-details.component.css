@@ -160,10 +160,17 @@ body {
     margin: 0 10px;
 }
 
-.user-info {
+.user-details {
     display: flex;
     align-items: center;
-    margin-top: 5px;
+    justify-content: center;
+}
+
+.user-info {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
 }
 
 .user-profile {
@@ -367,11 +374,9 @@ textarea:focus {
 
 .picture-info {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
+    flex-direction: column;
+    align-items: flex-start;
     width: 100%;
-    box-sizing: border-box;
 }
 
 .picture-item .picture-info .picture-image {
@@ -401,8 +406,41 @@ textarea:focus {
 }
 
 .comment {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    word-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
     padding: 10px;
-    border-bottom: 1px solid #ddd;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.comment-header .user-profile-picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 10px;
+}
+
+.comment-header .user-profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.comment-header p {
+    margin: 0;
+    flex-grow: 1;
 }
 
 textarea {
@@ -450,6 +488,208 @@ textarea {
 
 .close-btn:hover {
     background-color: #e53935;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-profile-picture {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 10px;
+}
+
+.user-profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.report-btn {
+    padding: 8px 15px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 0;
+}
+
+.picture-info .report-btn {
+    margin-left: 30px;
+    align-self: flex-start;
+    z-index: 10;
+}
+
+.comment .report-btn {
+    margin-left: 15px;
+    align-self: flex-start;
+}
+
+.delete-picture-btn {
+    margin-top: 10px;
+    background-color: #ec3131;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.delete-picture-btn:hover {
+    background-color: #d31f1f;
+}
+
+.delete-comment-btn {
+    background-color: #ec3131;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.delete-comment-btn:hover {
+    background-color: #d31f1f;
+}
+
+.delete-comment-btn {
+    margin-left: 10px;
+}
+
+.report-btn,
+.delete-picture-btn,
+.delete-comment-btn {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    margin-left: auto;
+}
+
+.report-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.report-modal {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    text-align: center;
+    z-index: 2010;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.submit-report-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submit-report-btn:hover {
+    background-color: #218838;
+}
+
+.cancel-report-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancel-report-btn:hover {
+    background-color: #c82333;
+}
+
+.delete-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.delete-modal {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    text-align: center;
+    z-index: 2010;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.confirm-delete-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.confirm-delete-btn:hover {
+    background-color: #c82333;
+}
+
+.cancel-delete-btn {
+    background-color: #1bba04;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancel-delete-btn:hover {
+    background-color: #155c0f;
+}
+
+.submit-report-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    color: #666;
 }
 
 @media screen and (max-width: 768px) {

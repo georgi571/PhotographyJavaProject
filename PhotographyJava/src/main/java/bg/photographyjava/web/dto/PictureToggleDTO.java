@@ -1,24 +1,13 @@
 package bg.photographyjava.web.dto;
 
-import java.util.List;
 import java.util.UUID;
 
-public class PictureDTO {
+public class PictureToggleDTO {
     private UUID id;
-
     private String imageUrl;
-
-    private UserInformationForPictureDTO user;
-
     private String caption;
-
-    private String story;
-
     private long likes;
-
     private boolean liked;
-
-    private List<CommentResponseDTO> comments;
 
     public UUID getId() {
         return id;
@@ -36,28 +25,12 @@ public class PictureDTO {
         this.imageUrl = imageUrl;
     }
 
-    public UserInformationForPictureDTO getUser() {
-        return user;
-    }
-
-    public void setUser(UserInformationForPictureDTO user) {
-        this.user = user;
-    }
-
     public String getCaption() {
         return caption;
     }
 
     public void setCaption(String caption) {
         this.caption = caption;
-    }
-
-    public String getStory() {
-        return story;
-    }
-
-    public void setStory(String story) {
-        this.story = story;
     }
 
     public long getLikes() {
@@ -74,13 +47,5 @@ public class PictureDTO {
 
     public void setLiked(boolean liked) {
         this.liked = liked;
-    }
-
-    public List<CommentResponseDTO> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<CommentResponseDTO> comments) {
-        this.comments = comments;
     }
 }

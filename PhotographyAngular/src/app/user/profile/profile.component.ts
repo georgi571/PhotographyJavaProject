@@ -44,7 +44,7 @@ export class ProfileComponent implements OnInit {
                 this.userDetails.age = data.age;
                 this.userDetails.rank = data.rank;
                 this.userDetails.points = data.points;
-                this.userDetails.picture = 'http://localhost:8080' + data.profilePicturePath;
+                this.userDetails.picture = data.profilePicturePath;
                 this.friends = data.friends;
                 this.followers = data.followers;
                 this.trophies = data.trophies;

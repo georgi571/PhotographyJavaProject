@@ -71,7 +71,13 @@ public class SecurityConfiguration {
                                         "/api/admin/approve-users/{id}", "/api/admin/admin-permissions",
                                         "/api/admin/admin-permissions/{id}", "/api/admin/moderator-permissions",
                                         "/api/admin/moderator-permissions/{id}", "/api/challenges/list",
-                                        "/api/challenges/{id}").permitAll()
+                                        "/api/challenges/{id}", "/api/challenges/{challengeId}/pictures",
+                                        "/api/challenges/{challengeId}/pictures/{pictureId}/toggle-like",
+                                        "/api/challenges/{challengeId}/pictures/{pictureId}/comments",
+                                        "/api/challenges/{challengeId}/pictures/{pictureId}/report",
+                                        "/api/challenges/{challengeId}/pictures/{pictureId}/comments/{commentId}/report",
+                                        "/api/challenges/{challengeId}/pictures/{pictureId}/delete",
+                                        "/api/challenges/{challengeId}/pictures/{pictureId}/comments/{commentId}/delete").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

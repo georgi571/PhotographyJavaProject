@@ -1,5 +1,6 @@
 package bg.photographyjava.user.model;
 
+import bg.photographyjava.challenge.model.Comment;
 import bg.photographyjava.challenge.model.Picture;
 import bg.photographyjava.user.property.enums.GenderEnum;
 import bg.photographyjava.user.property.enums.UserPermission;
@@ -78,6 +79,9 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Picture> pictures;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Comment> comments;
 
     public UUID getId() {
         return id;
@@ -229,5 +233,13 @@ public class UserEntity {
 
     public void setPictures(List<Picture> pictures) {
         this.pictures = pictures;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }

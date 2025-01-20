@@ -7,4 +7,8 @@ import java.util.UUID;
 
 public interface PictureService {
     List<Picture> getWinnersPicture(UUID challengeId);
+
+    Picture getPictureById(UUID pictureId);
+
+    void savePicture(Picture picture);
 }

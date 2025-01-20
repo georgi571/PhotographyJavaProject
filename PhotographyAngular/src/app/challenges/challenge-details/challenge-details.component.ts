@@ -21,13 +21,21 @@ import {FormsModule} from '@angular/forms';
 })
 export class ChallengeDetailsComponent implements OnInit {
     challengeId!: string;
-    challengeDetails: any;
+    challengeDetails: any = {};
     errorMessage: string | null = null;
     showDetails = false;
     showAddPictureModal = false;
     selectedPicture: any = null;
     selectedComments: any[] = [];
     newComment: string = '';
+    showReportModal: boolean = false;
+    reportReason: string = '';
+    reportType: string = '';
+    reportTarget: any = null;
+    showDeleteModal = false;
+    deleteType = '';
+
+    itemToDelete: any = null;
 
     newPicture = {
         file: null as File | null,
@@ -47,12 +55,10 @@ export class ChallengeDetailsComponent implements OnInit {
             (details) => {
                 if (details) {
                     this.challengeDetails = details;
+                    console.log(this.challengeDetails);
                 } else {
                     this.errorMessage = 'Challenge not found.';
                 }
-            },
-            (error) => {
-                this.errorMessage = 'An error occurred while fetching the challenge.';
             }
         );
     }
@@ -74,31 +80,38 @@ export class ChallengeDetailsComponent implements OnInit {
 
     submitPicture(): void {
         if (this.newPicture.file && this.newPicture.caption && this.newPicture.story) {
-            const newPictureEntry = {
-                id: this.challengeDetails.pictures.length + 1,
-                imageUrl: URL.createObjectURL(this.newPicture.file),
-                likes: 0,
-                user: {
-                    profilePictureUrl: 'path-to-profile.jpg',
-                    username: 'You',
-                },
-                caption: this.newPicture.caption,
-                story: this.newPicture.story,
-                comments: [],
-            };
+            const formData = new FormData();
+            formData.append('file', this.newPicture.file);
+            formData.append('caption', this.newPicture.caption);
+            formData.append('story', this.newPicture.story);
 
-            this.challengeDetails.pictures.push(newPictureEntry);
-
-            this.newPicture = {file: null, caption: '', story: ''};
-            this.toggleAddPictureModal();
+            this.challengeService.uploadPicture(this.challengeId, formData).subscribe(
+                (response) => {
+                    if (response) {
+                        console.log('Picture uploaded successfully:', response);
+                        this.toggleAddPictureModal();
+                    } else {
+                        this.errorMessage = 'An error occurred while uploading the picture.';
+                    }
+                }
+            );
         } else {
-            alert('Please select a file, caption, and story!');
+            this.errorMessage = 'Please fill out all fields and select a picture.';
         }
     }
 
     selectPicture(picture: any): void {
         this.selectedPicture = picture;
-        this.selectedComments = picture.comments || [];
+        this.selectedComments = (picture.comments || []).map((comment: { id: any; }, index: any) => ({
+            ...comment,
+            id: comment.id || `generated-id-${index}`,
+        }));
+
+        this.selectedComments.sort((a, b) => {
+            return new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime();
+        });
+
+        console.log('Selected Comments:', this.selectedComments);
     }
 
     closePictureDetails(): void {
@@ -107,17 +120,176 @@ export class ChallengeDetailsComponent implements OnInit {
 
     likePicture(event: Event, picture: any): void {
         event.stopPropagation();
+
         picture.liked = !picture.liked;
         picture.likes += picture.liked ? 1 : -1;
+
+        this.challengeService.toggleLikePicture(this.challengeId, picture.id).subscribe(
+            (response) => {
+                picture.liked = response.liked;
+                picture.likes = response.likes;
+
+                console.log('Updated like status from server:', response);
+            }
+        );
     }
 
     addComment() {
         if (this.newComment.trim()) {
-            this.selectedComments.push({
-                user: {username: 'Current User'},
+            const newComment = {
+                user: { username: 'Current User' },
                 text: this.newComment,
-            });
-            this.newComment = '';
+            };
+
+            this.selectedComments.push(newComment);
+
+            this.challengeService.addCommentToPicture(
+                this.challengeId,
+                this.selectedPicture.id,
+                this.newComment
+            ).subscribe(
+                (response) => {
+                    if (response) {
+                        const typedResponse = response as {
+                            text: string;
+                            author: { username: string };
+                            dateTime: string;
+                        };
+
+                        const commentIndex = this.selectedComments.findIndex(
+                            (comment) => comment.text === this.newComment
+                        );
+                        if (commentIndex > -1) {
+                            this.selectedComments[commentIndex] = typedResponse;
+                        }
+
+                        console.log('Comment added by:', typedResponse.author.username);
+                        console.log('Comment text:', typedResponse.text);
+
+                        this.newComment = '';
+                    } else {
+                        console.error('Invalid response structure:', response);
+                        this.errorMessage = 'Error: Invalid comment response';
+                    }
+                }
+            );
         }
+    }
+
+    openReportModalForPicture(picture: any): void {
+        this.showReportModal = true;
+        this.reportType = 'Picture';
+        this.reportTarget = picture;
+        this.reportReason = '';
+    }
+
+    openReportModalForComment(comment: any): void {
+        this.showReportModal = true;
+        this.reportType = 'Comment';
+        this.reportTarget = comment;
+        this.reportReason = '';
+    }
+
+    closeReportModal(): void {
+        this.showReportModal = false;
+        this.reportReason = '';
+        this.reportTarget = null;
+    }
+
+    submitReport(): void {
+        if (!this.reportReason.trim()) {
+            console.error('Report reason is required.');
+            return;
+        }
+
+        if (this.reportType === 'Picture') {
+            this.reportPicture(this.reportTarget, this.reportReason);
+        } else if (this.reportType === 'Comment') {
+            this.reportComment(this.reportTarget, this.reportReason);
+        }
+
+        this.closeReportModal();
+    }
+
+    reportPicture(picture: any, reason: string): void {
+        this.challengeService.reportPicture(this.challengeId, picture.id, reason).subscribe(
+            (response) => {
+                console.log('Picture reported successfully:', response);
+            }
+        );
+    }
+
+    reportComment(comment: any, reason: string): void {
+        if (!this.selectedPicture) {
+            console.error('No picture selected');
+            return;
+        }
+
+        const picture = this.selectedPicture;
+
+        if (!picture.comments || !picture.comments.some((c: any) => c.id === comment.id)) {
+            console.log(picture)
+            console.error('Comment not found in the selected picture');
+            return;
+        }
+
+        this.challengeService.reportComment(this.challengeId, picture.id, comment.id, reason).subscribe(
+            (response) => {
+                console.log('Comment reported successfully:', response);
+            }
+        );
+    }
+
+    openDeleteConfirmation(type: string, item: any): void {
+        this.deleteType = type === 'picture' ? 'Picture' : 'Comment';
+        this.itemToDelete = item;
+        this.showDeleteModal = true;
+    }
+
+    closeDeleteModal(): void {
+        this.showDeleteModal = false;
+        this.itemToDelete = null;
+    }
+
+    confirmDelete(): void {
+        if (this.deleteType === 'Picture') {
+            this.deletePicture(this.itemToDelete);
+        } else if (this.deleteType === 'Comment') {
+            this.deleteComment(this.itemToDelete);
+        }
+        this.closeDeleteModal();
+    }
+
+    deletePicture(picture: any): void {
+        console.log('Deleting picture:', picture);
+
+        this.challengeService.deletePicture(this.challengeId, picture.id).subscribe(
+            (response) => {
+                console.log('Picture deleted successfully:', response);
+
+                this.challengeDetails.pictures = this.challengeDetails.pictures.filter(
+                    (p: any) => p.id !== picture.id
+                );
+
+                if (this.selectedPicture?.id === picture.id) {
+                    this.selectedPicture = null;
+                }
+
+                console.log('Updated challengeDetails.pictures:', this.challengeDetails.pictures);
+            }
+        );
+    }
+
+    deleteComment(comment: any): void {
+        console.log('Deleting comment:', comment);
+        this.challengeService.deleteComment(this.challengeId, this.selectedPicture.id, comment.id).subscribe(
+            (response) => {
+                console.log('Comment deleted successfully:', response);
+                this.selectedComments = this.selectedComments.filter(
+                    (c: any) => c.id !== comment.id
+                );
+                console.log('Updated selectedComments:', this.selectedComments);
+            }
+        );
     }
 }

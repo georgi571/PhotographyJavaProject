@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
             admin.setPoints(2500);
             admin.setApproved(true);
             admin.setBanned(false);
-            admin.setProfilePicturePath("/img/male-profile-picture.avif");
+            admin.setProfilePicturePath("https://res.cloudinary.com/dkyp0c0lz/image/upload/v1737304170/male-profile-picture_rltohq.avif");
             this.userRepository.saveAndFlush(admin);
         }
     }

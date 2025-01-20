@@ -7,7 +7,7 @@ public class UserInformationForPictureDTO {
 
     private String username;
 
-    private String profilePictureUrl;
+    private String profilePicturePath;
 
     public UUID getId() {
         return id;
@@ -25,11 +25,11 @@ public class UserInformationForPictureDTO {
         this.username = username;
     }
 
-    public String getProfilePictureUrl() {
-        return profilePictureUrl;
+    public String getProfilePicturePath() {
+        return profilePicturePath;
     }
 
-    public void setProfilePictureUrl(String profilePictureUrl) {
-        this.profilePictureUrl = profilePictureUrl;
+    public void setProfilePicturePath(String profilePicturePath) {
+        this.profilePicturePath = profilePicturePath;
     }
 }

@@ -3,6 +3,8 @@ package bg.photographyjava.challenge.model;
 import bg.photographyjava.user.model.UserEntity;
 import jakarta.persistence.*;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -16,6 +18,12 @@ public class Picture {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(name = "caption")
+    private String caption;
+
+    @Column(name = "story")
+    private String story;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
@@ -26,6 +34,18 @@ public class Picture {
     @ManyToOne
     @JoinColumn(name = "challenge_id", nullable = false)
     private Challenge challenge;
+
+    @ManyToMany
+    @JoinTable(name = "picture_likes",
+            joinColumns = @JoinColumn(name = "picture_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<UserEntity> likedByUsers;
+
+    @OneToMany(mappedBy = "picture", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Comment> comments;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
 
     public UUID getId() {
         return id;
@@ -41,6 +61,22 @@ public class Picture {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getCaption() {
+        return caption;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
+    public String getStory() {
+        return story;
+    }
+
+    public void setStory(String story) {
+        this.story = story;
     }
 
     public UserEntity getUser() {
@@ -65,5 +101,29 @@ public class Picture {
 
     public void setChallenge(Challenge challenge) {
         this.challenge = challenge;
+    }
+
+    public Set<UserEntity> getLikedByUsers() {
+        return likedByUsers;
+    }
+
+    public void setLikedByUsers(Set<UserEntity> likedByUsers) {
+        this.likedByUsers = likedByUsers;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }

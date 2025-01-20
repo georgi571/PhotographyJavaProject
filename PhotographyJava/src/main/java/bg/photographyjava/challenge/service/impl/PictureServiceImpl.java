@@ -25,4 +25,15 @@ public class PictureServiceImpl implements PictureService {
                 .sorted(Comparator.comparingLong(Picture::getLikes).reversed())
                 .toList();
     }
+
+    @Override
+    public Picture getPictureById(UUID pictureId) {
+        return this.pictureRepository.findById(pictureId).orElse(null);
+    }
+
+    @Override
+    public void savePicture(Picture picture) {
+        this.pictureRepository.saveAndFlush(picture);
+    }
+
 }
