@@ -313,5 +313,10 @@ public class UserServiceImpl implements UserService {
         return this.modelMapper.map(moderator, ModeratorPermissionsDTO.class);
     }
 
+    @Override
+    public List<UserEntity> getAllUsersForCountries() {
+        return this.userRepository.findAll();
+    }
+
 
 }

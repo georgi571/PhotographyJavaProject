@@ -309,4 +309,9 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         return "Comment deleted successfully";
     }
+
+    @Override
+    public List<Challenge> findByType(ChallengeType challengeType) {
+        return this.challengeRepository.findByType(challengeType);
+    }
 }

@@ -1,5 +1,7 @@
 package bg.photographyjava.challenge.service;
 
+import bg.photographyjava.challenge.model.Challenge;
+import bg.photographyjava.challenge.property.enums.ChallengeType;
 import bg.photographyjava.web.dto.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,4 +33,6 @@ public interface ChallengeService {
     String deletePicture(UUID challengeId, UUID pictureId, String username);
 
     String deleteComment(UUID challengeId, UUID pictureId, UUID commentId, String username);
+
+    List<Challenge> findByType(ChallengeType challengeType);
 }

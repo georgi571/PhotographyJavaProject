@@ -59,4 +59,6 @@ public interface UserService {
     List<ModeratorPermissionsDTO> getAllModeratorsWithPermissions();
 
     ModeratorPermissionsDTO updateModerationPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username);
+
+    List<UserEntity> getAllUsersForCountries();
 }
