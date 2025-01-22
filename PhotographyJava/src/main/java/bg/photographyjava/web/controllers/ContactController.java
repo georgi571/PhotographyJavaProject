@@ -3,6 +3,7 @@ package bg.photographyjava.web.controllers;
 import bg.photographyjava.web.dto.ContactMessageDTO;
 import bg.photographyjava.contact.service.ContactMessageService;
 import bg.photographyjava.web.dto.ContactReplayDTO;
+import bg.photographyjava.web.dto.ContactUserDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -81,5 +82,15 @@ public class ContactController {
         this.contactMessageService.deleteMessage(id, username);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/user-info")
+    public ResponseEntity<?> getUserInfo(Authentication authentication) {
+        if (authentication != null) {
+            ContactUserDTO user = this.contactMessageService.getUserDetails(authentication.getName());
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 }

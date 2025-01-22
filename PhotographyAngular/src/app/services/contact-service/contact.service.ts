@@ -39,4 +39,13 @@ export class ContactService {
             }
         });
     }
+
+    getUserInfo() {
+        const token = this.authService.getToken();
+        return this.http.get<any>(`${this.apiUrl}/contacts/user-info`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
 }

@@ -2,6 +2,7 @@ package bg.photographyjava.contact.service;
 
 import bg.photographyjava.web.dto.ContactMessageDTO;
 import bg.photographyjava.web.dto.ContactReplayDTO;
+import bg.photographyjava.web.dto.ContactUserDTO;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,4 +18,6 @@ public interface ContactMessageService {
     void sendAnswer(ContactReplayDTO contactReplayDTO, String username);
 
     void deleteMessage(UUID id, String username);
+
+    ContactUserDTO getUserDetails(String username);
 }

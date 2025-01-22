@@ -8,6 +8,7 @@ import bg.photographyjava.contact.model.ContactMessage;
 import bg.photographyjava.contact.repository.ContactMessageRepository;
 import bg.photographyjava.contact.service.ContactMessageService;
 import bg.photographyjava.web.dto.ContactReplayDTO;
+import bg.photographyjava.web.dto.ContactUserDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -83,6 +84,12 @@ public class ContactMessageServiceImpl implements ContactMessageService {
         contactMessage.setDeleted(true);
 
         this.contactMessageRepository.saveAndFlush(contactMessage);
+    }
+
+    @Override
+    public ContactUserDTO getUserDetails(String username) {
+        UserEntity user = this.userService.getUserByUsername(username).get();
+        return this.modelMapper.map(user, ContactUserDTO.class);
     }
 
 

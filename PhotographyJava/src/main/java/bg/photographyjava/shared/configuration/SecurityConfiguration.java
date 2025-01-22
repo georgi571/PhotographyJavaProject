@@ -79,7 +79,8 @@ public class SecurityConfiguration {
                                         "/api/challenges/{challengeId}/pictures/{pictureId}/delete",
                                         "/api/challenges/{challengeId}/pictures/{pictureId}/comments/{commentId}/delete",
                                         "/api/leaderboards/countries-choice", "/api/leaderboards/challenge-types",
-                                        "/api/leaderboards/country", "/api/leaderboards/challenges").permitAll()
+                                        "/api/leaderboards/country", "/api/leaderboards/challenges",
+                                        "/api/contacts/user-info").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
