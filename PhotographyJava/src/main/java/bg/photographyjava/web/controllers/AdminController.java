@@ -1,5 +1,6 @@
 package bg.photographyjava.web.controllers;
 
+import bg.photographyjava.user.property.enums.UserPermission;
 import bg.photographyjava.user.service.UserService;
 import bg.photographyjava.web.dto.*;
 import org.springframework.http.ResponseEntity;
@@ -113,5 +114,13 @@ public class AdminController {
         );
 
         return ResponseEntity.ok(updatedModerator);
+    }
+
+    @GetMapping("/permissions")
+    public ResponseEntity<?> getPermissions(Authentication authentication) {
+        String username = authentication.getName();
+
+        List<UserPermission> permissions = this.userService.getCurrentAdminPermissions(username);
+        return ResponseEntity.ok(permissions);
     }
 }

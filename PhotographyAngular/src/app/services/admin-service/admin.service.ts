@@ -110,4 +110,14 @@ export class AdminService {
             }
         );
     }
+
+    getPermissions() {
+        const token = this.authService.getToken();
+        return this.http.get<any[]>(`${this.apiUrl}/admin/permissions`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+    }
 }

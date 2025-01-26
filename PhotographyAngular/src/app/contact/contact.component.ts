@@ -70,9 +70,11 @@ export class ContactComponent implements OnInit {
 
     onSubmit() {
         if (this.contactForm.valid) {
-            this.contactService.sendContactMessage(this.contactForm.value).subscribe({
+            const formData = this.contactForm.getRawValue();
+            console.log(formData)
+            this.contactService.sendContactMessage(formData).subscribe({
                 next: (response) => {
-                    console.log('Send successful:', response);
+                    alert('Contact message was send successful');
                     this.router.navigate(['home']);
                 },
                 error: (error) => {

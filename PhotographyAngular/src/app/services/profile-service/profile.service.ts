@@ -15,9 +15,9 @@ export class ProfileService {
                 private authService: AuthService) {
     }
 
-    getUserDetails() {
+    getUserDetails(username: string) {
         const token = this.authService.getToken();
-        return this.http.get<string[]>(`${this.apiUrl}/users/profile`, {
+        return this.http.get<string[]>(`${this.apiUrl}/users/profile/${username}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -102,6 +102,96 @@ export class ProfileService {
     editUserPasswordDetail(data: any) {
         const token = this.authService.getToken();
         return this.http.put(`${this.apiUrl}/users/profile/edit/password`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
+    addFriend(username: string) {
+        const token = this.authService.getToken();
+        return this.http.post(`${this.apiUrl}/add-friend`, { username }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
+    followUser(username: string) {
+        const token = this.authService.getToken();
+        return this.http.post(`${this.apiUrl}/follow-user`, { username }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
+    acceptFriendRequest(username: string) {
+        const token = this.authService.getToken();
+        return this.http.post(`${this.apiUrl}/accept-friend-request`, { username }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+    }
+
+    rejectFriendRequest(username: string) {
+        const token = this.authService.getToken();
+        return this.http.post(`${this.apiUrl}/reject-friend-request`, { username }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+    }
+
+    getFriends() {
+        const token = this.authService.getToken();
+        return this.http.get<any[]>(`${this.apiUrl}/friends`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
+    getFollowers() {
+        const token = this.authService.getToken();
+        return this.http.get<any[]>(`${this.apiUrl}/followers`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
+    getFollowing() {
+        const token = this.authService.getToken();
+        return this.http.get<any[]>(`${this.apiUrl}/following`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
+    getSentFriendRequests() {
+        const token = this.authService.getToken();
+        return this.http.get<any[]>(`${this.apiUrl}/sent-requests`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
+    getReceivedFriendRequests() {
+        const token = this.authService.getToken();
+        return this.http.get<any[]>(`${this.apiUrl}/received-requests`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
+    getBlockedUsers() {
+        const token = this.authService.getToken();
+        return this.http.get<any[]>(`${this.apiUrl}/blocked-users`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

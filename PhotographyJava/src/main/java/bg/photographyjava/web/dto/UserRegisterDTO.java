@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 @PasswordMatches
 public class UserRegisterDTO implements Serializable {
@@ -41,7 +42,7 @@ public class UserRegisterDTO implements Serializable {
     private String gender;
 
     @NotNull(message = "{age.empty}")
-    private Integer age;
+    private LocalDate birthDate;
 
     public String getUsername() {
         return username;
@@ -99,11 +100,11 @@ public class UserRegisterDTO implements Serializable {
         this.gender = gender;
     }
 
-    public Integer getAge() {
-        return age;
+    public LocalDate getBirthDate() {
+        return birthDate;
     }
 
-    public void setAge(Integer age) {
-        this.age = age;
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
     }
 }

@@ -1,0 +1,24 @@
+<app-header />
+
+<div class="friends-followers">
+    <header class="header">
+        <h1>Friends and Followers</h1>
+    </header>
+
+    <nav class="sidebar">
+        <ul>
+            <li><a routerLink="/profile/friends" routerLinkActive="active">All Friends</a></li>
+            <li><a routerLink="/profile/followers" routerLinkActive="active">All Followers</a></li>
+            <li><a routerLink="/profile/following" routerLinkActive="active">All Following</a></li>
+            <li><a routerLink="/profile/sent-requests" routerLinkActive="active">Sent Friend Requests</a></li>
+            <li><a routerLink="/profile/received-requests" routerLinkActive="active">Received Friend Requests</a></li>
+            <li><a routerLink="/profile/blocked-users" routerLinkActive="active">Blocked Users</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <router-outlet />
+    </main>
+</div>
+
+<app-footer />

@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -46,8 +47,8 @@ public class UserEntity {
     @Column(name = "gender", nullable = false)
     private GenderEnum gender;
 
-    @Column(name = "age", nullable = false)
-    private int age;
+    @Column(name = "birth_date", nullable = false)
+    private LocalDate birthDate;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "role_id", referencedColumnName = "id")
@@ -82,6 +83,34 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> comments;
+
+    @ManyToMany
+    @JoinTable(name = "user_friends",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id"))
+    private Set<UserEntity> friends;
+
+    @ManyToMany
+    @JoinTable(name = "user_send_friend_request",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id"))
+    private Set<UserEntity> sendFriendRequest;
+
+    @ManyToMany
+    @JoinTable(name = "user_receive_friend_request",
+            joinColumns = @JoinColumn(name = "friend_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<UserEntity> receiveFriendRequest;
+
+    @ManyToMany
+    @JoinTable(name = "user_followers",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "follower_id")
+    )
+    private Set<UserEntity> followers;
+
+    @ManyToMany(mappedBy = "followers")
+    private Set<UserEntity> following;
 
     public UUID getId() {
         return id;
@@ -147,12 +176,12 @@ public class UserEntity {
         this.gender = gender;
     }
 
-    public int getAge() {
-        return age;
+    public LocalDate getBirthDate() {
+        return birthDate;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
     }
 
     public Role getRole() {
@@ -241,5 +270,45 @@ public class UserEntity {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public Set<UserEntity> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(Set<UserEntity> friends) {
+        this.friends = friends;
+    }
+
+    public Set<UserEntity> getSendFriendRequest() {
+        return sendFriendRequest;
+    }
+
+    public void setSendFriendRequest(Set<UserEntity> sendFriendRequest) {
+        this.sendFriendRequest = sendFriendRequest;
+    }
+
+    public Set<UserEntity> getReceiveFriendRequest() {
+        return receiveFriendRequest;
+    }
+
+    public void setReceiveFriendRequest(Set<UserEntity> receiveFriendRequest) {
+        this.receiveFriendRequest = receiveFriendRequest;
+    }
+
+    public Set<UserEntity> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Set<UserEntity> followers) {
+        this.followers = followers;
+    }
+
+    public Set<UserEntity> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(Set<UserEntity> following) {
+        this.following = following;
     }
 }

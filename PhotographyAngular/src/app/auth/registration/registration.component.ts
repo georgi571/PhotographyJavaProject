@@ -3,7 +3,7 @@ import {HeaderComponent} from '../../core/header/header.component';
 import {ApiService} from '../../services/api-service/api.service';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
-import {confirmPasswordValidator} from './validators';
+import {confirmPasswordValidator, dateNotInFutureValidator} from './validators';
 import {FooterComponent} from '../../core/footer/footer.component';
 
 @Component({
@@ -29,7 +29,7 @@ export class RegistrationComponent implements OnInit {
             country: new FormControl('', [Validators.required]),
             city: new FormControl('', [Validators.required, Validators.minLength(1)]),
             gender: new FormControl('', [Validators.required]),
-            age: new FormControl('', [Validators.required, Validators.min(1), Validators.max(100)]),
+            birthDate: new FormControl('', [Validators.required, dateNotInFutureValidator]),
         },
         {validators: confirmPasswordValidator},
     );

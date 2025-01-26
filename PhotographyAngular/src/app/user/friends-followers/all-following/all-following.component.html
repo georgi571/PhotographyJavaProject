@@ -1,0 +1,36 @@
+<h2>Following</h2>
+<input type="text" placeholder="Search by username or email" [(ngModel)]="searchTerm" (input)="filterFollowing()"
+       class="search-box"/>
+<table>
+    <thead>
+        <tr>
+            <th>Profile Picture</th>
+            <th>Username</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (followings.length > 0) {
+            @for (followingUser of filteredFollowing; track followingUser) {
+                <tr>
+                    <td>
+                        <img
+                            [src]="followingUser.profilePicture"
+                            alt="Profile Picture"
+                            class="profile-picture">
+                    </td>
+                    <td>{{ followingUser.username }}</td>
+                    <td class="three-buttons">
+                        <button class="view-btn" (click)="viewFollowingProfile(followingUser)">View Profile</button>
+                        <button class="unfollow-btn" (click)="unfollow(followingUser)">Unfollow</button>
+                        <button class="block-btn" (click)="confirmBlock(followingUser)">Block</button>
+                    </td>
+                </tr>
+            }
+        } @else {
+            <div class="no-following-container">
+                <p class="no-following-text">No following users found.</p>
+            </div>
+        }
+    </tbody>
+</table>

@@ -10,13 +10,17 @@ import bg.photographyjava.user.repository.RoleRepository;
 import bg.photographyjava.user.repository.UserRepository;
 import bg.photographyjava.user.service.UserService;
 import bg.photographyjava.web.filter.JWTService;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -51,7 +55,7 @@ public class UserServiceImpl implements UserService {
             UserEntity admin = new UserEntity();
             admin.setUsername("admin");
             admin.setPassword(passwordEncoder.encode("admin"));
-            admin.setAge(100);
+            admin.setBirthDate(LocalDate.of(2025, 1, 1));
             admin.setEmail("admin@gmail.com");
             admin.setCountry(this.countryRepository.findByName(CountryEnum.BULGARIA));
             admin.setCity("Blagoevgrad");
@@ -88,6 +92,7 @@ public class UserServiceImpl implements UserService {
         user.setRole(this.userRoleRepository.findByRole(UserRole.USER));
         user.setApproved(false);
         user.setRealName("Anonymous");
+        user.setProfilePicturePath("https://res.cloudinary.com/dkyp0c0lz/image/upload/v1737304170/male-profile-picture_rltohq.avif");
         user.setPoints(0);
         user.setBanned(false);
         user.setApproved(false);
@@ -100,7 +105,13 @@ public class UserServiceImpl implements UserService {
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDTO.getUsername(), userLoginDTO.getPassword()));
 
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(userLoginDTO.getUsername());
+            String role = authentication.getAuthorities()
+                    .stream()
+                    .findFirst()
+                    .map(GrantedAuthority::getAuthority)
+                    .orElseThrow(() -> new IllegalStateException("User has no roles assigned"));
+
+            return jwtService.generateToken(userLoginDTO.getUsername(), role);
         }
         return "Failed";
     }
@@ -112,6 +123,10 @@ public class UserServiceImpl implements UserService {
         userProfileDTO.setCountry(user.getCountry().getName().getCountryName());
         userProfileDTO.setRank(user.getRank().getRank().toString());
         userProfileDTO.setPoints(user.getPoints());
+
+        LocalDate birthDate = user.getBirthDate();
+        int age = Period.between(birthDate, LocalDate.now()).getYears();
+        userProfileDTO.setAge(age);
 
         return userProfileDTO;
     }
@@ -128,7 +143,7 @@ public class UserServiceImpl implements UserService {
         UserEntity user = this.getUserByUsername(username).get();
         user.setRealName(userEditProfileDTO.getRealName());
         user.setCity(userEditProfileDTO.getCity());
-        user.setAge(userEditProfileDTO.getAge());
+        user.setBirthDate(userEditProfileDTO.getBirthDate());
 
         this.userRepository.saveAndFlush(user);
     }
@@ -318,5 +333,60 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.findAll();
     }
 
+    @Override
+    public List<UserPermission> getCurrentAdminPermissions(String username) {
+        UserEntity user = this.getUserByUsername(username).get();
+        return user.getPermissions().stream().toList();
+    }
 
+    @Override
+    public void addFriendByUsername(AddFriendDTO addFriendDTO, String username) {
+        UserEntity user = this.getUserByUsername(username).get();
+        UserEntity friend = this.getUserByUsername(addFriendDTO.getUsername()).get();
+
+        user.getSendFriendRequest().add(friend);
+        friend.getReceiveFriendRequest().add(user);
+
+        this.userRepository.saveAndFlush(user);
+        this.userRepository.saveAndFlush(friend);
+    }
+
+    @Override
+    public void followUserByUsername(FollowUserDTO followUserDTO, String username) {
+        UserEntity user = this.getUserByUsername(username).get();
+        UserEntity follower = this.getUserByUsername(followUserDTO.getUsername()).get();
+
+        user.getFollowing().add(follower);
+        follower.getFollowers().add(user);
+
+        this.userRepository.saveAndFlush(user);
+        this.userRepository.saveAndFlush(follower);
+    }
+
+    @Override
+    public void acceptFriendRequest(AddFriendDTO addFriendDTO, String username) {
+        UserEntity user = this.getUserByUsername(username).get();
+        UserEntity friend = this.getUserByUsername(addFriendDTO.getUsername()).get();
+
+        user.getFriends().add(friend);
+        friend.getFriends().add(user);
+
+        user.getReceiveFriendRequest().remove(friend);
+        friend.getSendFriendRequest().remove(user);
+
+        this.userRepository.saveAndFlush(user);
+        this.userRepository.saveAndFlush(friend);
+    }
+
+    @Override
+    public void rejectFriendRequest(AddFriendDTO addFriendDTO, String username) {
+        UserEntity user = this.getUserByUsername(username).get();
+        UserEntity friend = this.getUserByUsername(addFriendDTO.getUsername()).get();
+
+        user.getReceiveFriendRequest().remove(friend);
+        friend.getSendFriendRequest().remove(user);
+
+        this.userRepository.saveAndFlush(user);
+        this.userRepository.saveAndFlush(friend);
+    }
 }

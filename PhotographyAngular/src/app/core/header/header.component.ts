@@ -14,6 +14,7 @@ import {JwtService} from '../../services/jwt-service/jwt.service';
 })
 export class HeaderComponent implements OnInit {
     username: string | null = null;
+    role: string | null = null;
 
     constructor(
         private authService: AuthService,
@@ -28,6 +29,7 @@ export class HeaderComponent implements OnInit {
         if (token) {
             const decodedToken = this.jwtService.decodeToken(token);
             this.username = decodedToken?.username || null;
+            this.role = decodedToken?.role ? decodedToken?.role.replace("ROLE_", "") : null;
         }
     }
 

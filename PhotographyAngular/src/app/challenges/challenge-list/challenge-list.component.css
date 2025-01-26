@@ -85,9 +85,10 @@ body {
 
 .challenges-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: 1fr; /* One column layout */
+    gap: 20px; /* Space between items */
     padding: 20px;
+    width: 100%; /* Ensure full width */
 }
 
 .challenge-card {

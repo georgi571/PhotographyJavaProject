@@ -29,8 +29,8 @@
             </div>
 
             <div class="form-group">
-                <label for="age">Age</label>
-                <input type="number" id="age" [(ngModel)]="userDetails.age" name="age" required/>
+                <label for="birthDate">Birth Date</label>
+                <input type="date" id="birthDate" [(ngModel)]="userDetails.birthDate" name="birthDate" required />
                 @if (fieldErrors['age']) {
                     <div class="error-message">
                         <small>{{ fieldErrors['age'] }}</small>

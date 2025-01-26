@@ -1,0 +1,37 @@
+<h2>Received Friend Requests</h2>
+<input type="text" placeholder="Search by username or email" [(ngModel)]="searchTerm" (input)="filterReceivedRequests()"
+       class="search-box"/>
+<table>
+    <thead>
+        <tr>
+            <th>Profile Picture</th>
+            <th>Username</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (receivedFriendRequests.length > 0) {
+            @for (friend of filteredReceivedRequests; track friend) {
+                <tr>
+                    <td>
+                        <img
+                            [src]="friend.profilePicture"
+                            alt="Profile Picture"
+                            class="profile-picture">
+                    </td>
+                    <td>{{ friend.username }}</td>
+                    <td class="four-buttons">
+                        <button class="view-btn" (click)="viewFriendProfile(friend)">View Profile</button>
+                        <button class="accept-btn" (click)="acceptRequest(friend)">Accept</button>
+                        <button class="reject-btn" (click)="rejectRequest(friend)">Reject</button>
+                        <button class="block-btn" (click)="confirmBlock(friend)">Block</button>
+                    </td>
+                </tr>
+            }
+        } @else {
+            <div class="no-friend-container">
+                <p class="no-friend-text">No friend requests sent.</p>
+            </div>
+        }
+    </tbody>
+</table>

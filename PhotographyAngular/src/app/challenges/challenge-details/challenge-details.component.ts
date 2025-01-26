@@ -34,6 +34,7 @@ export class ChallengeDetailsComponent implements OnInit {
     reportTarget: any = null;
     showDeleteModal = false;
     deleteType = '';
+    showEditModal = false;
 
     itemToDelete: any = null;
 
@@ -137,7 +138,7 @@ export class ChallengeDetailsComponent implements OnInit {
     addComment() {
         if (this.newComment.trim()) {
             const newComment = {
-                user: { username: 'Current User' },
+                user: {username: 'Current User'},
                 text: this.newComment,
             };
 
@@ -291,5 +292,40 @@ export class ChallengeDetailsComponent implements OnInit {
                 console.log('Updated selectedComments:', this.selectedComments);
             }
         );
+    }
+
+    openEditModal(): void {
+        // You can either open a modal or navigate to an edit form
+        console.log('Edit button clicked!');
+        this.showEditModal = true; // Example for modal
+    }
+
+    closeEditModal(): void {
+        this.showEditModal = false;
+    }
+
+    submitEdit(): void {
+        // if (!this.challengeDetails.title || !this.challengeDetails.activity || !this.challengeDetails.createdAt || !this.challengeDetails.endAt) {
+        //     this.errorMessage = 'Please fill in all required fields.';
+        //     return;
+        // }
+        //
+        // // Convert date fields back to ISO format if required by backend
+        // const updatedDetails = {
+        //     ...this.challengeDetails,
+        //     createdAt: new Date(this.challengeDetails.createdAt).toISOString(),
+        //     endAt: new Date(this.challengeDetails.endAt).toISOString(),
+        // };
+        //
+        // // Send the updated details to the backend
+        // this.challengeService.updateChallenge(this.challengeId, updatedDetails).subscribe({
+        //     next: (response) => {
+        //         console.log('Challenge details updated successfully:', response);
+        //         this.showEditModal = false; // Close the modal on success
+        //     },
+        //     error: (error) => {
+        //         console.error('Error updating challenge details:', error);
+        //     },
+        // });
     }
 }

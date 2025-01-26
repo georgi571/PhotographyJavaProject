@@ -692,6 +692,53 @@ textarea {
     color: #666;
 }
 
+.edit-btn {
+    padding: 10px 15px;
+    background-color: #ff5722;
+    color: white;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.edit-btn:hover {
+    background-color: #e64a19;
+}
+
+.edit-btn:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(230, 74, 25);
+}
+
+.edit-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
+    z-index: 1000; /* Ensure modal is on top */
+}
+
+.edit-modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    width: 90%; /* Adjust width for better mobile view */
+    max-width: 700px; /* Max width to avoid too large modals */
+    max-height: 80vh; /* Ensure it doesn't overflow the viewport */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    z-index: 1001; /* Ensure modal is on top of backdrop */
+    box-sizing: border-box;
+    overflow-y: auto; /* Allow scrolling if content overflows */
+}
+
 @media screen and (max-width: 768px) {
     .picture-details-content {
         flex-direction: column;

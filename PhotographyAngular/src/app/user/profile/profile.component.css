@@ -61,6 +61,39 @@ body {
     background-color: #2980b9;
 }
 
+.btn {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    border: none; /* Remove default button borders */
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.btn-primary {
+    padding: 10px 15px;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.btn-secondary {
+    padding: 10px 15px;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.btn:hover {
+    background-color: #2980b9;
+}
+
 .friends-followers {
     margin-top: 20px;
     width: 100%;

@@ -3,6 +3,8 @@ package bg.photographyjava.user.service.impl;
 import bg.photographyjava.user.model.UserEntity;
 import bg.photographyjava.user.model.UserPrincipal;
 import bg.photographyjava.user.repository.UserRepository;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -29,6 +32,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("User not found.");
         }
 
+        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + user.getRole().getRole());
+
         return new UserPrincipal(user);
     }
 
@@ -36,7 +41,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return User
                 .withUsername(userEntity.getUsername())
                 .password(userEntity.getPassword())
-                .authorities(List.of())
+                .authorities(new SimpleGrantedAuthority("ROLE_" + userEntity.getRole().getRole().name()))
                 .disabled(false)
                 .build();
     }

@@ -25,22 +25,30 @@ import {EditPasswordComponent} from './user/profile-edit/edit-password/edit-pass
 import {EditPictureComponent} from './user/profile-edit/edit-picture/edit-picture.component';
 import {ChallengeListComponent} from './challenges/challenge-list/challenge-list.component';
 import {ChallengeDetailsComponent} from './challenges/challenge-details/challenge-details.component';
+import {FriendsFollowersComponent} from './user/friends-followers/friends-followers.component';
+import {AllFriendsComponent} from './user/friends-followers/all-friends/all-friends.component';
+import {AllFollowersComponent} from './user/friends-followers/all-followers/all-followers.component';
+import {AllFollowingComponent} from './user/friends-followers/all-following/all-following.component';
+import {
+    ReceiveFriendRequestComponent
+} from './user/friends-followers/receive-friend-request/receive-friend-request.component';
+import {SendFriendRequestComponent} from './user/friends-followers/send-friend-request/send-friend-request.component';
+import {BlockUsersComponent} from './user/friends-followers/block-users/block-users.component';
 
 export const routes: Routes = [
     {path: '', component: IntroComponent},
     {path: 'home', component: HomeComponent},
     {path: 'challenges', component: ChallengesComponent},
-    { path: 'challenges/list', component: ChallengeListComponent },
-    { path: 'challenge/:id', component: ChallengeDetailsComponent },
+    {path: 'challenges/list', component: ChallengeListComponent},
+    {path: 'challenge/:id', component: ChallengeDetailsComponent},
     {path: 'leaderboards', component: LeaderboardsComponent},
     {path: 'about', component: AboutComponent},
     {path: 'contacts', component: ContactComponent},
     {path: 'auth', component: AuthComponent},
     {path: 'users/login', component: LoginComponent},
     {path: 'users/register', component: RegistrationComponent},
-    {path: 'profile', component: ProfileComponent},
-    {path: 'profile/edit',
-        component: ProfileEditComponent,
+    {
+        path: 'profile/edit', component: ProfileEditComponent,
         children: [
             {path: 'information', component: EditInformationComponent},
             {path: 'password', component: EditPasswordComponent},
@@ -49,6 +57,18 @@ export const routes: Routes = [
             {path: 'picture', component: EditPictureComponent},
         ]
     },
+    {
+        path: 'profile', component: FriendsFollowersComponent,
+        children: [
+            {path: 'friends', component: AllFriendsComponent},
+            {path: 'followers', component: AllFollowersComponent},
+            {path: 'following', component: AllFollowingComponent},
+            {path: 'sent-requests', component: SendFriendRequestComponent},
+            {path: 'received-requests', component: ReceiveFriendRequestComponent},
+            {path: 'blocked-users', component: BlockUsersComponent}
+        ]
+    },
+    {path: 'profile/:username', component: ProfileComponent},
     {
         path: 'admin',
         component: AdminComponent,

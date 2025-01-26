@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 public class UserEditProfileDTO implements Serializable {
 
@@ -16,7 +17,7 @@ public class UserEditProfileDTO implements Serializable {
     private String city;
 
     @NotNull(message = "{age.empty}")
-    private int age;
+    private LocalDate birthDate;
 
     public String getRealName() {
         return realName;
@@ -34,11 +35,11 @@ public class UserEditProfileDTO implements Serializable {
         this.city = city;
     }
 
-    public int getAge() {
-        return age;
+    public LocalDate getBirthDate() {
+        return birthDate;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
     }
 }

@@ -1,0 +1,39 @@
+@import '../friends-followers.component.css';
+
+.search-box {
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    width: 100%;
+    max-width: 300px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.search-box:focus {
+    outline: none;
+    border-color: #1abc9c;
+}
+
+.three-buttons button {
+    margin: 5px;
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.view-btn {
+    background-color: #3498db;
+    color: white;
+}
+
+.unfollow-btn {
+    background-color: #ff5722;
+    color: white;
+}
+
+.block-btn {
+    background-color: #e74c3c;
+    color: white;
+}

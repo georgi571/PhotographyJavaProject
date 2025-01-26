@@ -61,4 +61,14 @@ public interface UserService {
     ModeratorPermissionsDTO updateModerationPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username);
 
     List<UserEntity> getAllUsersForCountries();
+
+    List<UserPermission> getCurrentAdminPermissions(String username);
+
+    void addFriendByUsername(AddFriendDTO addFriendDTO, String username);
+
+    void followUserByUsername(FollowUserDTO followUserDTO, String username);
+
+    void acceptFriendRequest(AddFriendDTO addFriendDTO, String username);
+
+    void rejectFriendRequest(AddFriendDTO addFriendDTO, String username);
 }

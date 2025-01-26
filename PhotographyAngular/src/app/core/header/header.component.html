@@ -11,7 +11,9 @@
             <li><a routerLink="/leaderboards" routerLinkActive="active">Leaderboards</a></li>
             <li><a routerLink="/about" routerLinkActive="active">About Us</a></li>
             <li><a routerLink="/contacts" routerLinkActive="active">Contacts</a></li>
-            <li><a routerLink="/admin" routerLinkActive="active">Admin Panel</a></li>
+            @if (role === 'ADMIN') {
+                <li><a routerLink="/admin" routerLinkActive="active">Admin Panel</a></li>
+            }
         </ul>
         <ul class="nav-links">
         </ul>
@@ -21,7 +23,7 @@
             <div class="dropdown">
                 <span class="dropdown-toggle"> Welcome, {{ username }}</span>
                 <ul class="dropdown-menu">
-                    <li><a routerLink="/profile" routerLinkActive="active">Profile</a></li>
+                    <li><a [routerLink]="['/profile', username]" routerLinkActive="active">Profile</a></li>
                     <li><a routerLink="/logout" routerLinkActive="active" (click)="logout()">Logout</a></li>
                 </ul>
             </div>

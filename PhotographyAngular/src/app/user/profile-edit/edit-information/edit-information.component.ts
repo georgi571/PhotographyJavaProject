@@ -20,7 +20,7 @@ export class EditInformationComponent implements OnInit {
     userDetails = {
         realName: '',
         city: '',
-        age: null,
+        birthDate: '',
         picture: ''
     };
 

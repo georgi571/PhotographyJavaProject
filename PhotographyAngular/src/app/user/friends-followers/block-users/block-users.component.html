@@ -1,0 +1,37 @@
+<h2>Blocked Users</h2>
+<input type="text" placeholder="Search by username or email" [(ngModel)]="searchTerm" (input)="filterBlockedUsers()"
+       class="search-box"/>
+<table>
+    <thead>
+        <tr>
+            <th>Profile Picture</th>
+            <th>Username</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (blockedUsers.length > 0) {
+            @for (blockedUser of filteredBlockedUsers; track blockedUser) {
+                <tr>
+                    <td>
+                        <img
+                            [src]="blockedUser.profilePicture"
+                            alt="Profile Picture"
+                            class="profile-picture">
+                    </td>
+                    <td>{{ blockedUser.username }}</td>
+                    <td class="two-buttons">
+                        <button class="view-btn" (click)="viewUserProfile(blockedUser)">View Profile</button>
+                        <button class="unblock-btn" (click)="unblockUser(blockedUser)">Unblock</button>
+                    </td>
+                </tr>
+            }
+        } @else {
+            <div class="no-blocked-container">
+                <p class="no-blocked-text">No blocked users.</p>
+            </div>
+        }
+    </tbody>
+</table>
+
+

@@ -20,6 +20,7 @@
                     <p><strong>Start Date:</strong> {{ challengeDetails.createdAt | date: 'yyyy-MM-dd HH:mm:ss' }}</p>
                     <p><strong>End Date:</strong> {{ challengeDetails.endAt | date: 'yyyy-MM-dd HH:mm:ss' }}</p>
                     <p><strong>Type:</strong> {{ challengeDetails.type }}</p>
+                    <button class="edit-btn" (click)="openEditModal()">Edit</button>
                 </div>
             }
         </div>
@@ -171,6 +172,46 @@
                     <button class="confirm-delete-btn" (click)="confirmDelete()">Yes, Delete</button>
                     <button class="cancel-delete-btn" (click)="closeDeleteModal()">Cancel</button>
                 </div>
+            </div>
+        </div>
+    }
+
+    @if (showEditModal) {
+        <div class="modal-backdrop edit-backdrop">
+            <div class="modal edit-modal">
+                <h2>Edit Challenge Details</h2>
+                <form (ngSubmit)="submitEdit()">
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" [(ngModel)]="challengeDetails.title" name="title" required/>
+
+                    <label for="activity">Activity Status:</label>
+                    <select id="activity" [(ngModel)]="challengeDetails.activity" name="activity" required>
+                        <option value="ACTIVE">ACTIVE</option>
+                        <option value="PAST">PAST</option>
+                    </select>
+
+                    <label for="description">Description:</label>
+                    <textarea id="description" [(ngModel)]="challengeDetails.description" name="description" rows="4"></textarea>
+
+                    <label for="details">Details:</label>
+                    <textarea id="details" [(ngModel)]="challengeDetails.details" name="details" rows="4"></textarea>
+
+                    <label for="createdAt">Start Date:</label>
+                    <input type="datetime-local" id="createdAt" [(ngModel)]="challengeDetails.createdAt" name="createdAt" required/>
+
+                    <label for="endAt">End Date:</label>
+                    <input type="datetime-local" id="endAt" [(ngModel)]="challengeDetails.endAt" name="endAt" required/>
+
+                    <label for="type">Type</label>
+                    <select id="type" [(ngModel)]="challengeDetails.type" name="type" required>
+                        <option value="DAILY">DAILY</option>
+                        <option value="THEMED">THEMED</option>
+                        <option value="ADMIN">ADMIN</option>
+                    </select>
+
+                    <button type="submit" class="submit-btn">Save Changes</button>
+                    <button type="button" class="cancel-btn" (click)="closeEditModal()">Cancel</button>
+                </form>
             </div>
         </div>
     }

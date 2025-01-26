@@ -14,9 +14,14 @@
                 </div>
             }
             <div class="profile-button">
-                <a href="profile/edit">Edit Profile</a>
-                <a href="#">Add Friend</a>
-                <a href="#">Follow</a>
+                @if (userDetails.username === username || role === 'ADMIN') {
+                    <a href="profile/edit">Edit Profile</a>
+                }
+
+                @if (userDetails.username !== username) {
+                    <button (click)="addFriend()" class="btn btn-primary">Add Friend</button>
+                    <button (click)="followUser()" class="btn btn-secondary">Follow</button>
+                }
             </div>
             <div class="info">
                 <p><strong>Username:</strong> {{userDetails.username}} </p>
@@ -49,7 +54,7 @@
                     </div>
                 </div>
                 <div class="view-all">
-                    <a href="#">See All Friends</a>
+                    <a href="/profile/friends">See All Friends</a>
                 </div>
                 <h3>Followers - <span>4</span></h3>
                 <div class="list">
@@ -71,7 +76,7 @@
                     </div>
                 </div>
                 <div class="view-all">
-                    <a href="#">See All Followers</a>
+                    <a href="/profile/followers">See All Followers</a>
                 </div>
             </div>
         </div>

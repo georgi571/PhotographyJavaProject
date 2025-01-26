@@ -141,14 +141,19 @@
                     }
                 </div>
                 <div class="form-group">
-                    <label for="age">Age</label>
-                    <input type="number" id="age" name="age" placeholder="Enter your age" required
-                           formControlName="age"/>
-                    @if (registerForm.get('age')?.touched) {
+                    <label for="birth-date">Date of birth:</label>
+                    <input type="date" id="birth-date" name="birth-date" placeholder="Enter date of birth" required
+                           formControlName="birthDate"/>
+                    @if (registerForm.get('birthDate')?.touched) {
                         <div class="alert alert-danger">
-                            @if (registerForm.get('age')?.errors?.['required']) {
+                            @if (registerForm.get('birthDate')?.errors?.['required']) {
                                 <div style="color: red">
-                                    Age is required!
+                                    Date of birth is required!
+                                </div>
+                            }
+                            @if (registerForm.get('birthDate')?.errors?.['futureDate']) {
+                                <div style="color: red">
+                                    Date of birth cannot be in the future.
                                 </div>
                             }
                         </div>

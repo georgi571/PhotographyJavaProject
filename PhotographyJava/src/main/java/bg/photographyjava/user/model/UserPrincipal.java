@@ -10,14 +10,16 @@ import java.util.Collections;
 public class UserPrincipal implements UserDetails {
 
     private UserEntity user;
+    private GrantedAuthority authority;
 
     public UserPrincipal(UserEntity user) {
         this.user = user;
+        this.authority = new SimpleGrantedAuthority("ROLE_" + user.getRole().getRole());
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority("USER"));
+        return Collections.singleton(this.authority);
     }
 
     @Override
