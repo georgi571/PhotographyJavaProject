@@ -22,7 +22,7 @@ public class AdminController {
     }
 
     @GetMapping("/change-roles")
-    public ResponseEntity<List<ChangeRoleUserDTO>> getAllUsers() {
+    public ResponseEntity<List<ChangeRoleUserResponse>> getAllUsers() {
 
         return ResponseEntity.ok(this.userService.getAllUsers());
     }
@@ -38,16 +38,16 @@ public class AdminController {
     }
 
     @GetMapping("/ban-users")
-    public ResponseEntity<List<BanUserDTO>> getUsersForBan() {
+    public ResponseEntity<List<BanUserResponse>> getUsersForBan() {
 
         return ResponseEntity.ok(this.userService.getAllUsersForBan());
     }
 
 
     @PutMapping("/ban-users/{id}")
-    public ResponseEntity<BanUserDTO> banOrUnbanUser(
+    public ResponseEntity<BanUserResponse> banOrUnbanUser(
             @PathVariable UUID id,
-            @RequestBody BanUserReasonDTO request,
+            @RequestBody BanUserReasonRequest request,
             Authentication authentication) {
 
         this.userService.banUserAction(id, request, authentication.getName());

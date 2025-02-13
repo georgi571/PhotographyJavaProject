@@ -2,7 +2,7 @@ package bg.photographyjava.web.dto;
 
 import java.util.UUID;
 
-public class BanUserDTO {
+public class BanUserResponse {
 
     private UUID id;
 
@@ -14,10 +14,10 @@ public class BanUserDTO {
 
     private String reasonForBan;
 
-    public BanUserDTO() {
+    public BanUserResponse() {
     }
 
-    public BanUserDTO(UUID id, String username, String email, boolean banned, String reasonForBan) {
+    public BanUserResponse(UUID id, String username, String email, boolean banned, String reasonForBan) {
         this.id = id;
         this.username = username;
         this.email = email;

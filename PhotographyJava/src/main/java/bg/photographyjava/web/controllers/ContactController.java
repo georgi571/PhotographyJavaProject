@@ -1,9 +1,9 @@
 package bg.photographyjava.web.controllers;
 
-import bg.photographyjava.web.dto.ContactMessageDTO;
+import bg.photographyjava.web.dto.ContactMessageRequest;
 import bg.photographyjava.contact.service.ContactMessageService;
-import bg.photographyjava.web.dto.ContactReplayDTO;
-import bg.photographyjava.web.dto.ContactUserDTO;
+import bg.photographyjava.web.dto.ContactReplayRequest;
+import bg.photographyjava.web.dto.ContactUserResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,14 +12,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @RestController
-@RequestMapping("/api/contacts")
+@RequestMapping("/api/v1/contacts")
 public class ContactController {
 
     private final ContactMessageService contactMessageService;
@@ -30,64 +28,58 @@ public class ContactController {
 
     // send to the FE all message which is still not answered
 
-    @GetMapping("receive")
-    public List<ContactMessageDTO> contactMessageDTO() {
+    @GetMapping("/receive")
+    public ResponseEntity<List<ContactMessageRequest>> getUnansweredMessages() {
 
-        return this.contactMessageService.getNotAnsweredMessages();
+        return ResponseEntity.ok(this.contactMessageService.getNotAnsweredMessages());
     }
 
     // receive contact message from FE
 
-    @PostMapping("receive")
-    public ResponseEntity<?> registerUser(
-            @RequestBody @Valid ContactMessageDTO contactMessageDTO,
+    @PostMapping("/receive")
+    public ResponseEntity<Map<String, String>> receiveMessage(
+            @RequestBody @Valid ContactMessageRequest contactMessageRequest,
             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            Map<String, String> errorResponse = new HashMap<>();
-
-            bindingResult.getAllErrors().forEach(error -> {
-                String fieldName = ((FieldError) error).getField();
-                String errorMessage = error.getDefaultMessage();
-                errorResponse.put(fieldName, errorMessage);
-            });
+            Map<String, String> errorResponse = bindingResult.getFieldErrors().stream()
+                    .collect(Collectors.toMap(
+                            FieldError::getField,
+                            error -> Optional.ofNullable(error.getDefaultMessage()).orElse("Unknown validation error")
+                    ));
 
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
-        contactMessageService.receiveContactMessage(contactMessageDTO);
+        this.contactMessageService.receiveContactMessage(contactMessageRequest);
 
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Contact message receive successfully");
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("message", "Contact message received successfully"));
     }
 
 
     @PostMapping("/reply")
-    public ResponseEntity<?> sendReply(@RequestBody ContactReplayDTO contactReplayDTO, Authentication authentication) {
-        String username = authentication.getName();
-        this.contactMessageService.sendAnswer(contactReplayDTO, username);
+    public ResponseEntity<Map<String, String>> sendReply(
+            @RequestBody ContactReplayRequest contactReplayRequest,
+            Authentication authentication) {
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("message", "Reply sent successfully!");
-
-        return ResponseEntity.ok(response);
+        this.contactMessageService.sendAnswer(contactReplayRequest, authentication.getName());
+        return ResponseEntity.ok(Map.of("message", "Reply sent successfully!"));
     }
 
     @PatchMapping("/delete/{id}")
-    public ResponseEntity<?> softDeleteMessage(@PathVariable UUID id, Authentication authentication) {
-        String username = authentication.getName();
-        this.contactMessageService.deleteMessage(id, username);
+    public ResponseEntity<Map<String, String>> deleteMessage(
+            @PathVariable UUID id,
+            Authentication authentication) {
 
-        return ResponseEntity.ok().build();
+        this.contactMessageService.deleteMessage(id, authentication.getName());
+        return ResponseEntity.ok(Map.of("message", "Message successfully marked as deleted"));
     }
 
     @GetMapping("/user-info")
-    public ResponseEntity<?> getUserInfo(Authentication authentication) {
+    public ResponseEntity<ContactUserResponse> getUserInfo(Authentication authentication) {
         if (authentication != null) {
-            ContactUserDTO user = this.contactMessageService.getUserDetails(authentication.getName());
+            ContactUserResponse user = this.contactMessageService.getUserDetails(authentication.getName());
             return ResponseEntity.ok(user);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

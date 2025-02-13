@@ -3,12 +3,12 @@ package bg.photographyjava.contact.service.impl;
 import bg.photographyjava.contact.service.EmailService;
 import bg.photographyjava.user.model.UserEntity;
 import bg.photographyjava.user.service.UserService;
-import bg.photographyjava.web.dto.ContactMessageDTO;
+import bg.photographyjava.web.dto.ContactMessageRequest;
 import bg.photographyjava.contact.model.ContactMessage;
 import bg.photographyjava.contact.repository.ContactMessageRepository;
 import bg.photographyjava.contact.service.ContactMessageService;
-import bg.photographyjava.web.dto.ContactReplayDTO;
-import bg.photographyjava.web.dto.ContactUserDTO;
+import bg.photographyjava.web.dto.ContactReplayRequest;
+import bg.photographyjava.web.dto.ContactUserResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +33,8 @@ public class ContactMessageServiceImpl implements ContactMessageService {
     }
 
     @Override
-    public void receiveContactMessage(ContactMessageDTO contactMessageDTO) {
-        ContactMessage contactMessage = this.modelMapper.map(contactMessageDTO, ContactMessage.class);
+    public void receiveContactMessage(ContactMessageRequest contactMessageRequest) {
+        ContactMessage contactMessage = this.modelMapper.map(contactMessageRequest, ContactMessage.class);
         contactMessage.setSentAt(LocalDateTime.now());
         contactMessage.setAnswered(false);
         contactMessage.setDeleted(false);
@@ -42,36 +42,36 @@ public class ContactMessageServiceImpl implements ContactMessageService {
     }
 
     @Override
-    public List<ContactMessageDTO> getNotAnsweredMessages() {
-        List<ContactMessageDTO> notAnsweredMessages = new ArrayList<>();
+    public List<ContactMessageRequest> getNotAnsweredMessages() {
+        List<ContactMessageRequest> notAnsweredMessages = new ArrayList<>();
         List<ContactMessage> contactMessages = this.contactMessageRepository.findAll();
         for (ContactMessage contactMessage : contactMessages) {
-            notAnsweredMessages.add(this.modelMapper.map(contactMessage, ContactMessageDTO.class));
+            notAnsweredMessages.add(this.modelMapper.map(contactMessage, ContactMessageRequest.class));
         }
         return notAnsweredMessages;
     }
 
     @Override
-    public ContactMessageDTO getContactMessageByID(UUID id) {
+    public ContactMessageRequest getContactMessageByID(UUID id) {
         ContactMessage contactMessage = this.contactMessageRepository.findById(id).get();
 
-        return this.modelMapper.map(contactMessage, ContactMessageDTO.class);
+        return this.modelMapper.map(contactMessage, ContactMessageRequest.class);
     }
 
     @Override
-    public void sendAnswer(ContactReplayDTO contactReplayDTO, String username) {
-        ContactMessage contactMessage = this.contactMessageRepository.findById(contactReplayDTO.getId()).get();
-        ContactMessageDTO contactMessageDTO = this.getContactMessageByID(contactReplayDTO.getId());
+    public void sendAnswer(ContactReplayRequest contactReplayRequest, String username) {
+        ContactMessage contactMessage = this.contactMessageRepository.findById(contactReplayRequest.getId()).get();
+        ContactMessageRequest contactMessageRequest = this.getContactMessageByID(contactReplayRequest.getId());
         String subject = "Response to your contact message";
-        String message = "Dear " + contactMessageDTO.getName() + ",\n\n" +
+        String message = "Dear " + contactMessageRequest.getName() + ",\n\n" +
                 "Thank you for your message. Here's our reply:\n\n" +
-                contactReplayDTO.getAnswer() + "\n\n" +
+                contactReplayRequest.getAnswer() + "\n\n" +
                 "Your message:\n\n" +
                 contactMessage.getMessage() + "\n\n" +
                 "Best regards,\nThe Gamified Photography Team";
-        this.emailService.sendEmail(contactMessageDTO.getEmail(), subject, message);
+        this.emailService.sendEmail(contactMessageRequest.getEmail(), subject, message);
         UserEntity admin = this.userService.getUserByUsername(username).get();
-        contactMessage.setAnswer(contactReplayDTO.getAnswer());
+        contactMessage.setAnswer(contactReplayRequest.getAnswer());
         contactMessage.setWhoAnswer(admin);
         contactMessage.setAnswered(true);
         this.contactMessageRepository.saveAndFlush(contactMessage);
@@ -87,9 +87,9 @@ public class ContactMessageServiceImpl implements ContactMessageService {
     }
 
     @Override
-    public ContactUserDTO getUserDetails(String username) {
+    public ContactUserResponse getUserDetails(String username) {
         UserEntity user = this.userService.getUserByUsername(username).get();
-        return this.modelMapper.map(user, ContactUserDTO.class);
+        return this.modelMapper.map(user, ContactUserResponse.class);
     }
 
 

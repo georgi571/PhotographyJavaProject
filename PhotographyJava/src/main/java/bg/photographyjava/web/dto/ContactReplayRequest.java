@@ -2,7 +2,7 @@ package bg.photographyjava.web.dto;
 
 import java.util.UUID;
 
-public class ContactReplayDTO {
+public class ContactReplayRequest {
     private UUID id;
 
     private String answer;

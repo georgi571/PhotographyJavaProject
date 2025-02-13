@@ -1,6 +1,6 @@
 package bg.photographyjava.web.dto;
 
-public class ContactUserDTO {
+public class ContactUserResponse {
 
     private String realName;
 

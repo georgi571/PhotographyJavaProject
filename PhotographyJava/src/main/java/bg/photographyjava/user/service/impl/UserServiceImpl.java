@@ -190,8 +190,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<ChangeRoleUserDTO> getAllUsers() {
-        return userRepository.findAll().stream().map(user -> new ChangeRoleUserDTO(
+    public List<ChangeRoleUserResponse> getAllUsers() {
+        return userRepository.findAll().stream().map(user -> new ChangeRoleUserResponse(
                 user.getId(),
                 user.getUsername(),
                 user.getRole().getRole().name()
@@ -214,8 +214,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<BanUserDTO> getAllUsersForBan() {
-        return userRepository.findAll().stream().map(user -> new BanUserDTO(
+    public List<BanUserResponse> getAllUsersForBan() {
+        return userRepository.findAll().stream().map(user -> new BanUserResponse(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
@@ -225,7 +225,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void banUserAction(UUID id, BanUserReasonDTO reasonDTO, String username) {
+    public void banUserAction(UUID id, BanUserReasonRequest reasonDTO, String username) {
         UserEntity admin = this.userRepository.findByUsername(username).get();
         UserEntity user = this.userRepository.findById(id).get();
         if (reasonDTO.getAction().equals("ban")) {
@@ -240,10 +240,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public BanUserDTO getUserForBan(UUID id) {
+    public BanUserResponse getUserForBan(UUID id) {
         UserEntity user = this.userRepository.findById(id).get();
 
-        return this.modelMapper.map(user, BanUserDTO.class);
+        return this.modelMapper.map(user, BanUserResponse.class);
     }
 
     @Override

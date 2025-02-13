@@ -72,7 +72,7 @@ export class FeedbackMessagesComponent implements OnInit {
         } else if (this.filter === 'deleted') {
             filtered = this.messages.filter((message: any) => message.deleted);
         } else {
-            filtered = this.messages.filter((message: any) => !message.deleted);
+            filtered = this.messages.filter((message: any) => message);
         }
 
         this.filteredMessages = filtered.sort((a: any, b: any) => {

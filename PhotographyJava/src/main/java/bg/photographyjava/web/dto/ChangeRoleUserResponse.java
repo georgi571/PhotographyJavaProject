@@ -2,7 +2,7 @@ package bg.photographyjava.web.dto;
 
 import java.util.UUID;
 
-public class ChangeRoleUserDTO {
+public class ChangeRoleUserResponse {
 
     private UUID id;
 
@@ -10,7 +10,7 @@ public class ChangeRoleUserDTO {
 
     private String role;
 
-    public ChangeRoleUserDTO(UUID id, String username, String role) {
+    public ChangeRoleUserResponse(UUID id, String username, String role) {
         this.id = id;
         this.username = username;
         this.role = role;

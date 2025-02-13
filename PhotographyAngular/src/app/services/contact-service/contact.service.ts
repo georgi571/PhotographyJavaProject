@@ -15,16 +15,16 @@ export class ContactService {
     }
 
     getAllContactMessage() {
-        return this.http.get(`${this.apiUrl}/contacts/receive`);
+        return this.http.get(`${this.apiUrl}/v1/contacts/receive`);
     }
 
     sendContactMessage(data: any): Observable<any> {
-        return this.http.post(`${this.apiUrl}/contacts/receive`, data);
+        return this.http.post(`${this.apiUrl}/v1/contacts/receive`, data);
     }
 
     sendReply(data: { id: string; answer: string }): Observable<any> {
         const token = this.authService.getToken();
-        return this.http.post(`${this.apiUrl}/contacts/reply`, data, {
+        return this.http.post(`${this.apiUrl}/v1/contacts/reply`, data, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -33,7 +33,7 @@ export class ContactService {
 
     deleteMessage(id: string): Observable<any> {
         const token = this.authService.getToken();
-        return this.http.patch(`${this.apiUrl}/contacts/delete/${id}`, {}, {
+        return this.http.patch(`${this.apiUrl}/v1/contacts/delete/${id}`, {}, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -42,7 +42,7 @@ export class ContactService {
 
     getUserInfo() {
         const token = this.authService.getToken();
-        return this.http.get<any>(`${this.apiUrl}/contacts/user-info`, {
+        return this.http.get<any>(`${this.apiUrl}/v1/contacts/user-info`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

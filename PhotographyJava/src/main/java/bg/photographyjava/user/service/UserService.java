@@ -36,15 +36,15 @@ public interface UserService {
 
     void updatePassword(String username, String encodedNewPassword);
 
-    List<ChangeRoleUserDTO> getAllUsers();
+    List<ChangeRoleUserResponse> getAllUsers();
 
     void updateUserRole(UUID userId, String role, String username);
 
-    List<BanUserDTO> getAllUsersForBan();
+    List<BanUserResponse> getAllUsersForBan();
 
-    void banUserAction(UUID id, BanUserReasonDTO reasonDTO, String username);
+    void banUserAction(UUID id, BanUserReasonRequest reasonDTO, String username);
 
-    BanUserDTO getUserForBan(UUID id);
+    BanUserResponse getUserForBan(UUID id);
 
     List<ApproveUsersResponse> getAllUsersForApprove();
 

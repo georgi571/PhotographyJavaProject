@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class ContactMessageDTO implements Serializable {
+public class ContactMessageRequest implements Serializable {
 
     private UUID id;
 

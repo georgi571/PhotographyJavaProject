@@ -1,23 +1,23 @@
 package bg.photographyjava.contact.service;
 
-import bg.photographyjava.web.dto.ContactMessageDTO;
-import bg.photographyjava.web.dto.ContactReplayDTO;
-import bg.photographyjava.web.dto.ContactUserDTO;
+import bg.photographyjava.web.dto.ContactMessageRequest;
+import bg.photographyjava.web.dto.ContactReplayRequest;
+import bg.photographyjava.web.dto.ContactUserResponse;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface ContactMessageService {
 
-    void receiveContactMessage(ContactMessageDTO contactMessageDTO);
+    void receiveContactMessage(ContactMessageRequest contactMessageRequest);
 
-    List<ContactMessageDTO> getNotAnsweredMessages();
+    List<ContactMessageRequest> getNotAnsweredMessages();
 
-    ContactMessageDTO getContactMessageByID(UUID id);
+    ContactMessageRequest getContactMessageByID(UUID id);
 
-    void sendAnswer(ContactReplayDTO contactReplayDTO, String username);
+    void sendAnswer(ContactReplayRequest contactReplayRequest, String username);
 
     void deleteMessage(UUID id, String username);
 
-    ContactUserDTO getUserDetails(String username);
+    ContactUserResponse getUserDetails(String username);
 }

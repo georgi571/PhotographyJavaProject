@@ -1,6 +1,6 @@
 package bg.photographyjava.web.dto;
 
-public class BanUserReasonDTO {
+public class BanUserReasonRequest {
 
     private String action;
 
