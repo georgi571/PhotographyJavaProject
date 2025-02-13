@@ -3,10 +3,10 @@ package bg.photographyjava.web.dto;
 import java.io.Serializable;
 import java.util.List;
 
-public class RegisterInfoDTO implements Serializable {
+public class RegisterInfoResponse implements Serializable {
     private List<String> countries;
 
-    public RegisterInfoDTO(List<String> countries) {
+    public RegisterInfoResponse(List<String> countries) {
         this.countries = countries;
     }
 

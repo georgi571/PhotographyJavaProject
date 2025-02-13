@@ -1,9 +1,11 @@
 package bg.photographyjava.web.dto;
 
-public class LoginResponseDTO {
+import java.io.Serializable;
+
+public class UserLoginResponse implements Serializable {
     private String jwtToken;
 
-    public LoginResponseDTO(String jwtToken) {
+    public UserLoginResponse(String jwtToken) {
         this.jwtToken = jwtToken;
     }
 

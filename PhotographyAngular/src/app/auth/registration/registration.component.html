@@ -18,6 +18,16 @@
                                     Username is required!
                                 </div>
                             }
+                            @if (registerForm.get('username')?.errors?.['minlength']) {
+                                <div style="color: red">
+                                    Username must be at least 5 characters!
+                                </div>
+                            }
+                            @if (registerForm.get('username')?.errors?.['maxlength']) {
+                                <div style="color: red">
+                                    Username cannot be more than 20 characters!
+                                </div>
+                            }
                             @if (registerForm.get('username')?.errors?.['backendError']) {
                                 <div style="color: red">
                                     {{ registerForm.get('username')?.errors?.['backendError'] }}
@@ -36,6 +46,11 @@
                             @if (registerForm.get('email')?.errors?.['required']) {
                                 <div style="color: red">
                                     Email is required!
+                                </div>
+                            }
+                            @if (registerForm.get('email')?.errors?.['email']) {
+                                <div style="color: red">
+                                    Please enter a valid email address!
                                 </div>
                             }
                             @if (registerForm.get('email')?.errors?.['backendError']) {
@@ -61,6 +76,21 @@
                                     Password is required!
                                 </div>
                             }
+                            @if (registerForm.get('password')?.errors?.['minlength']) {
+                                <div style="color: red">
+                                    Password must be at least 5 characters!
+                                </div>
+                            }
+                            @if (registerForm.get('password')?.errors?.['maxlength']) {
+                                <div style="color: red">
+                                    Password cannot be more than 20 characters!
+                                </div>
+                            }
+                            @if (registerForm.get('password')?.errors?.['backendError']) {
+                                <div style="color: red">
+                                    {{ registerForm.get('password')?.errors?.['backendError'] }}
+                                </div>
+                            }
                         </div>
                     }
                 </div>
@@ -76,10 +106,24 @@
                                     Confirm Password is required!
                                 </div>
                             }
-
                             @if (registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched) {
                                 <div style="color: red">
                                     Passwords do not match!
+                                </div>
+                            }
+                            @if (registerForm.get('confirmPassword')?.errors?.['minlength']) {
+                                <div style="color: red">
+                                    Confirm Password must be at least 5 characters!
+                                </div>
+                            }
+                            @if (registerForm.get('confirmPassword')?.errors?.['maxlength']) {
+                                <div style="color: red">
+                                    Confirm Password cannot be more than 20 characters!
+                                </div>
+                            }
+                            @if (registerForm.get('confirmPassword')?.errors?.['backendError']) {
+                                <div style="color: red">
+                                    {{ registerForm.get('confirmPassword')?.errors?.['backendError'] }}
                                 </div>
                             }
                         </div>
@@ -103,6 +147,11 @@
                                     Country is required!
                                 </div>
                             }
+                            @if (registerForm.get('country')?.errors?.['backendError']) {
+                                <div style="color: red">
+                                    {{ registerForm.get('country')?.errors?.['backendError'] }}
+                                </div>
+                            }
                         </div>
                     }
                 </div>
@@ -115,6 +164,11 @@
                             @if (registerForm.get('city')?.errors?.['required']) {
                                 <div style="color: red">
                                     City is required!
+                                </div>
+                            }
+                            @if (registerForm.get('city')?.errors?.['backendError']) {
+                                <div style="color: red">
+                                    {{ registerForm.get('city')?.errors?.['backendError'] }}
                                 </div>
                             }
                         </div>
@@ -137,6 +191,11 @@
                                     Gender is required!
                                 </div>
                             }
+                            @if (registerForm.get('gender')?.errors?.['backendError']) {
+                                <div style="color: red">
+                                    {{ registerForm.get('gender')?.errors?.['backendError'] }}
+                                </div>
+                            }
                         </div>
                     }
                 </div>
@@ -154,6 +213,11 @@
                             @if (registerForm.get('birthDate')?.errors?.['futureDate']) {
                                 <div style="color: red">
                                     Date of birth cannot be in the future.
+                                </div>
+                            }
+                            @if (registerForm.get('birthDate')?.errors?.['backendError']) {
+                                <div style="color: red">
+                                    {{ registerForm.get('birthDate')?.errors?.['backendError'] }}
                                 </div>
                             }
                         </div>

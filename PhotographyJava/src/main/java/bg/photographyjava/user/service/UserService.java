@@ -18,7 +18,7 @@ public interface UserService {
 
     void registerUser(UserRegisterDTO userRegisterDTO);
 
-    String verify(UserLoginDTO userLoginDTO);
+    String verify(UserLoginRequest userLoginRequest);
 
     UserProfileDTO getProfileDetails(String username);
 
@@ -71,4 +71,6 @@ public interface UserService {
     void acceptFriendRequest(AddFriendDTO addFriendDTO, String username);
 
     void rejectFriendRequest(AddFriendDTO addFriendDTO, String username);
+
+    boolean isValidUser(String username, String password);
 }

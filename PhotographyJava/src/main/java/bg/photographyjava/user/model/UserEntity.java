@@ -22,7 +22,7 @@ public class UserEntity {
     private UUID id;
 
     @Column(name = "username", nullable = false, unique = true)
-    @Size(min = 2, max = 50)
+    @Size(min = 5, max = 20)
     private String username;
 
     @Column(name = "real_name", nullable = false)

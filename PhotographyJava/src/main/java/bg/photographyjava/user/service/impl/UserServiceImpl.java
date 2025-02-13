@@ -10,7 +10,6 @@ import bg.photographyjava.user.repository.RoleRepository;
 import bg.photographyjava.user.repository.UserRepository;
 import bg.photographyjava.user.service.UserService;
 import bg.photographyjava.web.filter.JWTService;
-import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -100,9 +99,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String verify(UserLoginDTO userLoginDTO) {
+    public String verify(UserLoginRequest userLoginRequest) {
         Authentication authentication =
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDTO.getUsername(), userLoginDTO.getPassword()));
+                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginRequest.getUsername(), userLoginRequest.getPassword()));
 
         if (authentication.isAuthenticated()) {
             String role = authentication.getAuthorities()
@@ -111,7 +110,7 @@ public class UserServiceImpl implements UserService {
                     .map(GrantedAuthority::getAuthority)
                     .orElseThrow(() -> new IllegalStateException("User has no roles assigned"));
 
-            return jwtService.generateToken(userLoginDTO.getUsername(), role);
+            return jwtService.generateToken(userLoginRequest.getUsername(), role);
         }
         return "Failed";
     }
@@ -388,5 +387,12 @@ public class UserServiceImpl implements UserService {
 
         this.userRepository.saveAndFlush(user);
         this.userRepository.saveAndFlush(friend);
+    }
+
+    @Override
+    public boolean isValidUser(String username, String password) {
+        return userRepository.findByUsername(username)
+                .map(user -> passwordEncoder.matches(password, user.getPassword()))
+                .orElse(false);
     }
 }
