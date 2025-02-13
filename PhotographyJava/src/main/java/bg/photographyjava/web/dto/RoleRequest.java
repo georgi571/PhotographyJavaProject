@@ -1,6 +1,6 @@
 package bg.photographyjava.web.dto;
 
-public class RoleDTO {
+public class RoleRequest {
     private String role;
 
     public String getRole() {

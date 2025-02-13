@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/v1/admin")
 public class AdminController {
 
     private final UserService userService;
@@ -22,105 +22,90 @@ public class AdminController {
     }
 
     @GetMapping("/change-roles")
-    public List<ChangeRoleUserDTO> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<ChangeRoleUserDTO>> getAllUsers() {
+
+        return ResponseEntity.ok(this.userService.getAllUsers());
     }
 
-    // Update a user's role
     @PutMapping("/change-roles/{userId}")
-    public ResponseEntity<?> updateUserRole(@PathVariable UUID userId, @RequestBody RoleDTO roleDTO, Authentication authentication) {
-        String username = authentication.getName();
-        userService.updateUserRole(userId, roleDTO.getRole(), username);
+    public ResponseEntity<Map<String, String>> updateUserRole(
+            @PathVariable UUID userId,
+            @RequestBody RoleRequest roleRequest,
+            Authentication authentication) {
+
+        this.userService.updateUserRole(userId, roleRequest.getRole(), authentication.getName());
         return ResponseEntity.ok(Map.of("message", "Role updated successfully"));
     }
 
     @GetMapping("/ban-users")
-    public ResponseEntity<?> getUsersForBan() {
+    public ResponseEntity<List<BanUserDTO>> getUsersForBan() {
+
         return ResponseEntity.ok(this.userService.getAllUsersForBan());
     }
 
 
     @PutMapping("/ban-users/{id}")
-    public ResponseEntity<?> banOrUnbanUser(@PathVariable UUID id,
-                                            @RequestBody BanUserReasonDTO request,
-                                            Authentication authentication) {
-        String username = authentication.getName();
-        this.userService.banUserAction(id, request, username);
+    public ResponseEntity<BanUserDTO> banOrUnbanUser(
+            @PathVariable UUID id,
+            @RequestBody BanUserReasonDTO request,
+            Authentication authentication) {
 
-        BanUserDTO userForBan = this.userService.getUserForBan(id);
-
-        return ResponseEntity.ok(userForBan);
+        this.userService.banUserAction(id, request, authentication.getName());
+        return ResponseEntity.ok(this.userService.getUserForBan(id));
     }
 
     @GetMapping("/approve-users")
-    public ResponseEntity<?> getUsersForApprove() {
+    public ResponseEntity<List<ApproveUsersResponse>> getUsersForApprove() {
+
         return ResponseEntity.ok(this.userService.getAllUsersForApprove());
     }
 
 
     @PutMapping("/approve-users/{id}")
-    public ResponseEntity<?> approvingUser(@PathVariable UUID id,
-                                            @RequestBody ApproveUserReasonDTO request,
-                                            Authentication authentication) {
-        String username = authentication.getName();
-        this.userService.approveUserAction(id, request, username);
+    public ResponseEntity<ApproveUsersResponse> approveUser(
+            @PathVariable UUID id,
+            @RequestBody ApproveUserReasonRequest request,
+            Authentication authentication) {
 
-        ApproveUsersDTO userForApprove = this.userService.getUserForApprove(id);
-
-        return ResponseEntity.ok(userForApprove);
+        this.userService.approveUserAction(id, request, authentication.getName());
+        return ResponseEntity.ok(this.userService.getUserForApprove(id));
     }
 
     @GetMapping("/admin-permissions")
-    public ResponseEntity<?> getAdminsWithPermissions() {
-        List<AdminPermissionsDTO> admins = this.userService.getAllAdminsWithPermissions();
-        return ResponseEntity.ok(admins);
+    public ResponseEntity<List<AdminPermissionsResponse>> getAdminsWithPermissions() {
+
+        return ResponseEntity.ok(this.userService.getAllAdminsWithPermissions());
     }
 
     @PutMapping("/admin-permissions/{id}")
-    public ResponseEntity<?> updateAdminPermissions(
+    public ResponseEntity<AdminPermissionsResponse> updateAdminPermissions(
             @PathVariable UUID id,
-            @RequestBody AdminPermissionsUpdateDTO updateDTO,
+            @RequestBody AdminPermissionsUpdateRequest updatePermission,
             Authentication authentication) {
-        String username = authentication.getName();
 
-        AdminPermissionsDTO updatedAdmin = this.userService.updateAdminPermissions(
-                id,
-                updateDTO.getPermissionsToAdd(),
-                updateDTO.getPermissionsToRemove(),
-                username
-        );
-
-        return ResponseEntity.ok(updatedAdmin);
+        return ResponseEntity.ok(this.userService.updateAdminPermissions(
+                id, updatePermission.getPermissionsToAdd(), updatePermission.getPermissionsToRemove(), authentication.getName()));
     }
 
     @GetMapping("/moderator-permissions")
-    public ResponseEntity<?> getModeratorWithPermissions() {
-        List<ModeratorPermissionsDTO> admins = this.userService.getAllModeratorsWithPermissions();
-        return ResponseEntity.ok(admins);
+    public ResponseEntity<List<ModeratorPermissionsResponse>> getModeratorsWithPermissions() {
+
+        return ResponseEntity.ok(this.userService.getAllModeratorsWithPermissions());
     }
 
     @PutMapping("/moderator-permissions/{id}")
-    public ResponseEntity<?> updateModeratorPermissions(
+    public ResponseEntity<ModeratorPermissionsResponse> updateModeratorPermissions(
             @PathVariable UUID id,
-            @RequestBody ModeratorPermissionsUpdateDTO updateDTO,
+            @RequestBody ModeratorPermissionsUpdateRequest updatePermission,
             Authentication authentication) {
-        String username = authentication.getName();
 
-        ModeratorPermissionsDTO updatedModerator = this.userService.updateModerationPermissions(
-                id,
-                updateDTO.getPermissionsToAdd(),
-                updateDTO.getPermissionsToRemove(),
-                username
-        );
-
-        return ResponseEntity.ok(updatedModerator);
+        return ResponseEntity.ok(this.userService.updateModerationPermissions(
+                id, updatePermission.getPermissionsToAdd(), updatePermission.getPermissionsToRemove(), authentication.getName()));
     }
 
     @GetMapping("/permissions")
-    public ResponseEntity<?> getPermissions(Authentication authentication) {
-        String username = authentication.getName();
+    public ResponseEntity<List<UserPermission>> getPermissions(Authentication authentication) {
 
-        List<UserPermission> permissions = this.userService.getCurrentAdminPermissions(username);
-        return ResponseEntity.ok(permissions);
+        return ResponseEntity.ok(this.userService.getCurrentAdminPermissions(authentication.getName()));
     }
 }

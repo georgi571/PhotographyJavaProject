@@ -5,7 +5,7 @@ import bg.photographyjava.user.property.enums.UserPermission;
 import java.util.Set;
 import java.util.UUID;
 
-public class AdminPermissionsDTO {
+public class AdminPermissionsResponse {
 
     private UUID id;
 
@@ -13,10 +13,10 @@ public class AdminPermissionsDTO {
 
     private Set<UserPermission> permissions;
 
-    public AdminPermissionsDTO() {
+    public AdminPermissionsResponse() {
     }
 
-    public AdminPermissionsDTO(UUID id, String username, Set<UserPermission> permissions) {
+    public AdminPermissionsResponse(UUID id, String username, Set<UserPermission> permissions) {
         this.id = id;
         this.username = username;
         this.permissions = permissions;

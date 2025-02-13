@@ -46,19 +46,19 @@ public interface UserService {
 
     BanUserDTO getUserForBan(UUID id);
 
-    List<ApproveUsersDTO> getAllUsersForApprove();
+    List<ApproveUsersResponse> getAllUsersForApprove();
 
-    void approveUserAction(UUID id, ApproveUserReasonDTO reasonDTO, String username);
+    void approveUserAction(UUID id, ApproveUserReasonRequest reasonDTO, String username);
 
-    ApproveUsersDTO getUserForApprove(UUID id);
+    ApproveUsersResponse getUserForApprove(UUID id);
 
-    AdminPermissionsDTO updateAdminPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username);
+    AdminPermissionsResponse updateAdminPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username);
 
-    List<AdminPermissionsDTO> getAllAdminsWithPermissions();
+    List<AdminPermissionsResponse> getAllAdminsWithPermissions();
 
-    List<ModeratorPermissionsDTO> getAllModeratorsWithPermissions();
+    List<ModeratorPermissionsResponse> getAllModeratorsWithPermissions();
 
-    ModeratorPermissionsDTO updateModerationPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username);
+    ModeratorPermissionsResponse updateModerationPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username);
 
     List<UserEntity> getAllUsersForCountries();
 

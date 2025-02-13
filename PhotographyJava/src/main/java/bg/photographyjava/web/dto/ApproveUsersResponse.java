@@ -2,17 +2,17 @@ package bg.photographyjava.web.dto;
 
 import java.util.UUID;
 
-public class ApproveUsersDTO {
+public class ApproveUsersResponse {
     private UUID id;
 
     private String username;
 
     private String email;
 
-    public ApproveUsersDTO() {
+    public ApproveUsersResponse() {
     }
 
-    public ApproveUsersDTO(UUID id, String username, String email) {
+    public ApproveUsersResponse(UUID id, String username, String email) {
         this.id = id;
         this.username = username;
         this.email = email;

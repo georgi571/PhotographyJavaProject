@@ -4,7 +4,7 @@ import bg.photographyjava.user.property.enums.UserPermission;
 
 import java.util.Set;
 
-public class AdminPermissionsUpdateDTO {
+public class AdminPermissionsUpdateRequest {
 
     private Set<UserPermission> permissionsToAdd;
 

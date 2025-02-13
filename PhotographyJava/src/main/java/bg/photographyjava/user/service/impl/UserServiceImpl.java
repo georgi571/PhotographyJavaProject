@@ -247,8 +247,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<ApproveUsersDTO> getAllUsersForApprove() {
-        return userRepository.findAll().stream().filter(userEntity -> !userEntity.isApproved() && !userEntity.isBanned()).map(user -> new ApproveUsersDTO(
+    public List<ApproveUsersResponse> getAllUsersForApprove() {
+        return userRepository.findAll().stream().filter(userEntity -> !userEntity.isApproved() && !userEntity.isBanned()).map(user -> new ApproveUsersResponse(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail()
@@ -256,7 +256,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void approveUserAction(UUID id, ApproveUserReasonDTO reasonDTO, String username) {
+    public void approveUserAction(UUID id, ApproveUserReasonRequest reasonDTO, String username) {
         UserEntity admin = this.userRepository.findByUsername(username).get();
         UserEntity user = this.userRepository.findById(id).get();
         if (reasonDTO.getAction().equals("approve")) {
@@ -271,17 +271,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApproveUsersDTO getUserForApprove(UUID id) {
+    public ApproveUsersResponse getUserForApprove(UUID id) {
         UserEntity user = this.userRepository.findById(id).get();
 
-        return this.modelMapper.map(user, ApproveUsersDTO.class);
+        return this.modelMapper.map(user, ApproveUsersResponse.class);
     }
 
     @Override
-    public List<AdminPermissionsDTO> getAllAdminsWithPermissions() {
+    public List<AdminPermissionsResponse> getAllAdminsWithPermissions() {
         return this.userRepository.findAll().stream()
                 .filter(user -> user.getRole() != null && user.getRole().getRole() == UserRole.ADMIN)
-                .map(admin -> new AdminPermissionsDTO(
+                .map(admin -> new AdminPermissionsResponse(
                         admin.getId(),
                         admin.getUsername(),
                         admin.getPermissions()
@@ -290,7 +290,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AdminPermissionsDTO updateAdminPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username) {
+    public AdminPermissionsResponse updateAdminPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username) {
         UserEntity superAdmin = this.userRepository.findByUsername(username).get();
         UserEntity admin = this.userRepository.findById(id).get();
 
@@ -299,14 +299,14 @@ public class UserServiceImpl implements UserService {
 
         this.userRepository.saveAndFlush(admin);
 
-        return this.modelMapper.map(admin, AdminPermissionsDTO.class);
+        return this.modelMapper.map(admin, AdminPermissionsResponse.class);
     }
 
     @Override
-    public List<ModeratorPermissionsDTO> getAllModeratorsWithPermissions() {
+    public List<ModeratorPermissionsResponse> getAllModeratorsWithPermissions() {
         return this.userRepository.findAll().stream()
                 .filter(user -> user.getRole() != null && user.getRole().getRole() == UserRole.MODERATOR)
-                .map(admin -> new ModeratorPermissionsDTO(
+                .map(admin -> new ModeratorPermissionsResponse(
                         admin.getId(),
                         admin.getUsername(),
                         admin.getPermissions()
@@ -315,7 +315,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ModeratorPermissionsDTO updateModerationPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username) {
+    public ModeratorPermissionsResponse updateModerationPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username) {
         UserEntity superAdmin = this.userRepository.findByUsername(username).get();
         UserEntity moderator = this.userRepository.findById(id).get();
 
@@ -324,7 +324,7 @@ public class UserServiceImpl implements UserService {
 
         this.userRepository.saveAndFlush(moderator);
 
-        return this.modelMapper.map(moderator, ModeratorPermissionsDTO.class);
+        return this.modelMapper.map(moderator, ModeratorPermissionsResponse.class);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package bg.photographyjava.web.dto;
 
-public class ApproveUserReasonDTO {
+public class ApproveUserReasonRequest {
 
     private String action;
 

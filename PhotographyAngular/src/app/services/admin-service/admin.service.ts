@@ -15,12 +15,12 @@ export class AdminService {
     }
 
     getUsers() {
-        return this.http.get<any[]>(`${this.apiUrl}/admin/change-roles`);
+        return this.http.get<any[]>(`${this.apiUrl}/v1/admin/change-roles`);
     }
 
     updateUserRole(userId: string, role: string): Observable<any> {
         const token = this.authService.getToken();
-        return this.http.put(`${this.apiUrl}/admin/change-roles/${userId}`, {role}, {
+        return this.http.put(`${this.apiUrl}/v1/admin/change-roles/${userId}`, {role}, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -28,12 +28,12 @@ export class AdminService {
     }
 
     getUsersForBan() {
-        return this.http.get<any[]>(`${this.apiUrl}/admin/ban-users`);
+        return this.http.get<any[]>(`${this.apiUrl}/v1/admin/ban-users`);
     }
 
     banUser(userId: string, reason: string): Observable<any> {
         const token = this.authService.getToken();
-        return this.http.put(`${this.apiUrl}/admin/ban-users/${userId}`, {
+        return this.http.put(`${this.apiUrl}/v1/admin/ban-users/${userId}`, {
             action: 'ban',
             reason: reason
         }, {
@@ -45,7 +45,7 @@ export class AdminService {
 
     unbanUser(userId: string): Observable<any> {
         const token = this.authService.getToken();
-        return this.http.put(`${this.apiUrl}/admin/ban-users/${userId}`, {action: 'unban'}, {
+        return this.http.put(`${this.apiUrl}/v1/admin/ban-users/${userId}`, {action: 'unban'}, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -53,12 +53,12 @@ export class AdminService {
     }
 
     getUsersForApprove() {
-        return this.http.get<any[]>(`${this.apiUrl}/admin/approve-users`);
+        return this.http.get<any[]>(`${this.apiUrl}/v1/admin/approve-users`);
     }
 
     approveUser(userId: number): Observable<void> {
         const token = this.authService.getToken();
-        return this.http.put<void>(`${this.apiUrl}/admin/approve-users/${userId}`, {action: 'approve'}, {
+        return this.http.put<void>(`${this.apiUrl}/v1/admin/approve-users/${userId}`, {action: 'approve'}, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -67,7 +67,7 @@ export class AdminService {
 
     rejectUser(userId: number, reason: string): Observable<void> {
         const token = this.authService.getToken();
-        return this.http.put<void>(`${this.apiUrl}/admin/approve-users/${userId}`, {
+        return this.http.put<void>(`${this.apiUrl}/v1/admin/approve-users/${userId}`, {
             action: 'reject',
             reason: reason
         }, {
@@ -78,13 +78,13 @@ export class AdminService {
     }
 
     getAdminsWithPermissions() {
-        return this.http.get<any[]>(`${this.apiUrl}/admin/admin-permissions`);
+        return this.http.get<any[]>(`${this.apiUrl}/v1/admin/admin-permissions`);
     }
 
     updateAdminPermissions(adminId: string, permissionsToAdd: string[], permissionsToRemove: string[]): Observable<any> {
         const token = this.authService.getToken();
         return this.http.put<any>(
-            `${this.apiUrl}/admin/admin-permissions/${adminId}`,
+            `${this.apiUrl}/v1/admin/admin-permissions/${adminId}`,
             {permissionsToAdd, permissionsToRemove},
             {
                 headers: {
@@ -95,13 +95,13 @@ export class AdminService {
     }
 
     getModeratorsWithPermissions() {
-        return this.http.get<any[]>(`${this.apiUrl}/admin/moderator-permissions`);
+        return this.http.get<any[]>(`${this.apiUrl}/v1/admin/moderator-permissions`);
     }
 
     updateModeratorPermissions(moderatorId: string, permissionsToAdd: string[], permissionsToRemove: string[]): Observable<any> {
         const token = this.authService.getToken();
         return this.http.put<any>(
-            `${this.apiUrl}/admin/moderator-permissions/${moderatorId}`,
+            `${this.apiUrl}/v1/admin/moderator-permissions/${moderatorId}`,
             {permissionsToAdd, permissionsToRemove},
             {
                 headers: {
@@ -113,7 +113,7 @@ export class AdminService {
 
     getPermissions() {
         const token = this.authService.getToken();
-        return this.http.get<any[]>(`${this.apiUrl}/admin/permissions`, {
+        return this.http.get<any[]>(`${this.apiUrl}/v1/admin/permissions`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
