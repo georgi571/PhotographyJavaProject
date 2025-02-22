@@ -40,12 +40,14 @@ export class AdminComponent implements OnInit{
         console.log('Fetching permissions...');
         this.adminService.getPermissions().subscribe({
             next: (data) => {
-                console.log('Permissions:', data);
-                // Process permissions logic
+                if (data.includes('approveUsers')) this.approve = true;
+                if (data.includes('changeUserRoles')) this.roles = true;
+                if (data.includes('banUsers')) this.ban = true;
+                if (data.includes('answerFeedback')) this.feedback = true;
+                console.log(data);
             },
             error: (error) => {
                 console.error('Error fetching permissions:', error);
-                // Show an error message to the user if needed
             }
         });
     }

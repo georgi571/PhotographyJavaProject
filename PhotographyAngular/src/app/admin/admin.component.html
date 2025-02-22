@@ -8,12 +8,24 @@
 
         <nav class="sidebar">
             <ul>
-                <li><a routerLink="/admin/approve-users" routerLinkActive="active">Approve Users</a></li>
-                <li><a routerLink="/admin/change-roles" routerLinkActive="active">Change User Roles</a></li>
-                <li><a routerLink="/admin/ban-users" routerLinkActive="active">Ban Users</a></li>
-                <li><a routerLink="/admin/feedback" routerLinkActive="active">Feedback Messages</a></li>
+                @if (approve) {
+                    <li><a routerLink="/admin/approve-users" routerLinkActive="active">Approve Users</a></li>
+                }
+                @if (roles) {
+                    <li><a routerLink="/admin/change-roles" routerLinkActive="active">Change User Roles</a></li>
+                }
+                @if (ban) {
+                    <li><a routerLink="/admin/ban-users" routerLinkActive="active">Ban Users</a></li>
+                }
+                @if (feedback) {
+                    <li><a routerLink="/admin/feedback" routerLinkActive="active">Feedback Messages</a></li>
+                }
+                @if (roles) {
                 <li><a routerLink="/admin/admin-permission" routerLinkActive="active">Admin Permission</a></li>
-                <li><a routerLink="/admin/moderator-permission" routerLinkActive="active">Moderator Permission</a></li>
+                }
+                @if (roles) {
+                    <li><a routerLink="/admin/moderator-permission" routerLinkActive="active">Moderator Permission</a></li>
+                }
             </ul>
         </nav>
 

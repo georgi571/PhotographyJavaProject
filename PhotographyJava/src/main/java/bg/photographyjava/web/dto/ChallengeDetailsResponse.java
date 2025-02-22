@@ -1,17 +1,19 @@
 package bg.photographyjava.web.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
-public class ChallengeDTO {
+public class ChallengeDetailsResponse {
     private UUID id;
     private String title;
     private String description;
     private String details;
-    private LocalDateTime createdAt;
+    private LocalDateTime startAt;
     private LocalDateTime endAt;
     private String type;
     private String activity;
+    private List<PictureDTO> pictures;
 
     public UUID getId() {
         return id;
@@ -45,12 +47,12 @@ public class ChallengeDTO {
         this.details = details;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public LocalDateTime getStartAt() {
+        return startAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setStartAt(LocalDateTime startAt) {
+        this.startAt = startAt;
     }
 
     public LocalDateTime getEndAt() {
@@ -75,5 +77,13 @@ public class ChallengeDTO {
 
     public void setActivity(String activity) {
         this.activity = activity;
+    }
+
+    public List<PictureDTO> getPictures() {
+        return pictures;
+    }
+
+    public void setPictures(List<PictureDTO> pictures) {
+        this.pictures = pictures;
     }
 }

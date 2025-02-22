@@ -63,7 +63,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         challenge.setDetails("Daily created challenge created by Gamified Photography!");
         challenge.setActivity(ChallengeActivity.ACTIVE);
         challenge.setType(ChallengeType.DAILY);
-        challenge.setCreatedAt(startAt);
+        challenge.setStartAt(startAt);
         challenge.setEndAt(endAt);
 
         challengeRepository.saveAndFlush(challenge);
@@ -100,33 +100,33 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    public List<ChallengeDTO> getAllChallenges() {
+    public List<ChallengeResponse> getAllChallenges() {
         LocalDateTime now = LocalDateTime.now();
         List<Challenge> challenges = challengeRepository.findAll();
 
-        List<ChallengeDTO> challengesDTO = new ArrayList<>();
+        List<ChallengeResponse> challengesDTO = new ArrayList<>();
         for (Challenge challenge : challenges) {
-            challengesDTO.add(this.modelMapper.map(challenge, ChallengeDTO.class));
+            challengesDTO.add(this.modelMapper.map(challenge, ChallengeResponse.class));
         }
 
         return challengesDTO;
     }
 
     @Override
-    public ChallengeDetailsDTO getChallengeDetails(UUID id, String username) {
+    public ChallengeDetailsResponse getChallengeDetails(UUID id, String username) {
         UserEntity user = this.userService.getUserByUsername(username).get();
         Challenge challenge = challengeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Challenge not found"));
 
-        ChallengeDetailsDTO challengeDetailsDTO = new ChallengeDetailsDTO();
-        challengeDetailsDTO.setId(challenge.getId());
-        challengeDetailsDTO.setTitle(challenge.getTitle());
-        challengeDetailsDTO.setDescription(challenge.getDescription());
-        challengeDetailsDTO.setDetails(challenge.getDetails());
-        challengeDetailsDTO.setCreatedAt(challenge.getCreatedAt());
-        challengeDetailsDTO.setEndAt(challenge.getEndAt());
-        challengeDetailsDTO.setType(challenge.getType().name());
-        challengeDetailsDTO.setActivity(challenge.getActivity().name());
+        ChallengeDetailsResponse challengeDetailsResponse = new ChallengeDetailsResponse();
+        challengeDetailsResponse.setId(challenge.getId());
+        challengeDetailsResponse.setTitle(challenge.getTitle());
+        challengeDetailsResponse.setDescription(challenge.getDescription());
+        challengeDetailsResponse.setDetails(challenge.getDetails());
+        challengeDetailsResponse.setStartAt(challenge.getStartAt());
+        challengeDetailsResponse.setEndAt(challenge.getEndAt());
+        challengeDetailsResponse.setType(challenge.getType().name());
+        challengeDetailsResponse.setActivity(challenge.getActivity().name());
 
         List<PictureDTO> pictureDTOs = challenge.getPictures().stream().filter(picture -> !picture.isDeleted())
                 .map(picture -> {
@@ -157,9 +157,9 @@ public class ChallengeServiceImpl implements ChallengeService {
                 })
                 .collect(Collectors.toList());
 
-        challengeDetailsDTO.setPictures(pictureDTOs);
+        challengeDetailsResponse.setPictures(pictureDTOs);
 
-        return challengeDetailsDTO;
+        return challengeDetailsResponse;
     }
 
     @Override
@@ -313,5 +313,48 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     public List<Challenge> findByType(ChallengeType challengeType) {
         return this.challengeRepository.findByType(challengeType);
+    }
+
+    @Override
+    public ChallengeResponse createChallenge(CreateEventRequest createEventRequest, String username) {
+        LocalDateTime startAt = createEventRequest.getStartAt().atTime(0, 0, 0);
+        LocalDateTime endAt = createEventRequest.getEndAt().atTime(23, 59, 59);
+
+        Challenge challenge = new Challenge();
+        challenge.setTitle(createEventRequest.getTitle());
+        challenge.setDescription(createEventRequest.getDescription());
+        challenge.setDetails(createEventRequest.getDetails());
+        challenge.setStartAt(startAt);
+        challenge.setEndAt(endAt);
+        challenge.setType(ChallengeType.valueOf(createEventRequest.getType()));
+        challenge.setActivity(ChallengeActivity.UPCOMING);
+
+        this.challengeRepository.saveAndFlush(challenge);
+
+        return this.modelMapper.map(challenge, ChallengeResponse.class);
+    }
+
+    @Override
+    public ChallengeResponse editChallenge(UUID id, EditEventRequest editEventRequest, String name) {
+        Challenge challenge = this.challengeRepository.findById(id).get();
+
+        LocalDateTime startAt = editEventRequest.getStartAt().atTime(0, 0, 0);
+        LocalDateTime endAt = editEventRequest.getEndAt().atTime(23, 59, 59);
+
+        challenge.setTitle(editEventRequest.getTitle());
+        challenge.setDescription(editEventRequest.getDescription());
+        challenge.setDetails(editEventRequest.getDetails());
+        challenge.setStartAt(startAt);
+        challenge.setEndAt(endAt);
+        challenge.setType(ChallengeType.valueOf(editEventRequest.getType()));
+
+        this.challengeRepository.saveAndFlush(challenge);
+
+        return this.modelMapper.map(challenge, ChallengeResponse.class);
+    }
+
+    @Override
+    public void deleteChallenge(UUID id, String name) {
+        this.challengeRepository.deleteById(id);
     }
 }

@@ -153,6 +153,89 @@ body {
     background-color: #003378;
 }
 
+.modal h2 {
+    color: #004aad;
+    margin-bottom: 20px;
+}
+
+.modal form {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal label {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.create-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
+    z-index: 1000; /* Ensure modal is on top */
+}
+
+.create-modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    width: 90%; /* Adjust width for better mobile view */
+    max-width: 700px; /* Max width to avoid too large modals */
+    max-height: 80vh; /* Ensure it doesn't overflow the viewport */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    z-index: 1001; /* Ensure modal is on top of backdrop */
+    box-sizing: border-box;
+    overflow-y: auto; /* Allow scrolling if content overflows */
+}
+
+.modal input[type="file"],
+.modal input[type="text"],
+textarea {
+    margin-top: 5px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.submit-btn,
+.cancel-btn {
+    margin-top: 15px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.submit-btn {
+    background-color: #004aad;
+    color: #fff;
+}
+
+.submit-btn:hover {
+    background-color: #003b87;
+}
+
+.cancel-btn {
+    background-color: #ec3131;
+    color: #fff;
+}
+
+.cancel-btn:hover {
+    background-color: #d31f1f;
+}
+
 @media (max-width: 768px) {
     .challenge-filter {
         flex-direction: column;

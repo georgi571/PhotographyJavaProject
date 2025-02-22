@@ -30,20 +30,15 @@ public class UserController {
     // return full information about the user details
 
     @GetMapping("profile/{username}")
-    public ResponseEntity<?> getUserInfo(@PathVariable String username, Authentication authentication) {
-        UserProfileDTO userProfileDTO = this.userService.getProfileDetails(username);
-
-        return ResponseEntity.ok(userProfileDTO);
+    public ResponseEntity<UserProfileDTO> getUserInfo(@PathVariable String username) {
+        return ResponseEntity.ok(this.userService.getProfileDetails(username));
     }
 
     // get user details information for edit page
 
     @GetMapping("profile/edit")
-    public ResponseEntity<?> getUserDetails(Authentication authentication) {
-        String username = authentication.getName();
-        UserEditProfileDTO userEditProfileDTO = this.userService.getProfileEditDetails(username);
-
-        return ResponseEntity.ok(userEditProfileDTO);
+    public ResponseEntity<UserEditProfileDTO> getUserDetails(Authentication authentication) {
+        return ResponseEntity.ok(this.userService.getProfileEditDetails(authentication.getName()));
     }
 
     // change user details information
@@ -73,11 +68,8 @@ public class UserController {
     }
 
     @GetMapping("profile/edit/username")
-    public ResponseEntity<?> getUserUsername(Authentication authentication) {
-        String username = authentication.getName();
-        UserChangeUsernameDTO userChangeUsernameDTO = this.userService.getUserUsernameDetails(username);
-
-        return ResponseEntity.ok(userChangeUsernameDTO);
+    public ResponseEntity<UserChangeUsernameDTO> getUserUsername(Authentication authentication) {
+        return ResponseEntity.ok(this.userService.getUserUsernameDetails(authentication.getName()));
     }
 
     @PutMapping("profile/edit/username")
@@ -113,11 +105,8 @@ public class UserController {
     }
 
     @GetMapping("profile/edit/email")
-    public ResponseEntity<?> getUserEmail(Authentication authentication) {
-        String username = authentication.getName();
-        UserChangeEmailDTO userChangeEmailDTO = this.userService.getUserEmailDetails(username);
-
-        return ResponseEntity.ok(userChangeEmailDTO);
+    public ResponseEntity<UserChangeEmailDTO> getUserEmail(Authentication authentication) {
+        return ResponseEntity.ok(this.userService.getUserEmailDetails(authentication.getName()));
     }
 
     @PutMapping("profile/edit/email")
@@ -186,30 +175,26 @@ public class UserController {
 
     @PostMapping("/add-friend")
     public ResponseEntity<String> addFriend(@RequestBody AddFriendDTO addFriendDTO, Authentication authentication) {
-        String username = authentication.getName();
-        this.userService.addFriendByUsername(addFriendDTO, username);
+        this.userService.addFriendByUsername(addFriendDTO, authentication.getName());
         return ResponseEntity.ok("Friend added successfully");
     }
 
     @PostMapping("/follow-user")
     public ResponseEntity<String> followUser(@RequestBody FollowUserDTO followUserDTO, Authentication authentication) {
-        String username = authentication.getName();
-        this.userService.followUserByUsername(followUserDTO, username);
+        this.userService.followUserByUsername(followUserDTO, authentication.getName());
         return ResponseEntity.ok("User followed successfully");
     }
 
     @PostMapping("/accept-friend-request")
     public ResponseEntity<String> acceptFriendRequest(@RequestBody AddFriendDTO addFriendDTO, Authentication authentication) {
-        String username = authentication.getName();
-        userService.acceptFriendRequest(addFriendDTO, username);
+        this.userService.acceptFriendRequest(addFriendDTO, authentication.getName());
         return ResponseEntity.ok("Friend request accepted.");
     }
 
     // Reject a friend request
     @PostMapping("/reject-friend-request")
     public ResponseEntity<String> rejectFriendRequest(@RequestBody AddFriendDTO addFriendDTO, Authentication authentication) {
-        String username = authentication.getName();
-        userService.rejectFriendRequest(addFriendDTO, username);
+        this.userService.rejectFriendRequest(addFriendDTO, authentication.getName());
         return ResponseEntity.ok("Friend request rejected.");
     }
 }

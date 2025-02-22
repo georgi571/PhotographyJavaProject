@@ -27,13 +27,13 @@ public class AdminController {
         return ResponseEntity.ok(this.userService.getAllUsers());
     }
 
-    @PutMapping("/change-roles/{userId}")
+    @PutMapping("/change-roles/{id}")
     public ResponseEntity<Map<String, String>> updateUserRole(
-            @PathVariable UUID userId,
+            @PathVariable UUID id,
             @RequestBody RoleRequest roleRequest,
             Authentication authentication) {
 
-        this.userService.updateUserRole(userId, roleRequest.getRole(), authentication.getName());
+        this.userService.updateUserRole(id, roleRequest.getRole(), authentication.getName());
         return ResponseEntity.ok(Map.of("message", "Role updated successfully"));
     }
 
@@ -59,7 +59,6 @@ public class AdminController {
 
         return ResponseEntity.ok(this.userService.getAllUsersForApprove());
     }
-
 
     @PutMapping("/approve-users/{id}")
     public ResponseEntity<ApproveUsersResponse> approveUser(

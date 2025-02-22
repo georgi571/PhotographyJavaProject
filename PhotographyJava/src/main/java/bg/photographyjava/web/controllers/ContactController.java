@@ -26,15 +26,11 @@ public class ContactController {
         this.contactMessageService = contactMessageService;
     }
 
-    // send to the FE all message which is still not answered
-
     @GetMapping("/receive")
     public ResponseEntity<List<ContactMessageRequest>> getUnansweredMessages() {
 
         return ResponseEntity.ok(this.contactMessageService.getNotAnsweredMessages());
     }
-
-    // receive contact message from FE
 
     @PostMapping("/receive")
     public ResponseEntity<Map<String, String>> receiveMessage(
@@ -78,11 +74,7 @@ public class ContactController {
 
     @GetMapping("/user-info")
     public ResponseEntity<ContactUserResponse> getUserInfo(Authentication authentication) {
-        if (authentication != null) {
-            ContactUserResponse user = this.contactMessageService.getUserDetails(authentication.getName());
-            return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+
+        return ResponseEntity.ok(this.contactMessageService.getUserDetails(authentication.getName()));
     }
 }

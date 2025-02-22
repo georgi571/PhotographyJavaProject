@@ -26,10 +26,25 @@ export class ChallengeListComponent implements OnInit {
     selectedStatus: string = 'all';
     selectedType: string = 'all';
 
+    showCreateModal: boolean = false;
+    newChallenge: any = {
+        title: '',
+        description: '',
+        details: '',
+        startAt: '',
+        endAt: '',
+        type: ''
+    };
+
+    tomorrow: string;
+
     constructor(
         private challengeService: ChallengeService,
         private route: ActivatedRoute
     ) {
+        const tomorrowDate = new Date();
+        tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+        this.tomorrow = tomorrowDate.toISOString().split('T')[0];
     }
 
     ngOnInit(): void {
@@ -55,14 +70,40 @@ export class ChallengeListComponent implements OnInit {
 
             const isStatusMatch =
                 this.selectedStatus === 'all' ||
-                (this.selectedStatus === 'active' && new Date(challenge.endAt) > now) ||
-                (this.selectedStatus === 'past' && new Date(challenge.endAt) <= now);
+                (this.selectedStatus === 'active' && challenge.activity.toLowerCase() === 'active') ||
+                (this.selectedStatus === 'upcoming' && challenge.activity.toLowerCase() === 'upcoming') ||
+                (this.selectedStatus === 'past' && challenge.activity.toLowerCase() === 'past');
 
             const isTypeMatch =
                 this.selectedType === 'all' ||
                 this.selectedType === challenge.type.toLowerCase();
 
             return isStatusMatch && isTypeMatch;
+        });
+    }
+
+    openCreateModal(): void {
+        this.showCreateModal = true;
+    }
+
+    closeCreateModal(): void {
+        this.showCreateModal = false;
+    }
+
+    submitCreate(): void {
+        this.challengeService.createChallenge(this.newChallenge).subscribe({
+            next: () => {
+                alert('Challenge created successfully!');
+                this.showCreateModal = false;
+                this.challengeService.getAllChallenges().subscribe((challenges) => {
+                    this.allChallenges = challenges;
+                    this.filterChallenges();
+                });
+            },
+            error: (error) => {
+                console.error('Error creating challenge:', error);
+                alert('Failed to create challenge.');
+            }
         });
     }
 }

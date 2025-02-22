@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/challenges")
+@RequestMapping("/api/v1/challenges")
 public class ChallengeController {
 
     private final ChallengeService challengeService;
@@ -27,12 +27,12 @@ public class ChallengeController {
     }
 
     @GetMapping("/list")
-    public List<ChallengeDTO> getAllChallenges() {
+    public List<ChallengeResponse> getAllChallenges() {
         return this.challengeService.getAllChallenges();
     }
 
     @GetMapping("/{id}")
-    public ChallengeDetailsDTO getChallengeDetails(@PathVariable UUID id, Authentication authentication) {
+    public ChallengeDetailsResponse getChallengeDetails(@PathVariable UUID id, Authentication authentication) {
         String username = authentication.getName();
         return this.challengeService.getChallengeDetails(id, username);
     }
@@ -179,4 +179,23 @@ public class ChallengeController {
         }
     }
 
+    @PostMapping("/create-challenge")
+    public ResponseEntity<ChallengeResponse> createChallenge(@RequestBody CreateEventRequest createEventRequest,
+                                                              Authentication authentication) {
+
+        return ResponseEntity.ok(this.challengeService.createChallenge(createEventRequest, authentication.getName()));
+    }
+
+    @PutMapping("/edit-challenge/{id}")
+    public ResponseEntity<ChallengeResponse> editChallenge(@PathVariable UUID id,
+                                                           @RequestBody EditEventRequest editEventRequest,
+                                                           Authentication authentication) {
+        return ResponseEntity.ok(this.challengeService.editChallenge(id, editEventRequest, authentication.getName()));
+    }
+
+    @DeleteMapping("/delete-challenge/{id}")
+    public ResponseEntity<Void> deleteChallenge(@PathVariable UUID id, Authentication authentication) {
+        this.challengeService.deleteChallenge(id, authentication.getName());
+        return ResponseEntity.noContent().build();
+    }
 }

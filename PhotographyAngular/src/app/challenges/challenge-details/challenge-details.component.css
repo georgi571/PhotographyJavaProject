@@ -712,6 +712,27 @@ textarea {
     box-shadow: 0 0 5px rgba(230, 74, 25);
 }
 
+.delete-btn {
+    margin-left: 10px;
+    padding: 10px 15px;
+    background-color: #f30920;
+    color: white;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+    background-color: #ac0919;
+}
+
+.delete-btn:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgb(200, 31, 48);
+}
+
 .edit-backdrop {
     position: fixed;
     top: 0;

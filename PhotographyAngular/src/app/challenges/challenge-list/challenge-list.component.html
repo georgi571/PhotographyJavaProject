@@ -7,6 +7,7 @@
             <select id="status" [(ngModel)]="selectedStatus" (change)="filterChallenges()">
                 <option value="all">All</option>
                 <option value="active">Active</option>
+                <option value="upcoming">Upcoming</option>
                 <option value="past">Past</option>
             </select>
 
@@ -20,7 +21,7 @@
         </div>
 
         <div class="create-event">
-            <button class="btn create-event-btn">Create Event</button>
+            <button class="btn create-event-btn" (click)="openCreateModal()">Create Event</button>
         </div>
     </div>
 
@@ -34,7 +35,7 @@
                 </div>
 
                 <div class="middle">
-                    <p>Start: {{ challenge.createdAt | date:'yyyy-MM-dd HH:mm:ss' }}</p>
+                    <p>Start: {{ challenge.startAt | date:'yyyy-MM-dd HH:mm:ss' }}</p>
                     <br>
                     <p>End: {{ challenge.endAt | date:'yyyy-MM-dd HH:mm:ss' }}</p>
                 </div>
@@ -45,6 +46,40 @@
             </div>
         }
     </div>
+
+    @if (showCreateModal) {
+        <div class="modal-backdrop create-backdrop">
+            <div class="modal create-modal">
+                <h2>Create New Challenge</h2>
+                <form (ngSubmit)="submitCreate()">
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" [(ngModel)]="newChallenge.title" name="title" required />
+
+                    <label for="description">Description:</label>
+                    <textarea id="description" [(ngModel)]="newChallenge.description" name="description" rows="4"></textarea>
+
+                    <label for="details">Details:</label>
+                    <textarea id="details" [(ngModel)]="newChallenge.details" name="details" rows="4"></textarea>
+
+                    <label for="startAt">Start Date:</label>
+                    <input type="date" id="startAt" [(ngModel)]="newChallenge.startAt" name="startAt" [min]="tomorrow" required />
+
+                    <label for="endAt">End Date:</label>
+                    <input type="date" id="endAt" [(ngModel)]="newChallenge.endAt" name="endAt" [min]="tomorrow" required />
+
+                    <label for="new-type">Type:</label>
+                    <select id="new-type" [(ngModel)]="newChallenge.type" name="new-type" required>
+                        <option value="DAILY">DAILY</option>
+                        <option value="THEMED">THEMED</option>
+                        <option value="ADMIN">ADMIN</option>
+                    </select>
+
+                    <button type="submit" class="submit-btn">Create</button>
+                    <button type="button" class="cancel-btn" (click)="closeCreateModal()">Cancel</button>
+                </form>
+            </div>
+        </div>
+    }
 </body>
 
 <app-footer/>

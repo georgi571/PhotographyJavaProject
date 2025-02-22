@@ -29,7 +29,7 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    private final UserDetailsService userDetailsService; // Inject UserDetailsService bean
+    private final UserDetailsService userDetailsService;
     private final JwtFilter jwtFilter;
 
     public SecurityConfiguration(UserDetailsService userDetailsService, JwtFilter jwtFilter) {
@@ -84,8 +84,10 @@ public class SecurityConfiguration {
 //                                .anyRequest().authenticated()
 //                )
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/**").permitAll())
+                        .requestMatchers("/**").permitAll()
+                        .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+//                .oauth2ResourceServer(oauth2 -> oauth2.jwt())
 //                .formLogin(formLogin ->
 //                        formLogin
 //                                .loginPage("/api/users/login")

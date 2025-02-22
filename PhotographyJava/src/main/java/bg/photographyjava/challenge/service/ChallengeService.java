@@ -3,9 +3,7 @@ package bg.photographyjava.challenge.service;
 import bg.photographyjava.challenge.model.Challenge;
 import bg.photographyjava.challenge.property.enums.ChallengeType;
 import bg.photographyjava.web.dto.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,9 +14,9 @@ public interface ChallengeService {
 
     void setChallengeWinners(UUID challengeId);
 
-    List<ChallengeDTO> getAllChallenges();
+    List<ChallengeResponse> getAllChallenges();
 
-    ChallengeDetailsDTO getChallengeDetails(UUID id, String username);
+    ChallengeDetailsResponse getChallengeDetails(UUID id, String username);
 
     boolean savePictureForChallenge(UUID challengeId, String pictureFilePath, String caption, String story, String username);
 
@@ -35,4 +33,10 @@ public interface ChallengeService {
     String deleteComment(UUID challengeId, UUID pictureId, UUID commentId, String username);
 
     List<Challenge> findByType(ChallengeType challengeType);
+
+    ChallengeResponse createChallenge(CreateEventRequest createEventRequest, String username);
+
+    ChallengeResponse editChallenge(UUID id, EditEventRequest editEventRequest, String name);
+
+    void deleteChallenge(UUID id, String name);
 }

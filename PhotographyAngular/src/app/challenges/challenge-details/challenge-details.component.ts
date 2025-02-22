@@ -44,10 +44,15 @@ export class ChallengeDetailsComponent implements OnInit {
         story: '',
     };
 
+    tomorrow: string;
+
     constructor(
         private route: ActivatedRoute,
         private challengeService: ChallengeService
     ) {
+        const tomorrowDate = new Date();
+        tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+        this.tomorrow = tomorrowDate.toISOString().split('T')[0];
     }
 
     ngOnInit(): void {
@@ -295,9 +300,8 @@ export class ChallengeDetailsComponent implements OnInit {
     }
 
     openEditModal(): void {
-        // You can either open a modal or navigate to an edit form
         console.log('Edit button clicked!');
-        this.showEditModal = true; // Example for modal
+        this.showEditModal = true;
     }
 
     closeEditModal(): void {
@@ -305,27 +309,40 @@ export class ChallengeDetailsComponent implements OnInit {
     }
 
     submitEdit(): void {
-        // if (!this.challengeDetails.title || !this.challengeDetails.activity || !this.challengeDetails.createdAt || !this.challengeDetails.endAt) {
-        //     this.errorMessage = 'Please fill in all required fields.';
-        //     return;
-        // }
-        //
-        // // Convert date fields back to ISO format if required by backend
-        // const updatedDetails = {
-        //     ...this.challengeDetails,
-        //     createdAt: new Date(this.challengeDetails.createdAt).toISOString(),
-        //     endAt: new Date(this.challengeDetails.endAt).toISOString(),
-        // };
-        //
-        // // Send the updated details to the backend
-        // this.challengeService.updateChallenge(this.challengeId, updatedDetails).subscribe({
-        //     next: (response) => {
-        //         console.log('Challenge details updated successfully:', response);
-        //         this.showEditModal = false; // Close the modal on success
-        //     },
-        //     error: (error) => {
-        //         console.error('Error updating challenge details:', error);
-        //     },
-        // });
+        if (!this.challengeDetails.title || !this.challengeDetails.activity || !this.challengeDetails.startAt || !this.challengeDetails.endAt) {
+            this.errorMessage = 'Please fill in all required fields.';
+            return;
+        }
+
+        const updatedDetails = {
+            ...this.challengeDetails,
+            createdAt: new Date(this.challengeDetails.startAt).toISOString(),
+            endAt: new Date(this.challengeDetails.endAt).toISOString(),
+        };
+
+        this.challengeService.updateChallenge(this.challengeId, updatedDetails).subscribe({
+            next: (response) => {
+                console.log('Challenge details updated successfully:', response);
+                this.showEditModal = false;
+            },
+            error: (error) => {
+                console.error('Error updating challenge details:', error);
+            },
+        });
+    }
+
+    deleteChallenge(): void {
+        if (confirm('Are you sure you want to delete this challenge?')) {
+            this.challengeService.deleteChallenge(this.challengeId).subscribe({
+                next: () => {
+                    alert('Challenge deleted successfully!');
+                    window.location.reload();
+                },
+                error: (err) => {
+                    console.error('Error deleting challenge:', err);
+                    alert('Failed to delete challenge.');
+                }
+            });
+        }
     }
 }

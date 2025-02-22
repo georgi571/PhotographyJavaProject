@@ -15,12 +15,12 @@ export class ChallengeService {
     constructor(private http: HttpClient, private router: Router, private authService: AuthService) { }
 
     getAllChallenges() {
-        return this.http.get<any[]>(`${this.apiUrl}/challenges/list`);
+        return this.http.get<any[]>(`${this.apiUrl}/v1/challenges/list`);
     }
 
     getChallengeDetails(challengeId: string) {
         const token = this.authService.getToken();
-        return this.http.get<any>(`${this.apiUrl}/challenges/${challengeId}`, {
+        return this.http.get<any>(`${this.apiUrl}/v1/challenges/${challengeId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -34,7 +34,7 @@ export class ChallengeService {
 
     uploadPicture(challengeId: string, formData: FormData) {
         const token = this.authService.getToken();
-        return this.http.post(`${this.apiUrl}/challenges/${challengeId}/pictures`, formData, {
+        return this.http.post(`${this.apiUrl}/v1/challenges/${challengeId}/pictures`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -43,7 +43,7 @@ export class ChallengeService {
 
     toggleLikePicture(challengeId: string, pictureId: string) {
         const token = this.authService.getToken();
-        return this.http.put<any>(`${this.apiUrl}/challenges/${challengeId}/pictures/${pictureId}/toggle-like`, {}, {
+        return this.http.put<any>(`${this.apiUrl}/v1/challenges/${challengeId}/pictures/${pictureId}/toggle-like`, {}, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -53,7 +53,7 @@ export class ChallengeService {
     addCommentToPicture(challengeId: string, pictureId: string, commentText: string) {
         const token = this.authService.getToken();
         const commentData = { text: commentText };
-        return this.http.post(`${this.apiUrl}/challenges/${challengeId}/pictures/${pictureId}/comments`, commentData, {
+        return this.http.post(`${this.apiUrl}/v1/challenges/${challengeId}/pictures/${pictureId}/comments`, commentData, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -63,7 +63,7 @@ export class ChallengeService {
     reportPicture(challengeId: string, pictureId: string, reason: string) {
         const token = this.authService.getToken();
         return this.http.post(
-            `${this.apiUrl}/challenges/${challengeId}/pictures/${pictureId}/report`,
+            `${this.apiUrl}/v1/challenges/${challengeId}/pictures/${pictureId}/report`,
             { text: reason },
             {
                 headers: {
@@ -75,7 +75,7 @@ export class ChallengeService {
 
     reportComment(challengeId: string, pictureId: string, commentId: string, reason: string) {
         const token = this.authService.getToken();
-        return this.http.post(`${this.apiUrl}/challenges/${challengeId}/pictures/${pictureId}/comments/${commentId}/report`,
+        return this.http.post(`${this.apiUrl}/v1/challenges/${challengeId}/pictures/${pictureId}/comments/${commentId}/report`,
             { text: reason },
             {
                 headers: {
@@ -88,7 +88,7 @@ export class ChallengeService {
     deletePicture(challengeId: string, pictureId: string) {
         const token = this.authService.getToken();
         return this.http.delete(
-            `${this.apiUrl}/challenges/${challengeId}/pictures/${pictureId}/delete`,
+            `${this.apiUrl}/v1/challenges/${challengeId}/pictures/${pictureId}/delete`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -100,12 +100,33 @@ export class ChallengeService {
     deleteComment(challengeId: string, pictureId: string, commentId: string) {
         const token = this.authService.getToken();
         return this.http.delete<any>(
-            `${this.apiUrl}/challenges/${challengeId}/pictures/${pictureId}/comments/${commentId}/delete`,
+            `${this.apiUrl}/v1/challenges/${challengeId}/pictures/${pictureId}/comments/${commentId}/delete`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             }
         );
+    }
+
+    createChallenge(challenge: any) {
+        const token = this.authService.getToken();
+        return this.http.post(`${this.apiUrl}/v1/challenges/create-challenge`, challenge, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+    }
+
+    updateChallenge(challengeId: string, updatedDetails: any) {
+        const token = this.authService.getToken();
+        return this.http.put<any>(`${this.apiUrl}/v1/challenges/edit-challenge/${challengeId}`, updatedDetails, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+    }
+
+    deleteChallenge(challengeId: string) {
+        const token = this.authService.getToken();
+        return this.http.delete<void>(`${this.apiUrl}/v1/challenges/delete-challenge/${challengeId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
     }
 }

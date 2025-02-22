@@ -67,6 +67,7 @@ public class UserServiceImpl implements UserService {
             admin.setApproved(true);
             admin.setBanned(false);
             admin.setProfilePicturePath("https://res.cloudinary.com/dkyp0c0lz/image/upload/v1737304170/male-profile-picture_rltohq.avif");
+            admin.setPermissions(Set.of(UserPermission.APPROVE_USERS, UserPermission.CHANGE_USER_ROLES, UserPermission.BAN_USERS, UserPermission.ANSWER_FEEDBACK, UserPermission.DELETE_MESSAGE, UserPermission.DELETE_PICTURE));
             this.userRepository.saveAndFlush(admin);
         }
     }

@@ -114,7 +114,10 @@ export class LeaderboardsComponent implements OnInit {
 
     applyCountryFilter(): void {
         if (this.selectedCountry === 'all') {
-            this.usersByPoints = this.rawUsersByPoints.slice(0, 10);
+            this.usersByPoints = [...this.rawUsersByPoints]
+                .sort((a, b) => b.points - a.points)
+                .slice(0, 10)
+                .map((user, index) => ({ ...user, rank: index + 1 }));
         } else {
             this.usersByPoints = this.rawUsersByPoints
                 .filter(user => user.country === this.selectedCountry)
@@ -124,7 +127,10 @@ export class LeaderboardsComponent implements OnInit {
 
     applyChallengeTypeFilter(): void {
         if (this.selectedChallengeType === 'all') {
-            this.usersByChallenges = this.rawUsersByChallenges.slice(0, 10);
+            this.usersByChallenges = [...this.rawUsersByChallenges]
+                .sort((a, b) => b.challengesWon - a.challengesWon)
+                .slice(0, 10)
+                .map((user, index) => ({ ...user, rank: index + 1 }));
         } else {
             this.usersByChallenges = this.rawUsersByChallenges
                 .filter(user => user.challengeType === this.selectedChallengeType)

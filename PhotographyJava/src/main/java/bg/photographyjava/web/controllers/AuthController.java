@@ -26,10 +26,9 @@ public class AuthController {
         this.userService = userService;
     }
 
-    //login user and return the jwt token to FE
-
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponse> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
+
         String jwtToken = this.userService.verify(userLoginRequest);
 
         if (jwtToken != null) {
@@ -40,15 +39,11 @@ public class AuthController {
         }
     }
 
-    // Send all country names to the FE
-
     @GetMapping("/register")
     public ResponseEntity<RegisterInfoResponse> getRegistrationInfo() {
-        List<String> countries = CountryEnum.getCountryNames();
-        return ResponseEntity.ok(new RegisterInfoResponse(countries));
-    }
 
-    // Register user or send error to FE
+        return ResponseEntity.ok(new RegisterInfoResponse(CountryEnum.getCountryNames()));
+    }
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> registerUser(
@@ -66,7 +61,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
-        userService.registerUser(userRegisterDTO);
+        this.userService.registerUser(userRegisterDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Collections.singletonMap("message", "User registered successfully"));

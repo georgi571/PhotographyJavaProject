@@ -35,11 +35,8 @@ public class Challenge {
     @Column(name = "activity")
     private ChallengeActivity activity;
 
-    @Column(name = "createdAt")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updatedAt")
-    private LocalDateTime updatedAt;
+    @Column(name = "startAt")
+    private LocalDateTime startAt;
 
     @Column(name = "endAt")
     private LocalDateTime endAt;
@@ -98,20 +95,12 @@ public class Challenge {
         this.activity = activity;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public LocalDateTime getStartAt() {
+        return startAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setStartAt(LocalDateTime startAt) {
+        this.startAt = startAt;
     }
 
     public LocalDateTime getEndAt() {
