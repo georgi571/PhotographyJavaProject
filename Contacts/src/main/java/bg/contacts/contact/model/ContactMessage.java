@@ -1,6 +1,5 @@
-package bg.photographyjava.contact.model;
+package bg.contacts.contact.model;
 
-import bg.photographyjava.user.model.UserEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
@@ -36,9 +35,8 @@ public class ContactMessage {
     @Column(name = "is_answered")
     private boolean isAnswered;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "who_answer_id")
-    private UserEntity whoAnswer;
+    @Column(name = "who_answer")
+    private UUID whoAnswer;
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
@@ -96,14 +94,14 @@ public class ContactMessage {
     }
 
     public void setAnswered(boolean answered) {
-        isAnswered = answered;
+        this.isAnswered = answered;
     }
 
-    public UserEntity getWhoAnswer() {
+    public UUID getWhoAnswer() {
         return whoAnswer;
     }
 
-    public void setWhoAnswer(UserEntity whoAnswer) {
+    public void setWhoAnswer(UUID whoAnswer) {
         this.whoAnswer = whoAnswer;
     }
 

@@ -9,22 +9,28 @@ import {AuthService} from '../auth-service/auth.service';
 })
 export class ContactService {
     private apiUrl = environment.apiUrl;
+    private contactUrl = environment.contactUrl;
 
     constructor(private http: HttpClient,
                 private authService: AuthService) {
     }
 
     getAllContactMessage() {
-        return this.http.get(`${this.apiUrl}/v1/contacts/receive`);
+        const token = this.authService.getToken();
+        return this.http.get(`${this.contactUrl}/v1/contacts/receive`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
     }
 
     sendContactMessage(data: any): Observable<any> {
-        return this.http.post(`${this.apiUrl}/v1/contacts/receive`, data);
+        return this.http.post(`${this.contactUrl}/v1/contacts/receive`, data);
     }
 
-    sendReply(data: { id: string; answer: string }): Observable<any> {
+    sendReply(data: { id: string; answer: string; userId: string | null }): Observable<any> {
         const token = this.authService.getToken();
-        return this.http.post(`${this.apiUrl}/v1/contacts/reply`, data, {
+            return this.http.post(`${this.contactUrl}/v1/contacts/reply`, data , {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -33,7 +39,7 @@ export class ContactService {
 
     deleteMessage(id: string): Observable<any> {
         const token = this.authService.getToken();
-        return this.http.patch(`${this.apiUrl}/v1/contacts/delete/${id}`, {}, {
+        return this.http.delete(`${this.contactUrl}/v1/contacts/delete/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -42,7 +48,7 @@ export class ContactService {
 
     getUserInfo() {
         const token = this.authService.getToken();
-        return this.http.get<any>(`${this.apiUrl}/v1/contacts/user-info`, {
+        return this.http.get<any>(`${this.apiUrl}/v1/users/user-info`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

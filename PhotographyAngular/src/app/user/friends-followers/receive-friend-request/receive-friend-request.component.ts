@@ -13,15 +13,7 @@ import {Router} from '@angular/router';
     styleUrl: './receive-friend-request.component.css'
 })
 export class ReceiveFriendRequestComponent implements OnInit {
-    // receivedFriendRequests: string[] = [];
-
-    receivedFriendRequests = [
-        { id: 1, username: 'john_doe', profilePicture: 'path/to/john_image.jpg' },
-        { id: 2, username: 'jane_smith', profilePicture: 'path/to/jane_image.jpg' },
-        // Add more received friend requests here
-    ];
-
-    // Array to hold the filtered friend requests based on search input
+    receivedFriendRequests: any[] = [];
     filteredReceivedRequests: any[] = [];
     searchTerm: string = '';
 
@@ -35,8 +27,13 @@ export class ReceiveFriendRequestComponent implements OnInit {
     }
 
     getReceivedFriendRequests(): void {
-        this.profileService.getReceivedFriendRequests().subscribe(data => {
-            this.receivedFriendRequests = data;
+        this.profileService.getReceivedFriendRequests().subscribe({
+            next: (data) => {
+                this.receivedFriendRequests = data;
+                this.filterReceivedRequests();
+                console.log(data);
+            },
+            error: (error) => console.error('Error fetching sent requests:', error)
         });
     }
 
@@ -47,31 +44,39 @@ export class ReceiveFriendRequestComponent implements OnInit {
         );
     }
 
-    viewFriendProfile(followingUser: any) {
-        this.router.navigate(['/profile', followingUser.username]);
+    viewFriendProfile(friend: any) {
+        this.router.navigate(['/profile', friend.username]);
     }
 
-    acceptRequest(username: string): void {
-        this.profileService.acceptFriendRequest(username).subscribe(
+    acceptRequest(friend: any): void {
+        this.profileService.acceptFriendRequest(friend.username).subscribe(
             response => {
-                console.log('Friend request accepted:', response);
-                this.getReceivedFriendRequests();
+                alert('Friend request accepted!');
+                this.filterReceivedRequests();
             }
         );
+        window.location.reload();
     }
 
-    rejectRequest(username: string): void {
-        this.profileService.rejectFriendRequest(username).subscribe(
+    rejectRequest(friend: any): void {
+        this.profileService.rejectFriendRequest(friend.username).subscribe(
             response => {
-                console.log('Friend request rejected:', response);
-                this.getReceivedFriendRequests();
+                alert('Friend request rejected!');
+                this.filterReceivedRequests();
             }
         );
     }
 
     confirmBlock(friend: any) {
-        if (confirm(`Are you sure you want to block following user ${friend.username}?`)) {
-            this.receivedFriendRequests = this.receivedFriendRequests.filter(f => f.id !== friend.id);
+        if (confirm(`Are you sure you want to block the user ${friend.username}?`)) {
+            this.profileService.blockUser(friend.username).subscribe(
+                response => {
+                    alert('User was successfully blocked.');
+                    this.receivedFriendRequests = this.receivedFriendRequests.filter(f => f.username !== friend.username);
+                    this.filterReceivedRequests();
+                }
+            );
         }
+        window.location.reload();
     }
 }

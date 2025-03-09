@@ -14,14 +14,7 @@ import {Router} from '@angular/router';
 })
 export class BlockUsersComponent implements OnInit{
 
-    // blockedUsers: string[] = [];
-
-    blockedUsers = [
-        { id: 1, username: 'JohnDoe', email: 'john@example.com', profilePicture: 'assets/images/john.png' },
-        { id: 2, username: 'JaneSmith', email: 'jane@example.com', profilePicture: 'assets/images/jane.png' },
-        // Add more blocked users here...
-    ];
-
+    blockedUsers: any[] = [];
     filteredBlockedUsers: any[] = [];
     searchTerm: string = '';
 
@@ -37,6 +30,7 @@ export class BlockUsersComponent implements OnInit{
     getAllBlockedUsers(): void {
         this.profileService.getBlockedUsers().subscribe(data => {
             this.blockedUsers = data;
+            this.filterBlockedUsers();
         });
     }
 
@@ -53,13 +47,15 @@ export class BlockUsersComponent implements OnInit{
         this.router.navigate(['/profile', user.username]);
     }
 
-    // Unblock the user
     unblockUser(user: any) {
-        const index = this.blockedUsers.indexOf(user);
-        if (index !== -1) {
-            this.blockedUsers.splice(index, 1);
-            this.filterBlockedUsers();  // Re-filter after unblocking
+        if (confirm(`Are you sure you want to unblock ${user.username}?`)) {
+            this.profileService.unblockUser(user.username).subscribe(() => {
+                alert('User was successfully unblocked.');
+                this.blockedUsers = this.blockedUsers.filter(user => user.username !== user.username);
+                this.filterBlockedUsers();
+            });
         }
+        window.location.reload();
     }
 
 }

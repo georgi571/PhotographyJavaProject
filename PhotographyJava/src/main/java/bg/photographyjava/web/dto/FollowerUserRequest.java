@@ -1,6 +1,6 @@
 package bg.photographyjava.web.dto;
 
-public class FollowUserDTO {
+public class FollowerUserRequest {
     private String username;
 
     public String getUsername() {

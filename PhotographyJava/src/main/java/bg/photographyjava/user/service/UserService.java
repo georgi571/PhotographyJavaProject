@@ -66,11 +66,45 @@ public interface UserService {
 
     void addFriendByUsername(AddFriendDTO addFriendDTO, String username);
 
-    void followUserByUsername(FollowUserDTO followUserDTO, String username);
+    void followUserByUsername(FollowerUserRequest followerUserRequest, String username);
 
     void acceptFriendRequest(AddFriendDTO addFriendDTO, String username);
 
     void rejectFriendRequest(AddFriendDTO addFriendDTO, String username);
 
     boolean isValidUser(String username, String password);
+
+    void removeFriendByUsername(AddFriendDTO addFriendDTO, String username);
+
+    void cancelFriendRequestByUsername(AddFriendDTO addFriendDTO, String username);
+
+    void unfollowUserByUsername(FollowerUserRequest followerUserRequest, String username);
+
+    boolean areFriends(String username, String targetUsername);
+
+    boolean hasSentFriendRequest(String username, String targetUsername);
+
+    boolean isFollowing(String username, String targetUsername);
+
+    Set<FriendsResponse> getSentFriendRequests(String username);
+
+    Set<FriendsResponse> getReceiveFriendRequests(String username);
+
+    Set<FollowersResponse> getAllFollowers(String username);
+
+    Set<FollowersResponse> getAllFollowings(String username);
+
+    Set<FriendsResponse> getAllFriends(String username);
+
+    void removeFollowerByUsername(FollowerUserRequest followerUserRequest, String username);
+
+    void blockUser(String username, String blockedUsername);
+
+    void unblockUser(String username, String blockedUsername);
+
+    Set<BlockedUserResponse> getBlockedUsers(String username);
+
+    boolean isUserBlocked(String username, String blockedUsername);
+
+    ContactUserResponse getUserDetails(String username);
 }

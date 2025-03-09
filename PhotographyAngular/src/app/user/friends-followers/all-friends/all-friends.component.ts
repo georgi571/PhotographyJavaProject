@@ -14,14 +14,7 @@ import {Router} from '@angular/router';
 })
 export class AllFriendsComponent implements OnInit {
 
-    // friends: string[] = [];
-
-    friends = [
-        { id: 1, username: 'JohnDoe', email: 'john@example.com', profilePicture: 'assets/images/john.png' },
-        { id: 2, username: 'JaneSmith', email: 'jane@example.com', profilePicture: 'assets/images/jane.png' },
-        { id: 3, username: 'SamWilson', email: 'sam@example.com', profilePicture: null },
-    ];
-
+    friends: any[] = [];
     filteredFriends: any[] = [];
     searchTerm: string = '';
 
@@ -37,6 +30,7 @@ export class AllFriendsComponent implements OnInit {
     getAllFriends(): void {
         this.profileService.getFriends().subscribe(data => {
             this.friends = data;
+            this.filterFriends();
         });
     }
 
@@ -49,18 +43,31 @@ export class AllFriendsComponent implements OnInit {
     }
 
     viewFriendProfile(friend: any) {
-        this.router.navigate(['/profile', 'georgi571']);
+        this.router.navigate(['/profile', friend.username]);
     }
 
     unfriend(friend: any) {
         if (confirm(`Are you sure you want to unfriend ${friend.username}?`)) {
-            this.friends = this.friends.filter(f => f.id !== friend.id);
+            this.profileService.removeFriend(friend.username).subscribe(
+                response => {
+                    console.log('Unfriended:', response);
+                    this.friends = this.friends.filter(f => f.username !== friend.username);
+                    this.filterFriends(); // Update filtered list
+                }
+            );
         }
     }
 
     confirmBlock(friend: any) {
         if (confirm(`Are you sure you want to block ${friend.username}?`)) {
-            this.friends = this.friends.filter(f => f.id !== friend.id);
+            this.profileService.blockUser(friend.username).subscribe(
+                response => {
+                    alert('User was successfully blocked.');
+                    this.friends = this.friends.filter(f => f.username !== friend.username);
+                    this.filterFriends();
+                }
+            );
         }
+        window.location.reload();
     }
 }

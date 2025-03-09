@@ -38,7 +38,8 @@ export class ContactComponent implements OnInit {
         }
     }
 
-    constructor(private contactService: ContactService, private router: Router,) {
+    constructor(private contactService: ContactService,
+                private router: Router) {
     }
 
 

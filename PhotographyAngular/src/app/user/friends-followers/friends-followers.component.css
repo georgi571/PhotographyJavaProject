@@ -200,6 +200,13 @@ table td input[type="checkbox"] {
     background-color: #388e3c;
 }
 
+.profile-picture {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
 
 @media (max-width: 768px) {
     .admin-panel {

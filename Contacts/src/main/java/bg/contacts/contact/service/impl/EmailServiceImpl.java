@@ -1,6 +1,6 @@
-package bg.photographyjava.contact.service.impl;
+package bg.contacts.contact.service.impl;
 
-import bg.photographyjava.contact.service.EmailService;
+import bg.contacts.contact.service.EmailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

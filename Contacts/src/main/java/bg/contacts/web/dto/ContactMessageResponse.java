@@ -1,27 +1,17 @@
-package bg.photographyjava.web.dto;
-
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+package bg.contacts.web.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class ContactMessageRequest implements Serializable {
+public class ContactMessageResponse implements Serializable {
 
     private UUID id;
 
-    @NotNull
-    @Size(min = 1, max = 50)
     private String name;
 
-    @NotNull
-    @Email
     private String email;
 
-    @NotNull
-    @Size(min = 1, max = 2000)
     private String message;
 
     private boolean isAnswered;

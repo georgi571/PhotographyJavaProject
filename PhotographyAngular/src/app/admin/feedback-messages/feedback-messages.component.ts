@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {ContactService} from '../../services/contact-service/contact.service';
 import {FormsModule} from '@angular/forms';
 import {DatePipe} from '@angular/common';
+import {AuthService} from '../../services/auth-service/auth.service';
+import {JwtService} from '../../services/jwt-service/jwt.service';
 
 @Component({
     selector: 'app-feedback-messages',
@@ -20,12 +22,21 @@ export class FeedbackMessagesComponent implements OnInit {
     errorMessage: string | null = null;
 
     isSortDescending: boolean = true;
+    userId: string | null = null;
 
-    constructor(private contactService: ContactService) {
+    constructor(private contactService: ContactService,
+                private authService: AuthService,
+                private jwtService: JwtService) {
     }
 
     ngOnInit(): void {
         this.loadMessages();
+
+        const token = this.authService.getToken();
+        if (token) {
+            const decodedToken = this.jwtService.decodeToken(token);
+            this.userId = decodedToken?.userId;
+        }
     }
 
     loadMessages(): void {
@@ -93,7 +104,7 @@ export class FeedbackMessagesComponent implements OnInit {
             return;
         }
 
-        this.contactService.sendReply({id: message.id, answer: message.answer}).subscribe({
+        this.contactService.sendReply({id: message.id, answer: message.answer, userId: this.userId}).subscribe({
             next: () => {
                 alert('Reply sent successfully!');
                 message.answered = true;

@@ -13,14 +13,7 @@ import {FormsModule} from '@angular/forms';
     styleUrl: './all-followers.component.css'
 })
 export class AllFollowersComponent implements OnInit {
-    // followers: string[] = [];
-
-    followers = [
-        { id: 1, username: 'john_doe', email: 'john.doe@example.com', profilePicture: 'path/to/john_image.jpg', blocked: false },
-        { id: 2, username: 'jane_smith', email: 'jane.smith@example.com', profilePicture: 'path/to/jane_image.jpg', blocked: false },
-        // More followers...
-    ];
-
+    followers: any[] = [];
     filteredFollowers: any[] = [];
     searchTerm: string = '';
 
@@ -36,6 +29,8 @@ export class AllFollowersComponent implements OnInit {
     getAllFollowers(): void {
         this.profileService.getFollowers().subscribe(data => {
             this.followers = data;
+            console.log(data);
+            this.filterFollowers();
         });
     }
 
@@ -54,13 +49,26 @@ export class AllFollowersComponent implements OnInit {
 
     removeFollower(follower: any) {
         if (confirm(`Are you sure you want to remove follower ${follower.username}?`)) {
-            this.followers = this.followers.filter(f => f.id !== follower.id);
+            this.profileService.removeFollower(follower.username).subscribe(
+                response => {
+                    console.log('Follower removed:', response);
+                    this.followers = this.followers.filter(f => f.id !== follower.id);
+                    this.filterFollowers();
+                }
+            );
         }
     }
 
     confirmBlock(follower: any) {
         if (confirm(`Are you sure you want to block follower ${follower.username}?`)) {
-            this.followers = this.followers.filter(f => f.id !== follower.id);
+            this.profileService.blockUser(follower.username).subscribe(
+                response => {
+                    alert('User was successfully blocked.');
+                    this.followers = this.followers.filter(f => f.username !== follower.username);
+                    this.filterFollowers();
+                }
+            );
         }
+        window.location.reload();
     }
 }

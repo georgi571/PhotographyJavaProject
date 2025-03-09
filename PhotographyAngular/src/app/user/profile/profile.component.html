@@ -14,66 +14,97 @@
                 </div>
             }
             <div class="profile-button">
-                @if (userDetails.username === username || role === 'ADMIN') {
+                @if (userDetails.username === username) {
                     <a href="profile/edit">Edit Profile</a>
                 }
 
                 @if (userDetails.username !== username) {
-                    <button (click)="addFriend()" class="btn btn-primary">Add Friend</button>
-                    <button (click)="followUser()" class="btn btn-secondary">Follow</button>
+                    @if (!isFriend && !hasPendingRequest) {
+                        <button (click)="addFriend()" class="btn btn-primary">Add Friend</button>
+                    }
+
+                    @if (isFriend) {
+                        <button (click)="removeFriend()" class="btn btn-danger">Remove Friend</button>
+                    }
+
+                    @if (hasPendingRequest) {
+                        <button (click)="cancelFriendRequest()" class="btn btn-warning">Cancel Friend Request</button>
+                    }
+
+                    @if (!isFollowing) {
+                        <button (click)="followUser()" class="btn btn-secondary">Follow</button>
+
+                    }
+
+                    @if (isFollowing) {
+                        <button (click)="unfollowUser()" class="btn btn-danger">Unfollow</button>
+
+                    }
+                    <button class="btn block-btn" (click)="confirmBlock(userDetails)">Block</button>
                 }
             </div>
             <div class="info">
-                <p><strong>Username:</strong> {{userDetails.username}} </p>
-                <p><strong>Name:</strong> {{userDetails.name}} </p>
-                <p><strong>Country:</strong> {{userDetails.country}} </p>
-                <p><strong>City:</strong> {{userDetails.city}} </p>
-                <p><strong>Gender:</strong> {{userDetails.gender}} </p>
-                <p><strong>Age:</strong> {{userDetails.age}} </p>
-                <p><strong>Rank:</strong> {{userDetails.rank}} </p>
-                <p><strong>Points collected:</strong> {{userDetails.points}} </p>
+                <p><strong>Username:</strong> {{ userDetails.username }} </p>
+                <p><strong>Name:</strong> {{ userDetails.name }} </p>
+                <p><strong>Country:</strong> {{ userDetails.country }} </p>
+                <p><strong>City:</strong> {{ userDetails.city }} </p>
+                <p><strong>Gender:</strong> {{ userDetails.gender }} </p>
+                <p><strong>Age:</strong> {{ userDetails.age }} </p>
+                <p><strong>Rank:</strong> {{ userDetails.rank }} </p>
+                <p><strong>Points collected:</strong> {{ userDetails.points }} </p>
             </div>
             <div class="friends-followers">
-                <h3>Friends - <span>4</span></h3>
+                @if (userDetails.username === username) {
+                    <h3>Friends - <span>{{ friends?.length }}</span></h3>
+                }
+                @if (userDetails.username !== username) {
+                    <h3>Friends - <span>{{ currFriends?.length }}</span></h3>
+                }
                 <div class="list">
-                    <div class="list-item">
-                        <img src="../../../assets/images/male-profile-picture.avif" alt="Friend 1">
-                        <p>Friend 1</p>
-                    </div>
-                    <div class="list-item">
-                        <img src="../../../assets/images/male-profile-picture.avif" alt="Friend 2">
-                        <p>Friend 2</p>
-                    </div>
-                    <div class="list-item">
-                        <img src="../../../assets/images/male-profile-picture.avif" alt="Friend 3">
-                        <p>Friend 3</p>
-                    </div>
-                    <div class="list-item">
-                        <img src="../../../assets/images/male-profile-picture.avif" alt="Friend 4">
-                        <p>Friend 4</p>
-                    </div>
+                    @if (userDetails.username === username) {
+                        @for (friend of friends.slice(0, 4); track friend.id) {
+                            <div class="list-item">
+                                <img [src]="friend.profilePicturePath" alt="{{ friend.username }}">
+                                <p>{{ friend.username }}</p>
+                            </div>
+                        }
+                    }
+                    @if (userDetails.username !== username) {
+                        @for (friend of currFriends.slice(0, 4); track friend.id) {
+                            <div class="list-item">
+                                <img [src]="friend.profilePicturePath" alt="{{ friend.username }}">
+                                <p>{{ friend.username }}</p>
+                            </div>
+                        }
+                    }
+
                 </div>
                 <div class="view-all">
                     <a href="/profile/friends">See All Friends</a>
                 </div>
-                <h3>Followers - <span>4</span></h3>
+                @if (userDetails.username === username) {
+                    <h3>Followers - <span>{{ followers?.length }}</span></h3>
+                }
+                @if (userDetails.username !== username) {
+                    <h3>Followers - <span>{{ currFollowers?.length }}</span></h3>
+                }
                 <div class="list">
-                    <div class="list-item">
-                        <img src="../../../assets/images/male-profile-picture.avif" alt="Follower 1">
-                        <p>Follower 1</p>
-                    </div>
-                    <div class="list-item">
-                        <img src="../../../assets/images/male-profile-picture.avif" alt="Follower 2">
-                        <p>Follower 2</p>
-                    </div>
-                    <div class="list-item">
-                        <img src="../../../assets/images/male-profile-picture.avif" alt="Follower 3">
-                        <p>Follower 3</p>
-                    </div>
-                    <div class="list-item">
-                        <img src="../../../assets/images/male-profile-picture.avif" alt="Follower 4">
-                        <p>Follower 4</p>
-                    </div>
+                    @if (userDetails.username == username) {
+                        @for (follower of followers.slice(0, 4); track follower.id) {
+                            <div class="list-item">
+                                <img [src]="follower.profilePicturePath" alt="{{ follower.username }}">
+                                <p>{{ follower.username }}</p>
+                            </div>
+                        }
+                    }
+                    @if (userDetails.username !== username) {
+                        @for (follower of currFollowers.slice(0, 4); track follower.id) {
+                            <div class="list-item">
+                                <img [src]="follower.profilePicturePath" alt="{{ follower.username }}">
+                                <p>{{ follower.username }}</p>
+                            </div>
+                        }
+                    }
                 </div>
                 <div class="view-all">
                     <a href="/profile/followers">See All Followers</a>

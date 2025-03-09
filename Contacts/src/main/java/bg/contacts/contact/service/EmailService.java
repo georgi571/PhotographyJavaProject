@@ -1,4 +1,4 @@
-package bg.photographyjava.contact.service;
+package bg.contacts.contact.service;
 
 public interface EmailService {
 

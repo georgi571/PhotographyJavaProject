@@ -13,14 +13,7 @@ import {Router} from '@angular/router';
     styleUrl: './send-friend-request.component.css'
 })
 export class SendFriendRequestComponent implements OnInit {
-    // sentFriendRequests: string[] = [];
-
-    sentFriendRequests = [
-        { id: 1, username: 'john_doe', profilePicture: 'path/to/john_image.jpg' },
-        { id: 2, username: 'jane_smith', profilePicture: 'path/to/jane_image.jpg' },
-        // Add more sent friend requests here
-    ];
-
+    sentFriendRequests: any[] = [];
     filteredFriendRequests: any[] = [];
     searchTerm: string = '';
 
@@ -34,8 +27,12 @@ export class SendFriendRequestComponent implements OnInit {
     }
 
     getSentFriendRequests(): void {
-        this.profileService.getSentFriendRequests().subscribe(data => {
-            this.sentFriendRequests = data;
+        this.profileService.getSentFriendRequests().subscribe({
+            next: (data) => {
+                this.sentFriendRequests = data;
+                this.filterSentRequests();
+            },
+            error: (error) => console.error('Error fetching sent requests:', error)
         });
     }
 
@@ -51,8 +48,15 @@ export class SendFriendRequestComponent implements OnInit {
     }
 
     cancelRequest(friend: any) {
-        if (confirm(`Are you sure you want to cansel friend request to user ${friend.username}?`)) {
-            this.sentFriendRequests = this.sentFriendRequests.filter(f => f.id !== friend.id);
+        if (confirm(`Are you sure you want to cancel the friend request to ${friend.username}?`)) {
+            this.profileService.cancelFriendRequest(friend.username).subscribe({
+                next: () => {
+                    this.sentFriendRequests = this.sentFriendRequests.filter(f => f.username !== friend.username);
+                    this.filterSentRequests();
+                    alert('Friend request canceled successfully.');
+                },
+                error: (error) => console.error('Error canceling friend request:', error)
+            });
         }
     }
 }

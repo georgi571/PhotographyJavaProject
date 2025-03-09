@@ -13,14 +13,7 @@ import {Router} from '@angular/router';
     styleUrl: './all-following.component.css'
 })
 export class AllFollowingComponent implements OnInit {
-    // following: string[] = [];
-
-    followings = [
-        { id: 1, username: 'john_doe', email: 'john.doe@example.com', profilePicture: 'path/to/john_image.jpg', blocked: false },
-        { id: 2, username: 'jane_smith', email: 'jane.smith@example.com', profilePicture: 'path/to/jane_image.jpg', blocked: false },
-        // More following users...
-    ];
-
+    followings: any[] = [];
     filteredFollowing: any[] = [];
     searchTerm: string = '';
 
@@ -36,6 +29,7 @@ export class AllFollowingComponent implements OnInit {
     getAllFollowing(): void {
         this.profileService.getFollowing().subscribe(data => {
             this.followings = data;
+            this.filterFollowing();
         });
     }
 
@@ -51,15 +45,28 @@ export class AllFollowingComponent implements OnInit {
         this.router.navigate(['/profile', followingUser.username]);
     }
 
-    unfollow(follower: any) {
-        if (confirm(`Are you sure you want to remove following user ${follower.username}?`)) {
-            this.followings = this.followings.filter(f => f.id !== follower.id);
+    unfollow(followingUser: any) {
+        if (confirm(`Are you sure you want to remove following user ${followingUser.username}?`)) {
+            this.profileService.unfollowUser(followingUser.username).subscribe(
+                response => {
+                    console.log('Unfollowed user:', response);
+                    this.followings = this.followings.filter(f => f.username !== followingUser.username);
+                    this.filterFollowing();
+                }
+            );
         }
     }
 
-    confirmBlock(follower: any) {
-        if (confirm(`Are you sure you want to block following user ${follower.username}?`)) {
-            this.followings = this.followings.filter(f => f.id !== follower.id);
+    confirmBlock(followingUser: any) {
+        if (confirm(`Are you sure you want to block following user ${followingUser.username}?`)) {
+            this.profileService.blockUser(followingUser.username).subscribe(
+                response => {
+                    alert('User was successfully blocked.');
+                    this.followings = this.followings.filter(f => f.username !== followingUser.username);
+                    this.filterFollowing();
+                }
+            );
         }
+        window.location.reload();
     }
 }

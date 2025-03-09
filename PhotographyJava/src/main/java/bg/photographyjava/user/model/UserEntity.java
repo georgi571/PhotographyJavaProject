@@ -105,12 +105,17 @@ public class UserEntity {
     @ManyToMany
     @JoinTable(name = "user_followers",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "follower_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "follower_id"))
     private Set<UserEntity> followers;
 
     @ManyToMany(mappedBy = "followers")
     private Set<UserEntity> following;
+
+    @ManyToMany
+    @JoinTable(name = "user_blocked_users",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "blocked_user_id"))
+    private Set<UserEntity> blockedUsers;
 
     public UUID getId() {
         return id;
@@ -310,5 +315,13 @@ public class UserEntity {
 
     public void setFollowing(Set<UserEntity> following) {
         this.following = following;
+    }
+
+    public Set<UserEntity> getBlockedUsers() {
+        return blockedUsers;
+    }
+
+    public void setBlockedUsers(Set<UserEntity> blockedUsers) {
+        this.blockedUsers = blockedUsers;
     }
 }

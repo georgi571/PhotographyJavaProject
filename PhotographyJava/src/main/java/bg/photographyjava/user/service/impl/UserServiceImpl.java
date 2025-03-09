@@ -20,10 +20,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -111,7 +109,10 @@ public class UserServiceImpl implements UserService {
                     .map(GrantedAuthority::getAuthority)
                     .orElseThrow(() -> new IllegalStateException("User has no roles assigned"));
 
-            return jwtService.generateToken(userLoginRequest.getUsername(), role);
+            UserEntity user = this.userRepository.findByUsername(userLoginRequest.getUsername()).get();
+            List<UserPermission> userPermissions = user.getPermissions().stream().toList();
+
+            return jwtService.generateToken(userLoginRequest.getUsername(), role, userPermissions, user.getId());
         }
         return "Failed";
     }
@@ -352,9 +353,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void followUserByUsername(FollowUserDTO followUserDTO, String username) {
+    public void followUserByUsername(FollowerUserRequest followerUserRequest, String username) {
         UserEntity user = this.getUserByUsername(username).get();
-        UserEntity follower = this.getUserByUsername(followUserDTO.getUsername()).get();
+        UserEntity follower = this.getUserByUsername(followerUserRequest.getUsername()).get();
 
         user.getFollowing().add(follower);
         follower.getFollowers().add(user);
@@ -395,5 +396,177 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username)
                 .map(user -> passwordEncoder.matches(password, user.getPassword()))
                 .orElse(false);
+    }
+
+    @Override
+    public void removeFriendByUsername(AddFriendDTO addFriendDTO, String username) {
+        UserEntity user = this.getUserByUsername(username).get();
+        UserEntity friend = this.getUserByUsername(addFriendDTO.getUsername()).get();
+
+        user.getFriends().remove(friend);
+        friend.getFriends().remove(user);
+
+        this.userRepository.saveAndFlush(user);
+        this.userRepository.saveAndFlush(friend);
+    }
+
+    @Override
+    public void cancelFriendRequestByUsername(AddFriendDTO addFriendDTO, String username) {
+        UserEntity user = this.getUserByUsername(username).get();
+        UserEntity friend = this.getUserByUsername(addFriendDTO.getUsername()).get();
+
+        user.getSendFriendRequest().remove(friend);
+        friend.getReceiveFriendRequest().remove(user);
+
+        this.userRepository.saveAndFlush(user);
+        this.userRepository.saveAndFlush(friend);
+    }
+
+    @Override
+    public void unfollowUserByUsername(FollowerUserRequest followerUserRequest, String username) {
+        UserEntity user = this.getUserByUsername(username).get();
+        UserEntity follower = this.getUserByUsername(followerUserRequest.getUsername()).get();
+
+        user.getFollowing().remove(follower);
+        follower.getFollowers().remove(user);
+
+        this.userRepository.saveAndFlush(user);
+        this.userRepository.saveAndFlush(follower);
+    }
+
+    @Override
+    public boolean areFriends(String username, String targetUsername) {
+        UserEntity user = userRepository.findByUsername(username).get();
+        UserEntity targetUser = userRepository.findByUsername(targetUsername).get();
+
+        return user.getFriends().contains(targetUser);
+    }
+
+    @Override
+    public boolean hasSentFriendRequest(String username, String targetUsername) {
+        UserEntity user = userRepository.findByUsername(username).get();
+        UserEntity targetUser = userRepository.findByUsername(targetUsername).get();
+
+        return user.getSendFriendRequest().contains(targetUser);
+    }
+
+    @Override
+    public boolean isFollowing(String username, String targetUsername) {
+        UserEntity user = userRepository.findByUsername(username).get();
+        UserEntity targetUser = userRepository.findByUsername(targetUsername).get();
+
+        return targetUser.getFollowers().contains(user);
+    }
+
+    @Override
+    public Set<FriendsResponse> getSentFriendRequests(String username) {
+        UserEntity user = userRepository.findByUsername(username).get();
+        Set<UserEntity> friendRequest = user.getSendFriendRequest();
+        return friendRequest.stream()
+                .map(request -> modelMapper.map(request, FriendsResponse.class))
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<FriendsResponse> getReceiveFriendRequests(String username) {
+        UserEntity user = userRepository.findByUsername(username).get();
+        Set<UserEntity> receiveRequest = user.getReceiveFriendRequest();
+        return receiveRequest.stream()
+                .map(request -> modelMapper.map(request, FriendsResponse.class))
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<FollowersResponse> getAllFollowers(String username) {
+        UserEntity user = userRepository.findByUsername(username).get();
+        Set<UserEntity> followers = user.getFollowers();
+        return followers.stream()
+                .map(request -> modelMapper.map(request, FollowersResponse.class))
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<FollowersResponse> getAllFollowings(String username) {
+        UserEntity user = userRepository.findByUsername(username).get();
+        Set<UserEntity> followings = user.getFollowing();
+        return followings.stream()
+                .map(request -> modelMapper.map(request, FollowersResponse.class))
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<FriendsResponse> getAllFriends(String username) {
+        UserEntity user = userRepository.findByUsername(username).get();
+        Set<UserEntity> friends = user.getFriends();
+        return friends.stream()
+                .map(request -> modelMapper.map(request, FriendsResponse.class))
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public void removeFollowerByUsername(FollowerUserRequest followerUserRequest, String username) {
+        UserEntity user = this.getUserByUsername(username).get();
+        UserEntity follower = this.getUserByUsername(followerUserRequest.getUsername()).get();
+
+        user.getFollowers().remove(follower);
+        follower.getFollowing().remove(user);
+
+        this.userRepository.saveAndFlush(user);
+        this.userRepository.saveAndFlush(follower);
+    }
+
+    @Override
+    public void blockUser(String username, String blockedUsername) {
+        UserEntity user = this.getUserByUsername(username).get();
+        UserEntity blockedUser = this.getUserByUsername(blockedUsername).get();
+
+        user.getFriends().remove(blockedUser);
+        user.getReceiveFriendRequest().remove(blockedUser);
+        user.getSendFriendRequest().remove(blockedUser);
+        user.getFollowing().remove(blockedUser);
+        user.getFollowers().remove(blockedUser);
+
+        blockedUser.getFriends().remove(user);
+        blockedUser.getReceiveFriendRequest().remove(user);
+        blockedUser.getSendFriendRequest().remove(user);
+        blockedUser.getFollowing().remove(user);
+        blockedUser.getFollowers().remove(user);
+
+        user.getBlockedUsers().add(blockedUser);
+        userRepository.saveAndFlush(user);
+        userRepository.saveAndFlush(blockedUser);
+    }
+
+    @Override
+    public void unblockUser(String username, String blockedUsername) {
+        UserEntity user = this.getUserByUsername(username).get();
+        UserEntity blockedUser = this.getUserByUsername(blockedUsername).get();
+
+        user.getBlockedUsers().remove(blockedUser);
+        this.userRepository.saveAndFlush(user);
+    }
+
+    @Override
+    public Set<BlockedUserResponse> getBlockedUsers(String username) {
+        UserEntity user = this.getUserByUsername(username).get();
+        Set<UserEntity> blockedUsers = user.getBlockedUsers();
+
+        return blockedUsers.stream()
+                .map(request -> this.modelMapper.map(request, BlockedUserResponse.class))
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public boolean isUserBlocked(String username, String blockedUsername) {
+        UserEntity user = this.userRepository.findByUsername(username).get();
+        UserEntity targetUser = this.userRepository.findByUsername(blockedUsername).get();
+
+        return targetUser.getBlockedUsers().contains(user);
+    }
+
+    @Override
+    public ContactUserResponse getUserDetails(String username) {
+        UserEntity user = this.getUserByUsername(username).get();
+        return this.modelMapper.map(user, ContactUserResponse.class);
     }
 }

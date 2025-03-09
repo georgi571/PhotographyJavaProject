@@ -13,15 +13,15 @@ export class ApiService {
     }
 
     getCountries() {
-        return this.http.get<string[]>(`${this.apiUrl}/v1/register`);
+        return this.http.get<string[]>(`${this.apiUrl}/v1/auth/register`);
     }
 
     registerUser(data: any): Observable<any> {
-        return this.http.post(`${this.apiUrl}/v1/register`, data);
+        return this.http.post(`${this.apiUrl}/v1/auth/register`, data);
     }
 
     loginUser(data: any): Observable<any> {
-        return this.http.post(`${this.apiUrl}/v1/login`, data);
+        return this.http.post(`${this.apiUrl}/v1/auth/login`, data);
     }
 
 

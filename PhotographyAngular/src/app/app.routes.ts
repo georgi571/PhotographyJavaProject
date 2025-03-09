@@ -68,7 +68,7 @@ export const routes: Routes = [
             {path: 'blocked-users', component: BlockUsersComponent}
         ]
     },
-    {path: 'profile/:username', component: ProfileComponent},
+    {path: 'profile/username/:username', component: ProfileComponent},
     {
         path: 'admin',
         component: AdminComponent,

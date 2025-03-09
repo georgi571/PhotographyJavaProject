@@ -23,7 +23,7 @@
             <div class="dropdown">
                 <span class="dropdown-toggle"> Welcome, {{ username }}</span>
                 <ul class="dropdown-menu">
-                    <li><a [routerLink]="['/profile', username]" routerLinkActive="active">Profile</a></li>
+                    <li><a [routerLink]="['/profile/username', username]" routerLinkActive="active">Profile</a></li>
                     <li><a routerLink="/logout" routerLinkActive="active" (click)="logout()">Logout</a></li>
                 </ul>
             </div>
