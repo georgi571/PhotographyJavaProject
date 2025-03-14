@@ -1,0 +1,57 @@
+<app-header/>
+
+<body>
+    <div class="container">
+        <section class="leaderboard-section">
+            <h2>Top Photographers of the Month</h2>
+            <div class="filters">
+                <label for="year-select">Select Year:</label>
+                <select id="year-select" [(ngModel)]="selectedYear" (change)="fetchLeaderboard()">
+                    @for (year of years; track year) {
+                        <option [value]="year">{{ year }}</option>
+                    }
+                </select>
+
+                <label for="month-select">Select Month:</label>
+                <select id="month-select" [(ngModel)]="selectedMonth" (change)="fetchLeaderboard()">
+                    @for (month of months; track month) {
+                        <option [value]="month">{{ month }}</option>
+                    }
+                </select>
+            </div>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Country</th>
+                        <th>Points Earned This Month</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (photographersOfMonth.length === 0) {
+                        <td colspan="4" style="text-align: center;">No users for gain points for this month!</td>
+                    } @else {
+                        @for (user of paginatedUsers; track user) {
+                            <tr>
+                                <td>{{ user.rank }}</td>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.country }}</td>
+                                <td>{{ user.points }}</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                @for (page of [].constructor(totalPages); track page; let i = $index) {
+                    <button (click)="changePage(i + 1)"
+                            [class.active]="currentPage === (i + 1)">{{ i + 1 }}</button>
+                }
+            </div>
+        </section>
+    </div>
+</body>
+
+<app-footer/>

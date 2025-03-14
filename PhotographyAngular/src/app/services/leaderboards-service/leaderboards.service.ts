@@ -1,43 +1,42 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment.development';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {AuthService} from '../auth-service/auth.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class LeaderboardsService {
-    private apiUrl = environment.apiUrl;
+    private apiUrl = environment.leaderboardUrl;
 
     constructor(private http: HttpClient,
                 private authService: AuthService) {
     }
 
     getCountries() {
-        return this.http.get<string[]>(`${this.apiUrl}/leaderboards/countries-choice`);
+        return this.http.get<string[]>(`${this.apiUrl}/v1/leaderboards/countries-choice`);
     }
 
     getChallengeTypes() {
-        return this.http.get<string[]>(`${this.apiUrl}/leaderboards/challenge-types`);
+        return this.http.get<string[]>(`${this.apiUrl}/v1/leaderboards/challenge-types`);
     }
 
     getTopUsersByPoints(country: string) {
-        return this.http.get(`${this.apiUrl}/leaderboards/country`);
+        return this.http.get(`${this.apiUrl}/v1/leaderboards/country`);
     }
 
     getTopUsersByChallenges(challengeType: string) {
-        return this.http.get(`${this.apiUrl}/leaderboards/challenges`);
+        return this.http.get(`${this.apiUrl}/v1/leaderboards/challenges`);
     }
 
-    getPhotographersOfMonth() {
-        return this.http.get(`${this.apiUrl}/leaderboards/month`);
-    }
-
-    getActiveUsers() {
-        return this.http.get(`${this.apiUrl}/leaderboards/active`);
+    getPhotographersOfMonth(year: number, month: string) {
+        const params = new HttpParams()
+            .set('year', year)
+            .set('month', month);
+        return this.http.get(`${this.apiUrl}/v1/leaderboards/month`, { params });
     }
 
     getRisingStars() {
-        return this.http.get(`${this.apiUrl}/leaderboards/rising`);
+        return this.http.get(`${this.apiUrl}/v1/leaderboards/rising`);
     }
 }

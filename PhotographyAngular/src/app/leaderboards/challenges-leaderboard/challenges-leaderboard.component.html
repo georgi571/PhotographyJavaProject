@@ -1,0 +1,52 @@
+<app-header/>
+
+<body>
+    <div class="container">
+        <section class="leaderboard-section">
+            <h2>Users with Most Challenges Won</h2>
+            <div class="filters">
+                <label for="challenge-type-filter">Filter by Challenge Type:</label>
+                <select id="challenge-type-filter" [(ngModel)]="selectedChallengeType"
+                        (change)="applyChallengeTypeFilter()">
+                    <option value="all">All Types</option>
+                    @for (type of challengeTypes; track type) {
+                        <option [value]="type">{{ type }}</option>
+                    }
+                </select>
+            </div>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Country</th>
+                        <th>Challenges Won</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (usersByChallenges.length === 0) {
+                        <td colspan="4" style="text-align: center;">No users from this country!</td>
+                    } @else {
+                        @for (user of paginatedUsers; track user) {
+                            <tr>
+                                <td>{{ user.rank }}</td>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.country }}</td>
+                                <td>{{ user.numberOfWinChallenges }}</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                @for (page of [].constructor(totalPages); track page; let i = $index) {
+                    <button (click)="changePage(i + 1)"
+                            [class.active]="currentPage === (i + 1)">{{ i + 1 }}</button>
+                }
+            </div>
+        </section>
+    </div>
+</body>
+
+<app-footer/>

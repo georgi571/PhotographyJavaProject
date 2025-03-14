@@ -1,9 +1,8 @@
-package bg.photographyjava.web.dto;
+package bg.leaderboards.web.dto;
 
-import java.util.UUID;
+import java.io.Serializable;
 
-public class LeaderboardsUserByChallengeType {
-    private UUID id;
+public class LeaderboardsUserByChallengeTypeResponse implements Serializable {
 
     private String username;
 
@@ -11,13 +10,9 @@ public class LeaderboardsUserByChallengeType {
 
     private String challengeType;
 
-    public UUID getId() {
-        return id;
-    }
+    private String country;
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
+    private int rank;
 
     public String getUsername() {
         return username;
@@ -41,5 +36,21 @@ public class LeaderboardsUserByChallengeType {
 
     public void setChallengeType(String challengeType) {
         this.challengeType = challengeType;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
     }
 }

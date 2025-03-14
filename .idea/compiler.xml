@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="Contacts" />
         <module name="PhotographyJava" />
+        <module name="Leaderboards" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -17,6 +18,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Contacts" options="-parameters" />
+      <module name="Leaderboards" options="-parameters" />
       <module name="PhotographStorage" options="-parameters" />
       <module name="PhotographyJava" options="-parameters" />
     </option>

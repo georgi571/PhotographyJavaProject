@@ -34,6 +34,10 @@ import {
 } from './user/friends-followers/receive-friend-request/receive-friend-request.component';
 import {SendFriendRequestComponent} from './user/friends-followers/send-friend-request/send-friend-request.component';
 import {BlockUsersComponent} from './user/friends-followers/block-users/block-users.component';
+import {PointsLeaderboardComponent} from './leaderboards/points-leaderboard/points-leaderboard.component';
+import {ChallengesLeaderboardComponent} from './leaderboards/challenges-leaderboard/challenges-leaderboard.component';
+import {MonthLeaderboardComponent} from './leaderboards/month-leaderboard/month-leaderboard.component';
+import {RisingLeaderboardComponent} from './leaderboards/rising-leaderboard/rising-leaderboard.component';
 
 export const routes: Routes = [
     {path: '', component: IntroComponent},
@@ -42,6 +46,10 @@ export const routes: Routes = [
     {path: 'challenges/list', component: ChallengeListComponent},
     {path: 'challenge/:id', component: ChallengeDetailsComponent},
     {path: 'leaderboards', component: LeaderboardsComponent},
+    { path: 'leaderboards/points', component: PointsLeaderboardComponent },
+    { path: 'leaderboards/challenges', component: ChallengesLeaderboardComponent },
+    { path: 'leaderboards/months', component: MonthLeaderboardComponent },
+    { path: 'leaderboards/rising', component: RisingLeaderboardComponent },
     {path: 'about', component: AboutComponent},
     {path: 'contacts', component: ContactComponent},
     {path: 'auth', component: AuthComponent},

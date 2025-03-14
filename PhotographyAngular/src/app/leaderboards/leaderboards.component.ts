@@ -23,7 +23,6 @@ export class LeaderboardsComponent implements OnInit {
     usersByPoints: any[] = [];
     usersByChallenges: any[] = [];
     photographersOfMonth: any[] = [];
-    activeUsers: any[] = [];
     risingStars: any[] = [];
 
     countries: string[] = [];
@@ -37,7 +36,6 @@ export class LeaderboardsComponent implements OnInit {
         this.fetchUsersByPoints();
         this.fetchUsersByChallenges();
         this.fetchPhotographersOfMonth();
-        this.fetchActiveUsers();
         this.fetchRisingStars();
         this.loadCountries();
         this.loadChallengeTypes();
@@ -80,20 +78,12 @@ export class LeaderboardsComponent implements OnInit {
     }
 
     fetchPhotographersOfMonth(): void {
-        this.leaderboardsService.getPhotographersOfMonth().subscribe({
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = currentDate.toLocaleString('en-US', { month: 'long' }).toUpperCase();
+        this.leaderboardsService.getPhotographersOfMonth(year, month).subscribe({
             next: (data: any) => {
                 this.photographersOfMonth = data.slice(0, 10);
-            },
-            error: (err) => {
-                console.error(err);
-            }
-        });
-    }
-
-    fetchActiveUsers(): void {
-        this.leaderboardsService.getActiveUsers().subscribe({
-            next: (data: any) => {
-                this.activeUsers = data.slice(0, 10);
             },
             error: (err) => {
                 console.error(err);
@@ -127,8 +117,9 @@ export class LeaderboardsComponent implements OnInit {
 
     applyChallengeTypeFilter(): void {
         if (this.selectedChallengeType === 'all') {
-            this.usersByChallenges = [...this.rawUsersByChallenges]
-                .sort((a, b) => b.challengesWon - a.challengesWon)
+            this.usersByChallenges = this.rawUsersByChallenges
+                .filter(user => user.challengeType === 'ALL')
+                .sort((a, b) => b.numberOfWinChallenges - a.numberOfWinChallenges)
                 .slice(0, 10)
                 .map((user, index) => ({ ...user, rank: index + 1 }));
         } else {
