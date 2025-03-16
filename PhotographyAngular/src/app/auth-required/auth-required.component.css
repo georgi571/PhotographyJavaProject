@@ -1,0 +1,32 @@
+body {
+    height: 84vh;
+}
+
+.auth-required-container {
+    height: 84vh;
+    background:rgba(0, 0, 0, 0.6) url('../../assets/images/auth-required.avif') no-repeat center center;
+    background-size: cover;
+    text-align: center;
+    font-size: 30px;
+    padding-top: 90px;
+}
+
+.auth-required-container h2 {
+    color: white;
+    background-color: #ff5722;
+    margin: 0 150px;
+}
+
+.auth-required-container button {
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    margin-top: 350px;
+    padding: 15px 15px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.auth-required-container button:hover {
+    background-color: #e64a19;
+}
