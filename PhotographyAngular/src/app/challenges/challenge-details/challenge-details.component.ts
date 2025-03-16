@@ -1,10 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 import {ChallengeService} from '../../services/challenge-service/challenge.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {DatePipe, NgClass} from '@angular/common';
 import {HeaderComponent} from '../../core/header/header.component';
 import {FooterComponent} from '../../core/footer/footer.component';
 import {FormsModule} from '@angular/forms';
+import {JwtService} from '../../services/jwt-service/jwt.service';
+import {AuthService} from '../../services/auth-service/auth.service';
+import {ProfileService} from '../../services/profile-service/profile.service';
+import {forkJoin, map} from 'rxjs';
 
 @Component({
     selector: 'app-challenge-details',
@@ -44,11 +48,23 @@ export class ChallengeDetailsComponent implements OnInit {
         story: '',
     };
 
+    userId: string | null = null;
+    loading: boolean = true;
+
+    currentUser = {
+        username: '',
+        profilePicturePath: '',
+    }
+
     tomorrow: string;
 
     constructor(
         private route: ActivatedRoute,
-        private challengeService: ChallengeService
+        private challengeService: ChallengeService,
+        private profileService: ProfileService,
+        private authService: AuthService,
+        private jwtService: JwtService,
+        private router: Router
     ) {
         const tomorrowDate = new Date();
         tomorrowDate.setDate(tomorrowDate.getDate() + 1);
@@ -57,16 +73,25 @@ export class ChallengeDetailsComponent implements OnInit {
 
     ngOnInit(): void {
         this.challengeId = this.route.snapshot.paramMap.get('id')!;
+
         this.challengeService.getChallengeDetails(this.challengeId).subscribe(
             (details) => {
-                if (details) {
                     this.challengeDetails = details;
-                    console.log(this.challengeDetails);
-                } else {
-                    this.errorMessage = 'Challenge not found.';
-                }
             }
         );
+
+        const token = this.authService.getToken();
+        if (token) {
+            const decodedToken = this.jwtService.decodeToken(token);
+            this.userId = decodedToken?.userId;
+        }
+
+        this.profileService.getUserById(this.userId).subscribe(
+            (userData) => {
+                this.currentUser = userData;
+            }
+        );
+
     }
 
     toggleDetails(): void {
@@ -96,6 +121,7 @@ export class ChallengeDetailsComponent implements OnInit {
                     if (response) {
                         console.log('Picture uploaded successfully:', response);
                         this.toggleAddPictureModal();
+                        window.location.reload();
                     } else {
                         this.errorMessage = 'An error occurred while uploading the picture.';
                     }
@@ -117,8 +143,32 @@ export class ChallengeDetailsComponent implements OnInit {
             return new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime();
         });
 
-        console.log('Selected Comments:', this.selectedComments);
+        const userRequests = this.selectedComments.map((comment: any) =>
+            this.profileService.getUserById(comment.authorId).pipe(
+                map((userData: any) => {
+                    comment.author = userData;
+                    return comment;
+                })
+            )
+        );
+
+        forkJoin(userRequests).subscribe(
+            (updatedComments) => {
+                this.selectedComments = updatedComments;
+                console.log('Comments with user data:', this.selectedComments);
+
+                this.loading = false;
+            }
+        );
+
+        this.profileService.getUserById(picture.authorId).subscribe(
+            (userData) => {
+                this.selectedPicture.user = userData;
+                console.log('Author Info:', this.selectedPicture.user);
+            }
+        );
     }
+
 
     closePictureDetails(): void {
         this.selectedPicture = null;
@@ -143,8 +193,12 @@ export class ChallengeDetailsComponent implements OnInit {
     addComment() {
         if (this.newComment.trim()) {
             const newComment = {
-                user: {username: 'Current User'},
+                author: {
+                    username: this.currentUser.username,
+                    profilePicturePath: this.currentUser.profilePicturePath || 'default-profile-pic-url'
+                },
                 text: this.newComment,
+                dateTime: new Date().toISOString(),
             };
 
             this.selectedComments.push(newComment);
@@ -158,24 +212,22 @@ export class ChallengeDetailsComponent implements OnInit {
                     if (response) {
                         const typedResponse = response as {
                             text: string;
-                            author: { username: string };
+                            author: { username: string, profilePicturePath: string };
                             dateTime: string;
                         };
 
                         const commentIndex = this.selectedComments.findIndex(
-                            (comment) => comment.text === this.newComment
+                            (comment) => comment.text === this.newComment && comment.dateTime === typedResponse.dateTime
                         );
+
                         if (commentIndex > -1) {
-                            this.selectedComments[commentIndex] = typedResponse;
+                            this.selectedComments[commentIndex] = {
+                                ...typedResponse,
+                                author: typedResponse.author
+                            };
                         }
 
-                        console.log('Comment added by:', typedResponse.author.username);
-                        console.log('Comment text:', typedResponse.text);
-
                         this.newComment = '';
-                    } else {
-                        console.error('Invalid response structure:', response);
-                        this.errorMessage = 'Error: Invalid comment response';
                     }
                 }
             );
@@ -336,7 +388,9 @@ export class ChallengeDetailsComponent implements OnInit {
             this.challengeService.deleteChallenge(this.challengeId).subscribe({
                 next: () => {
                     alert('Challenge deleted successfully!');
-                    window.location.reload();
+                    this.router.navigate(['/challenges']).then(() => {
+                        window.location.reload();
+                    });
                 },
                 error: (err) => {
                     console.error('Error deleting challenge:', err);

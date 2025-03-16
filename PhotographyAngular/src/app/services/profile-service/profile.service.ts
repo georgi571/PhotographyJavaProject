@@ -15,6 +15,15 @@ export class ProfileService {
                 private authService: AuthService) {
     }
 
+    getUserById(userId: string | null) {
+        const token = this.authService.getToken();
+        return this.http.get<any>(`${this.apiUrl}/v1/users/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
     getUserDetails(username: string) {
         const token = this.authService.getToken();
         return this.http.get<string[]>(`${this.apiUrl}/v1/users/profile/username/${username}`, {

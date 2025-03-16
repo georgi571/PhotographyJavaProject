@@ -38,6 +38,8 @@ import {PointsLeaderboardComponent} from './leaderboards/points-leaderboard/poin
 import {ChallengesLeaderboardComponent} from './leaderboards/challenges-leaderboard/challenges-leaderboard.component';
 import {MonthLeaderboardComponent} from './leaderboards/month-leaderboard/month-leaderboard.component';
 import {RisingLeaderboardComponent} from './leaderboards/rising-leaderboard/rising-leaderboard.component';
+import {AuthRequiredComponent} from './auth-required/auth-required.component';
+import {ServerDownComponent} from './server-down/server-down.component';
 
 export const routes: Routes = [
     {path: '', component: IntroComponent},
@@ -53,6 +55,7 @@ export const routes: Routes = [
     {path: 'about', component: AboutComponent},
     {path: 'contacts', component: ContactComponent},
     {path: 'auth', component: AuthComponent},
+    {path: 'auth-required', component: AuthRequiredComponent},
     {path: 'users/login', component: LoginComponent},
     {path: 'users/register', component: RegistrationComponent},
     {
@@ -89,6 +92,7 @@ export const routes: Routes = [
             {path: 'moderator-permission', component: ModeratorPermissionsComponent},
         ]
     },
+    {path: 'server-down', component: ServerDownComponent},
 ];
 
 @NgModule({

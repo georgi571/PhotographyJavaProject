@@ -9,6 +9,7 @@
         <module name="Contacts" />
         <module name="PhotographyJava" />
         <module name="Leaderboards" />
+        <module name="Challenges" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -17,6 +18,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Challenges" options="-parameters" />
       <module name="Contacts" options="-parameters" />
       <module name="Leaderboards" options="-parameters" />
       <module name="PhotographStorage" options="-parameters" />

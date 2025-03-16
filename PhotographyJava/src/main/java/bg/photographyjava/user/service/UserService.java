@@ -107,4 +107,6 @@ public interface UserService {
     boolean isUserBlocked(String username, String blockedUsername);
 
     ContactUserResponse getUserDetails(String username);
+
+    UserInformationForPictureDTO getUserById(UUID userId);
 }

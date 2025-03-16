@@ -569,4 +569,10 @@ public class UserServiceImpl implements UserService {
         UserEntity user = this.getUserByUsername(username).get();
         return this.modelMapper.map(user, ContactUserResponse.class);
     }
+
+    @Override
+    public UserInformationForPictureDTO getUserById(UUID userId) {
+        UserEntity user = this.userRepository.findById(userId).get();
+        return this.modelMapper.map(user, UserInformationForPictureDTO.class);
+    }
 }

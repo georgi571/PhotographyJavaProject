@@ -1,7 +1,5 @@
 package bg.photographyjava.user.model;
 
-import bg.photographyjava.challenge.model.Comment;
-import bg.photographyjava.challenge.model.Picture;
 import bg.photographyjava.user.property.enums.GenderEnum;
 import bg.photographyjava.user.property.enums.UserPermission;
 import jakarta.persistence.*;
@@ -9,7 +7,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -77,12 +74,6 @@ public class UserEntity {
     @CollectionTable(name = "user_permissions", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "permission")
     private Set<UserPermission> permissions;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Picture> pictures;
-
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Comment> comments;
 
     @ManyToMany
     @JoinTable(name = "user_friends",
@@ -259,22 +250,6 @@ public class UserEntity {
 
     public void removePermission(UserPermission permission) {
         this.permissions.remove(permission);
-    }
-
-    public List<Picture> getPictures() {
-        return pictures;
-    }
-
-    public void setPictures(List<Picture> pictures) {
-        this.pictures = pictures;
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
     }
 
     public Set<UserEntity> getFriends() {

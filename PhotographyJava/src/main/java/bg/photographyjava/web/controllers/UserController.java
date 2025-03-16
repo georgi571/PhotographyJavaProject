@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -26,6 +27,12 @@ public class UserController {
     public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserInformationForPictureDTO> getUserById(@PathVariable UUID userId) {
+        UserInformationForPictureDTO userResponse = this.userService.getUserById(userId);
+        return ResponseEntity.ok(userResponse);
     }
 
     // return full information about the user details

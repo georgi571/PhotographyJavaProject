@@ -59,14 +59,15 @@
                     <img [src]="selectedPicture.imageUrl" alt="User Picture" class="picture-image">
                     <div class="picture-info">
                         <div class="user-info">
-                            <img [src]="selectedPicture.user.profilePicturePath" alt="User Profile"
+                            <img [src]="selectedPicture.user?.profilePicturePath" alt="User Profile"
                                  class="user-profile">
-                            <p>{{ selectedPicture.user.username }}</p>
+                            <p>{{ selectedPicture.user?.username }}</p>
                             <div class="button-group">
                                 <button class="report-btn" (click)="openReportModalForPicture(selectedPicture)">
                                     Report Picture
                                 </button>
-                                <button class="delete-picture-btn" (click)="openDeleteConfirmation('picture', selectedPicture)">
+                                <button class="delete-picture-btn"
+                                        (click)="openDeleteConfirmation('picture', selectedPicture)">
                                     Delete Picture
                                 </button>
                             </div>
@@ -79,32 +80,36 @@
 
                 <div class="right-side">
                     <h3>Comments</h3>
-                    <div class="comments-container">
-                        @if (selectedPicture?.comments?.length > 0) {
-                            @for (comment of selectedComments; track comment.id) {
-                                <div class="comment">
-                                    <div class="comment-header">
-                                        <div class="user-profile-picture">
-                                            <img [src]="comment.author?.profilePicturePath || 'default-profile-pic-url'"
-                                                 alt="User Profile Picture">
+                    @if (!loading) {
+                        <div class="comments-container">
+                            @if (selectedPicture?.comments?.length > 0) {
+                                @for (comment of selectedComments; track comment.id) {
+                                    <div class="comment">
+                                        <div class="comment-header">
+                                            <div class="user-profile-picture">
+                                                <img
+                                                    [src]="comment.author?.profilePicturePath || 'default-profile-pic-url'"
+                                                    alt="User Profile Picture">
+                                            </div>
+                                            <p><strong>{{ comment.author?.username || 'Anonymous' }}:</strong></p>
+                                            <button class="report-btn" (click)="openReportModalForComment(comment)">
+                                                Report Comment
+                                            </button>
+                                            <button class="delete-comment-btn"
+                                                    (click)="openDeleteConfirmation('comment', comment)">Delete
+                                            </button>
                                         </div>
-                                        <p><strong>{{ comment.author?.username || 'Anonymous' }}:</strong></p>
-                                        <button class="report-btn" (click)="openReportModalForComment(comment)">
-                                            Report Comment
-                                        </button>
-                                        <button class="delete-comment-btn" (click)="openDeleteConfirmation('comment', comment)">Delete
-                                        </button>
-                                    </div>
 
-                                    <div class="comment-text">
-                                        <p>{{ comment.text }}</p>
+                                        <div class="comment-text">
+                                            <p>{{ comment.text }}</p>
+                                        </div>
                                     </div>
-                                </div>
+                                }
+                            } @else {
+                                <p>No comments yet.</p>
                             }
-                        } @else {
-                            <p>No comments yet.</p>
-                        }
-                    </div>
+                        </div>
+                    }
                     <textarea [(ngModel)]="newComment" placeholder="Add a comment..." rows="4"></textarea>
                     <button (click)="addComment()" class="add-comment-btn">Add Comment</button>
                 </div>
@@ -186,16 +191,19 @@
                     <input type="text" id="title" [(ngModel)]="challengeDetails.title" name="title" required/>
 
                     <label for="description">Description:</label>
-                    <textarea id="description" [(ngModel)]="challengeDetails.description" name="description" rows="4"></textarea>
+                    <textarea id="description" [(ngModel)]="challengeDetails.description" name="description"
+                              rows="4"></textarea>
 
                     <label for="details">Details:</label>
                     <textarea id="details" [(ngModel)]="challengeDetails.details" name="details" rows="4"></textarea>
 
                     <label for="startAt">Start Date:</label>
-                    <input type="date" id="startAt" [(ngModel)]="challengeDetails.startAt" name="startAt" [min]="tomorrow" required/>
+                    <input type="date" id="startAt" [(ngModel)]="challengeDetails.startAt" name="startAt"
+                           [min]="tomorrow" required/>
 
                     <label for="endAt">End Date:</label>
-                    <input type="date" id="endAt" [(ngModel)]="challengeDetails.endAt" name="endAt" [min]="tomorrow" required/>
+                    <input type="date" id="endAt" [(ngModel)]="challengeDetails.endAt" name="endAt" [min]="tomorrow"
+                           required/>
 
                     <label for="type">Type</label>
                     <select id="type" [(ngModel)]="challengeDetails.type" name="type" required>

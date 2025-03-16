@@ -1,7 +1,5 @@
 package bg.photographyjava.user.model;
 
-import bg.photographyjava.challenge.model.Comment;
-import bg.photographyjava.challenge.model.Picture;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -19,13 +17,11 @@ public class Report {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @ManyToOne
-    @JoinColumn(name = "picture_id")
-    private Picture picture;
+    @Column(name = "picture_id")
+    private UUID pictureId;
 
-    @ManyToOne
-    @JoinColumn(name = "comment_id")
-    private Comment comment;
+    @Column(name = "comment_id")
+    private UUID commentId;
 
     @Column(name = "report_reason")
     private String reportReason;
@@ -47,22 +43,6 @@ public class Report {
 
     public void setUser(UserEntity user) {
         this.user = user;
-    }
-
-    public Picture getPicture() {
-        return picture;
-    }
-
-    public void setPicture(Picture picture) {
-        this.picture = picture;
-    }
-
-    public Comment getComment() {
-        return comment;
-    }
-
-    public void setComment(Comment comment) {
-        this.comment = comment;
     }
 
     public String getReportReason() {
