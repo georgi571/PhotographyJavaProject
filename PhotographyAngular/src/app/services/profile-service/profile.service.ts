@@ -10,6 +10,7 @@ import {catchError, throwError} from 'rxjs';
 export class ProfileService {
 
     private apiUrl = environment.apiUrl;
+    private reportUrl = environment.reportUrl;
 
     constructor(private http: HttpClient,
                 private authService: AuthService) {
@@ -305,4 +306,16 @@ export class ProfileService {
         return this.http.get<any[]>(`${this.apiUrl}/v1/users/curr/followers?username=${username}`);
     }
 
+    reportUser(userId: string, reason: string) {
+        const token = this.authService.getToken();
+        return this.http.post(
+            `${this.reportUrl}/v1/reports/user`,
+            { userId, reason },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+    }
 }

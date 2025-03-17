@@ -1,0 +1,14 @@
+<h2>Reported Users</h2>
+@if (userReports.length === 0) {
+    <div>
+        <p>No user reports found.</p>
+    </div>
+}
+@for (report of userReports; track report) {
+    <div>
+        <p><strong>User ID:</strong> {{ report.userId }}</p>
+        <p><strong>Reason:</strong> {{ report.reason }}</p>
+        <p><strong>Reported By:</strong> {{ report.reportedBy }}</p>
+        <button (click)="deleteReport(report.id)" class="btn btn-danger">Delete Report</button>
+    </div>
+}

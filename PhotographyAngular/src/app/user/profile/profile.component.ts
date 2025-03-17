@@ -5,13 +5,15 @@ import {ProfileService} from '../../services/profile-service/profile.service';
 import {ActivatedRoute} from '@angular/router';
 import {AuthService} from '../../services/auth-service/auth.service';
 import {JwtService} from '../../services/jwt-service/jwt.service';
+import {FormsModule} from '@angular/forms';
 
 @Component({
     selector: 'app-profile',
     standalone: true,
     imports: [
         HeaderComponent,
-        FooterComponent
+        FooterComponent,
+        FormsModule
     ],
     templateUrl: './profile.component.html',
     styleUrl: './profile.component.css'
@@ -21,6 +23,10 @@ export class ProfileComponent implements OnInit {
     @Input() profileUsername!: string;
 
     showPopup: boolean = false;
+    showReportModal: boolean = false;
+
+    reportReason: string = '';
+    reportTarget: any = null;
 
     userDetails: any = {};
     friends: any[] = [];
@@ -131,6 +137,7 @@ export class ProfileComponent implements OnInit {
                 this.userDetails.rank = data.rank;
                 this.userDetails.points = data.points;
                 this.userDetails.picture = data.profilePicturePath;
+                this.userDetails.id = data.id;
                 this.trophies = data.trophies;
                 this.events = data.events;
                 this.pictures = data.pictures;
@@ -252,5 +259,32 @@ export class ProfileComponent implements OnInit {
                 }
             );
         }
+    }
+
+    openReportUserModal(user: any): void {
+        this.showReportModal = true;
+        this.reportTarget = user;
+        this.reportReason = '';
+    }
+
+    closeReportModal(): void {
+        this.showReportModal = false;
+        this.reportReason = '';
+        this.reportTarget = null;
+    }
+
+    submitReport(): void {
+        if (!this.reportReason.trim()) {
+            console.error('Report reason is required.');
+            return;
+        }
+
+        this.profileService.reportUser(this.userDetails.id, this.reportReason).subscribe(
+            (response) => {
+                console.log('Picture reported successfully:', response);
+            }
+        );
+
+        this.closeReportModal();
     }
 }

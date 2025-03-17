@@ -1,0 +1,215 @@
+.report-panel {
+    display: flex;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+.header {
+    background-color: #34495e;
+    color: #fff;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 20px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 15px;
+}
+
+.sidebar ul li a {
+    color: #bdc3c7;
+    text-decoration: none;
+    font-size: 1.1rem;
+    display: block;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li a.active {
+    background-color: #34495e;
+    color: #fff;
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #ecf0f1;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+table th,
+table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #34495e;
+    color: #fff;
+}
+
+table tr:hover {
+    background-color: #f5f5f5;
+}
+
+button {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.role-select {
+    padding: 0.5em;
+}
+
+.approve-btn, .save-role-btn {
+    background-color: #27ae60;
+    color: #fff;
+}
+
+.approve-btn:hover,
+.save-role-btn:hover {
+    background-color: #2ecc71;
+}
+
+.reject-btn {
+    background-color: #c0392b;
+    color: #fff;
+}
+
+.reject-btn:hover {
+    background-color: #e74c3c;
+}
+
+.ban-btn {
+    background-color: red;
+    color: #fff;
+}
+
+.ban-btn:hover {
+    background-color: darkred;
+}
+
+.un-ban-btn {
+    background-color: green;
+    color: #fff;
+}
+
+.un-ban-btn:hover {
+    background-color: darkgreen;
+}
+
+.feedback {
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    margin: 20px 0;
+}
+
+.feedback h2 {
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    color: #34495e;
+}
+
+.feedback p {
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.feedback textarea {
+    width: 100%;
+    height: 100px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 1rem;
+    resize: none;
+    margin-bottom: 15px;
+}
+
+.feedback button {
+    background-color: #2980b9;
+    color: #fff;
+}
+
+.feedback button:hover {
+    background-color: #3498db;
+}
+
+.two-buttons button {
+    margin-right: 1em;
+}
+
+.permissions label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+table td input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.save-role-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.save-role-btn:hover {
+    background-color: #45a049;
+}
+
+.save-role-btn:active {
+    background-color: #388e3c;
+}
+
+
+@media (max-width: 768px) {
+    .admin-panel {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .content {
+        padding: 10px;
+    }
+}

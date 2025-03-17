@@ -11,6 +11,7 @@ export class ChallengeService {
 
     private apiUrl = environment.apiUrl;
     private challengeUrl = environment.challengeUrl;
+    private reportUrl = environment.reportUrl;
 
     constructor(private http: HttpClient, private router: Router, private authService: AuthService) { }
 
@@ -62,8 +63,8 @@ export class ChallengeService {
     reportPicture(challengeId: string, pictureId: string, reason: string) {
         const token = this.authService.getToken();
         return this.http.post(
-            `${this.apiUrl}/v1/challenges/${challengeId}/pictures/${pictureId}/report`,
-            { text: reason },
+            `${this.reportUrl}/v1/reports/pictures`,
+            { challengeId: challengeId, pictureId: pictureId, reason: reason },
             {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -74,8 +75,8 @@ export class ChallengeService {
 
     reportComment(challengeId: string, pictureId: string, commentId: string, reason: string) {
         const token = this.authService.getToken();
-        return this.http.post(`${this.apiUrl}/v1/challenges/${challengeId}/pictures/${pictureId}/comments/${commentId}/report`,
-            { text: reason },
+        return this.http.post(`${this.reportUrl}/v1/reports/comments`,
+            { challengeId: challengeId, pictureId: pictureId, commentId: commentId, reason: reason },
             {
                 headers: {
                     Authorization: `Bearer ${token}`

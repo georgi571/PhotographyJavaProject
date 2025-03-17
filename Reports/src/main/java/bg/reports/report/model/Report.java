@@ -1,4 +1,4 @@
-package bg.photographyjava.user.model;
+package bg.reports.report.model;
 
 import jakarta.persistence.*;
 
@@ -13,9 +13,11 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
+    @Column(name = "user_id")
+    private UUID userId;
+
+    @Column(name = "challenge_id")
+    private UUID challengeId;
 
     @Column(name = "picture_id")
     private UUID pictureId;
@@ -29,6 +31,9 @@ public class Report {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "reported_by")
+    private UUID reportedBy;
+
     public UUID getId() {
         return id;
     }
@@ -37,12 +42,36 @@ public class Report {
         this.id = id;
     }
 
-    public UserEntity getUser() {
-        return user;
+    public UUID getUserId() {
+        return userId;
     }
 
-    public void setUser(UserEntity user) {
-        this.user = user;
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
+
+    public UUID getChallengeId() {
+        return challengeId;
+    }
+
+    public void setChallengeId(UUID challengeId) {
+        this.challengeId = challengeId;
+    }
+
+    public UUID getPictureId() {
+        return pictureId;
+    }
+
+    public void setPictureId(UUID pictureId) {
+        this.pictureId = pictureId;
+    }
+
+    public UUID getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(UUID commentId) {
+        this.commentId = commentId;
     }
 
     public String getReportReason() {
@@ -59,5 +88,13 @@ public class Report {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public UUID getReportedBy() {
+        return reportedBy;
+    }
+
+    public void setReportedBy(UUID reportedBy) {
+        this.reportedBy = reportedBy;
     }
 }

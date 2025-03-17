@@ -40,6 +40,10 @@ import {MonthLeaderboardComponent} from './leaderboards/month-leaderboard/month-
 import {RisingLeaderboardComponent} from './leaderboards/rising-leaderboard/rising-leaderboard.component';
 import {AuthRequiredComponent} from './auth-required/auth-required.component';
 import {ServerDownComponent} from './server-down/server-down.component';
+import {ReportComponent} from './report/report.component';
+import {ReportUsersComponent} from './report/report-users/report-users.component';
+import {ReportPicturesComponent} from './report/report-pictures/report-pictures.component';
+import {ReportCommentsComponent} from './report/report-comments/report-comments.component';
 
 export const routes: Routes = [
     {path: '', component: IntroComponent},
@@ -93,6 +97,11 @@ export const routes: Routes = [
         ]
     },
     {path: 'server-down', component: ServerDownComponent},
+    { path: 'reports', component: ReportComponent, children: [
+            { path: 'users', component: ReportUsersComponent },
+            { path: 'picture', component: ReportPicturesComponent },
+            { path: 'comments', component: ReportCommentsComponent }
+        ] }
 ];
 
 @NgModule({

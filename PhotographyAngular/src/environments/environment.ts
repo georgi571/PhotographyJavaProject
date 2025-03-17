@@ -4,4 +4,5 @@ export const environment = {
     contactUrl: 'http://localhost:8081/api',
     leaderboardUrl: 'http://localhost:8082/api',
     challengeUrl: 'http://localhost:8083/api',
+    reportUrl: 'http://localhost:8084/api',
 }

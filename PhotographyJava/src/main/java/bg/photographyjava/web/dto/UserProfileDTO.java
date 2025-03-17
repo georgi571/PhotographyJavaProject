@@ -1,8 +1,11 @@
 package bg.photographyjava.web.dto;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 public class UserProfileDTO implements Serializable {
+
+    private UUID id;
 
     private String username;
 
@@ -21,6 +24,14 @@ public class UserProfileDTO implements Serializable {
     private int points;
 
     private String profilePicturePath;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;

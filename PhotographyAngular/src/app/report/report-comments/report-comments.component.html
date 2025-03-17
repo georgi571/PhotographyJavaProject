@@ -1,0 +1,16 @@
+<h2>Reported Comments</h2>
+@if (commentReports.length === 0) {
+    <div>
+        <p>No comment reports found.</p>
+    </div>
+}
+@for (report of commentReports; track report) {
+    <div>
+        <p><strong>Challenge ID:</strong> {{ report.challengeId }}</p>
+        <p><strong>Picture ID:</strong> {{ report.pictureId }}</p>
+        <p><strong>Comment ID:</strong> {{ report.commentId }}</p>
+        <p><strong>Reason:</strong> {{ report.reason }}</p>
+        <p><strong>Reported By:</strong> {{ report.reportedBy }}</p>
+        <button (click)="deleteReport(report.id)" class="btn btn-danger">Delete Report</button>
+    </div>
+}

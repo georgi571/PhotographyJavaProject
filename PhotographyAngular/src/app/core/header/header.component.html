@@ -14,6 +14,9 @@
             @if (role === 'ADMIN') {
                 <li><a routerLink="/admin" routerLinkActive="active">Admin Panel</a></li>
             }
+            @if (role === 'MODERATOR' || role === 'ADMIN') {
+                <li><a routerLink="/reports" routerLinkActive="active">Report Panel</a></li>
+            }
         </ul>
         <ul class="nav-links">
         </ul>

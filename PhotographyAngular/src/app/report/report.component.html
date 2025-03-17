@@ -1,0 +1,29 @@
+<app-header/>
+
+<body>
+    <div class="report-panel">
+        <header class="header">
+            <h1>Reports Panel</h1>
+        </header>
+
+        <nav class="sidebar">
+            <ul>
+                @if (ban) {
+                    <li><a routerLink="/reports/users" routerLinkActive="active">Reports For Users</a></li>
+                }
+                @if (picture) {
+                    <li><a routerLink="/reports/picture" routerLinkActive="active">Reports For Pictures</a></li>
+                }
+                @if (comments) {
+                    <li><a routerLink="/reports/comments" routerLinkActive="active">Reports For Comments</a></li>
+                }
+            </ul>
+        </nav>
+
+        <main class="content">
+            <router-outlet></router-outlet>
+        </main>
+    </div>
+</body>
+
+<app-footer/>

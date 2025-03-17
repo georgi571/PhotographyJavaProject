@@ -1,0 +1,15 @@
+<h2>Reported Pictures</h2>
+@if (pictureReports.length === 0) {
+    <div>
+        <p>No picture reports found.</p>
+    </div>
+}
+@for (report of pictureReports; track report) {
+    <div>
+        <p><strong>Challenge ID:</strong> {{ report.challengeId }}</p>
+        <p><strong>Picture ID:</strong> {{ report.pictureId }}</p>
+        <p><strong>Reason:</strong> {{ report.reason }}</p>
+        <p><strong>Reported By:</strong> {{ report.reportedBy }}</p>
+        <button (click)="deleteReport(report.id)" class="btn btn-danger">Delete Report</button>
+    </div>
+}

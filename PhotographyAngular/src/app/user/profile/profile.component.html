@@ -41,6 +41,7 @@
 
                     }
                     <button class="btn block-btn" (click)="confirmBlock(userDetails)">Block</button>
+                    <button class="btn report-btn" (click)="openReportUserModal(userDetails)">Report User</button>
                 }
             </div>
             <div class="info">
@@ -170,6 +171,29 @@
             </div>
         </div>
     </div>
+
+    @if (showReportModal) {
+        <div class="report-modal-backdrop">
+            <div class="report-modal">
+                <h2>Report User</h2>
+                <p>Please provide a reason for reporting this user:</p>
+                <textarea [(ngModel)]="reportReason" placeholder="Enter your reason here..." rows="4"></textarea>
+                <div class="modal-buttons">
+                    <button
+                        class="submit-report-btn"
+                        [disabled]="!reportReason || reportReason.trim().length === 0"
+                        (click)="submitReport()">
+                        Submit
+                    </button>
+                    <button
+                        class="cancel-report-btn"
+                        (click)="closeReportModal()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
 </body>
 
 <app-footer/>
