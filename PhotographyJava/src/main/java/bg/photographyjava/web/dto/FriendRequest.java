@@ -1,6 +1,10 @@
 package bg.photographyjava.web.dto;
 
-public class AddFriendDTO {
+import jakarta.validation.constraints.NotNull;
+
+public class FriendRequest {
+
+    @NotNull
     private String username;
 
     public String getUsername() {

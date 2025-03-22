@@ -10,12 +10,6 @@ public class ChangeRoleUserResponse {
 
     private String role;
 
-    public ChangeRoleUserResponse(UUID id, String username, String role) {
-        this.id = id;
-        this.username = username;
-        this.role = role;
-    }
-
     public UUID getId() {
         return id;
     }

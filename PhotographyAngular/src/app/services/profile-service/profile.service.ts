@@ -299,11 +299,21 @@ export class ProfileService {
     }
 
     getFriendsForProfile(username: string) {
-        return this.http.get<any[]>(`${this.apiUrl}/v1/users/curr/friends?username=${username}`);
+        const token = this.authService.getToken();
+        return this.http.get<any[]>(`${this.apiUrl}/v1/users/curr/friends?username=${username}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
     }
 
     getFollowersForProfile(username: string) {
-        return this.http.get<any[]>(`${this.apiUrl}/v1/users/curr/followers?username=${username}`);
+        const token = this.authService.getToken();
+        return this.http.get<any[]>(`${this.apiUrl}/v1/users/curr/followers?username=${username}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
     }
 
     reportUser(userId: string, reason: string) {
@@ -311,6 +321,17 @@ export class ProfileService {
         return this.http.post(
             `${this.reportUrl}/v1/reports/user`,
             { userId, reason },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+    }
+
+    editUserPicture(formData: FormData) {
+        const token = this.authService.getToken();
+        return this.http.post<any>(`${this.apiUrl}/v1/users/profile/edit/picture`, formData,
             {
                 headers: {
                     Authorization: `Bearer ${token}`

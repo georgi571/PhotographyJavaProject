@@ -17,6 +17,7 @@ public class DtoMapper {
         report.setReportReason(commentReportRequest.getReason());
         report.setReportedBy(reporterId);
         report.setCreatedAt(LocalDateTime.now());
+        report.setUserId(commentReportRequest.getAuthorId());
 
         return report;
     }
@@ -29,6 +30,7 @@ public class DtoMapper {
         report.setReportReason(pictureReportRequest.getReason());
         report.setReportedBy(reporterId);
         report.setCreatedAt(LocalDateTime.now());
+        report.setUserId(pictureReportRequest.getAuthorId());
 
         return report;
     }
@@ -53,6 +55,7 @@ public class DtoMapper {
         commentReportResponse.setChallengeId(report.getChallengeId());
         commentReportResponse.setReason(report.getReportReason());
         commentReportResponse.setReportedBy(report.getReportedBy());
+        commentReportResponse.setAuthorId(report.getUserId());
 
         return commentReportResponse;
     }
@@ -65,6 +68,7 @@ public class DtoMapper {
         pictureReportResponse.setChallengeId(report.getChallengeId());
         pictureReportResponse.setReason(report.getReportReason());
         pictureReportResponse.setReportedBy(report.getReportedBy());
+        pictureReportResponse.setAuthorId(report.getUserId());
 
         return pictureReportResponse;
     }

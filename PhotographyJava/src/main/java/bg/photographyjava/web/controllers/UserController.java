@@ -1,18 +1,16 @@
 package bg.photographyjava.web.controllers;
 
-import bg.photographyjava.user.model.UserEntity;
 import bg.photographyjava.web.dto.*;
 import bg.photographyjava.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -22,326 +20,269 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserInformationForPictureDTO> getUserById(@PathVariable UUID userId) {
-        UserInformationForPictureDTO userResponse = this.userService.getUserById(userId);
-        return ResponseEntity.ok(userResponse);
+    public ResponseEntity<UserInformationForPictureResponse> getUserById(@PathVariable UUID userId) {
+
+        return ResponseEntity.ok(this.userService.getUserById(userId));
     }
 
-    // return full information about the user details
-
     @GetMapping("/profile/username/{username}")
-    public ResponseEntity<UserProfileDTO> getUserInfo(@PathVariable String username) {
+    public ResponseEntity<UserProfileResponse> getUserInfo(@PathVariable String username) {
+
         return ResponseEntity.ok(this.userService.getProfileDetails(username));
     }
 
-    // get user details information for edit page
-
     @GetMapping("/profile/edit")
-    public ResponseEntity<UserEditProfileDTO> getUserDetails(Authentication authentication) {
+    public ResponseEntity<UserEditProfileResponse> getUserDetails(Authentication authentication) {
+
         return ResponseEntity.ok(this.userService.getProfileEditDetails(authentication.getName()));
     }
 
-    // change user details information
-
     @PutMapping("/profile/edit")
-    public ResponseEntity<?> updateUserDetails(Authentication authentication, @RequestBody @Valid UserEditProfileDTO userEditProfileDTO,
+    public ResponseEntity<?> updateUserDetails(Authentication authentication,
+                                               @RequestBody @Valid UserEditProfileRequest userEditProfileRequest,
                                                BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            Map<String, String> errorResponse = new HashMap<>();
-
-            bindingResult.getAllErrors().forEach(error -> {
-                String fieldName = ((FieldError) error).getField();
-                String errorMessage = error.getDefaultMessage();
-                errorResponse.put(fieldName, errorMessage);
-            });
-
-            return ResponseEntity.badRequest().body(errorResponse);
+            return ResponseEntity.badRequest().body(this.userService.handleValidationErrors(bindingResult));
         }
 
-        String username = authentication.getName();
+        this.userService.editUserDetails(authentication.getName(), userEditProfileRequest);
 
-        this.userService.editUserDetails(username, userEditProfileDTO);
-
-        UserEditProfileDTO updatedProfileDTO = this.userService.getProfileEditDetails(username);
-
-        return ResponseEntity.status(HttpStatus.OK).body(updatedProfileDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.getProfileEditDetails(authentication.getName()));
     }
 
     @GetMapping("/profile/edit/username")
-    public ResponseEntity<UserChangeUsernameDTO> getUserUsername(Authentication authentication) {
+    public ResponseEntity<UserChangeUsernameResponse> getUserUsername(Authentication authentication) {
+
         return ResponseEntity.ok(this.userService.getUserUsernameDetails(authentication.getName()));
     }
 
     @PutMapping("/profile/edit/username")
-    public ResponseEntity<?> updateUserUsername(Authentication authentication, @RequestBody @Valid UserChangeUsernameDTO userChangeUsernameDTO,
-                                                BindingResult bindingResult) {
-        Map<String, String> errorResponse = new HashMap<>();
-
+    public ResponseEntity<Map<String, String>> updateUserUsername(Authentication authentication,
+                                                                  @RequestBody @Valid UserChangeUsernameRequest userChangeUsernameRequest,
+                                                                  BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().forEach(error -> {
-                String fieldName = ((FieldError) error).getField();
-                String errorMessage = error.getDefaultMessage();
-                errorResponse.put(fieldName, errorMessage);
-            });
-
-            return ResponseEntity.badRequest().body(errorResponse);
+            return ResponseEntity.badRequest().body(this.userService.handleValidationErrors(bindingResult));
         }
 
-        if (this.userService.getUserByEmail(userChangeUsernameDTO.getOldUsername()).isEmpty()) {
-            String fieldName = "oldUsername";
-            String errorMessage = "Invalid old username";
-            errorResponse.put(fieldName, errorMessage);
+        this.userService.editUserUsernameDetails(authentication.getName(), userChangeUsernameRequest);
 
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
-
-        String username = authentication.getName();
-
-        this.userService.editUserUsernameDetails(username, userChangeUsernameDTO);
-
-        UserChangeUsernameDTO updateUsername = this.userService.getUserUsernameDetails(username);
-
-        return ResponseEntity.status(HttpStatus.OK).body(updateUsername);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Username updated successfully"));
     }
 
     @GetMapping("/profile/edit/email")
-    public ResponseEntity<UserChangeEmailDTO> getUserEmail(Authentication authentication) {
+    public ResponseEntity<UserChangeEmailResponse> getUserEmail(Authentication authentication) {
+
         return ResponseEntity.ok(this.userService.getUserEmailDetails(authentication.getName()));
     }
 
     @PutMapping("/profile/edit/email")
-    public ResponseEntity<?> updateUserEmail(Authentication authentication, @RequestBody @Valid UserChangeEmailDTO userChangeEmailDTO,
-                                             BindingResult bindingResult) {
+    public ResponseEntity<Map<String, String>> updateUserEmail(Authentication authentication,
+                                                               @RequestBody @Valid UserChangeEmailRequest userChangeEmailRequest,
+                                                               BindingResult bindingResult) {
 
-        Map<String, String> errorResponse = new HashMap<>();
         if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().forEach(error -> {
-                String fieldName = ((FieldError) error).getField();
-                String errorMessage = error.getDefaultMessage();
-                errorResponse.put(fieldName, errorMessage);
-            });
-
-            return ResponseEntity.badRequest().body(errorResponse);
+            return ResponseEntity.badRequest().body(this.userService.handleValidationErrors(bindingResult));
         }
 
-        if (this.userService.getUserByEmail(userChangeEmailDTO.getOldEmail()).isEmpty()) {
-            String fieldName = "oldEmail";
-            String errorMessage = "Invalid old email address";
-            errorResponse.put(fieldName, errorMessage);
+        this.userService.editUserEmailDetails(authentication.getName(), userChangeEmailRequest);
 
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
-
-        String username = authentication.getName();
-
-        this.userService.editUserEmailDetails(username, userChangeEmailDTO);
-
-        UserChangeEmailDTO updateEmail = this.userService.getUserEmailDetails(username);
-
-        return ResponseEntity.status(HttpStatus.OK).body(updateEmail);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Email updated successfully"));
     }
 
 
     @PutMapping("/profile/edit/password")
-    public ResponseEntity<?> updatePassword(Authentication authentication, @RequestBody @Valid UserChangePasswordDTO userChangePasswordDTO,
-                                            BindingResult bindingResult) {
+    public ResponseEntity<Map<String, String>> updatePassword(Authentication authentication,
+                                                              @RequestBody @Valid UserChangePasswordRequest userChangePasswordRequest,
+                                                              BindingResult bindingResult) {
 
-        Map<String, String> errorResponse = new HashMap<>();
         if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().forEach(error -> {
-                String fieldName = ((FieldError) error).getField();
-                String errorMessage = error.getDefaultMessage();
-                errorResponse.put(fieldName, errorMessage);
-            });
-
-            return ResponseEntity.badRequest().body(errorResponse);
+            return ResponseEntity.badRequest().body(this.userService.handleValidationErrors(bindingResult));
         }
 
-        String username = authentication.getName();
+        this.userService.updatePassword(authentication.getName(), userChangePasswordRequest);
 
-        UserEntity user = this.userService.getUserByUsername(username).get();
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Password updated successfully"));
+    }
 
-        if (!passwordEncoder.matches(userChangePasswordDTO.getOldPassword(), user.getPassword())) {
-            String fieldName = "currentPassword";
-            String errorMessage = "Invalid current password";
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
+    @PostMapping("/profile/edit/picture")
+    public ResponseEntity<Map<String, String>> updatePicture(@RequestParam("file") MultipartFile file,
+                                                             Authentication authentication) throws IOException {
 
-        String encodedNewPassword = passwordEncoder.encode(userChangePasswordDTO.getNewPassword());
-        this.userService.updatePassword(username, encodedNewPassword);
+        this.userService.editUserProfilePicture(file, authentication.getName());
 
-        return ResponseEntity.status(HttpStatus.OK).body("Password updated successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Profile picture successfully updated."));
     }
 
     @PostMapping("/add-friend")
-    public ResponseEntity<Map<String, String>> addFriend(@RequestBody AddFriendDTO addFriendDTO, Authentication authentication) {
-        this.userService.addFriendByUsername(addFriendDTO, authentication.getName());
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Friend added successfully");
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Map<String, String>> addFriend(@RequestBody @Valid FriendRequest friendRequest,
+                                                         Authentication authentication) {
+
+        this.userService.addFriendByUsername(friendRequest, authentication.getName());
+
+        return ResponseEntity.ok(Map.of("message", "Friend added successfully"));
     }
 
     @PostMapping("/follow-user")
-    public ResponseEntity<Map<String, String>> followUser(@RequestBody FollowerUserRequest followerUserRequest, Authentication authentication) {
+    public ResponseEntity<Map<String, String>> followUser(@RequestBody @Valid FollowerUserRequest followerUserRequest,
+                                                          Authentication authentication) {
+
         this.userService.followUserByUsername(followerUserRequest, authentication.getName());
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "User followed successfully");
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity.ok(Map.of("message", "User followed successfully"));
     }
 
     @PostMapping("/accept-friend-request")
-    public ResponseEntity<Map<String, String>> acceptFriendRequest(@RequestBody AddFriendDTO addFriendDTO, Authentication authentication) {
-        this.userService.acceptFriendRequest(addFriendDTO, authentication.getName());
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Friend request accepted.");
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Map<String, String>> acceptFriendRequest(@RequestBody @Valid FriendRequest friendRequest,
+                                                                   Authentication authentication) {
+
+        this.userService.acceptFriendRequest(friendRequest, authentication.getName());
+
+        return ResponseEntity.ok(Map.of("message", "Friend request accepted."));
     }
 
-    // Reject a friend request
     @PostMapping("/reject-friend-request")
-    public ResponseEntity<Map<String, String>> rejectFriendRequest(@RequestBody AddFriendDTO addFriendDTO, Authentication authentication) {
-        this.userService.rejectFriendRequest(addFriendDTO, authentication.getName());
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Friend request rejected.");
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Map<String, String>> rejectFriendRequest(@RequestBody @Valid FriendRequest friendRequest,
+                                                                   Authentication authentication) {
+
+        this.userService.rejectFriendRequest(friendRequest, authentication.getName());
+
+        return ResponseEntity.ok(Map.of("message", "Friend request rejected."));
     }
 
     @PostMapping("/remove-friend")
-    public ResponseEntity<Map<String, String>> removeFriend(@RequestBody AddFriendDTO addFriendDTO, Authentication authentication) {
-        this.userService.removeFriendByUsername(addFriendDTO, authentication.getName());
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Friend removed successfully");
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Map<String, String>> removeFriend(@RequestBody FriendRequest friendRequest,
+                                                            Authentication authentication) {
+
+        this.userService.removeFriendByUsername(friendRequest, authentication.getName());
+
+        return ResponseEntity.ok(Map.of("message", "Friend removed successfully"));
     }
 
     @PostMapping("/cancel-friend-request")
-    public ResponseEntity<Map<String, String>> cancelFriendRequest(@RequestBody AddFriendDTO addFriendDTO, Authentication authentication) {
-        this.userService.cancelFriendRequestByUsername(addFriendDTO, authentication.getName());
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Friend request cancelled successfully");
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Map<String, String>> cancelFriendRequest(@RequestBody FriendRequest friendRequest,
+                                                                   Authentication authentication) {
+
+        this.userService.cancelFriendRequestByUsername(friendRequest, authentication.getName());
+
+        return ResponseEntity.ok(Map.of("message", "Friend request cancelled successfully"));
     }
 
     @PostMapping("/unfollow-user")
-    public ResponseEntity<Map<String, String>> unfollowUser(@RequestBody FollowerUserRequest followerUserRequest, Authentication authentication) {
+    public ResponseEntity<Map<String, String>> unfollowUser(@RequestBody FollowerUserRequest followerUserRequest,
+                                                            Authentication authentication) {
+
         this.userService.unfollowUserByUsername(followerUserRequest, authentication.getName());
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "User unfollowed successfully");
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity.ok(Map.of("message", "User unfollowed successfully"));
     }
 
     @PostMapping("/remove-follower")
-    public ResponseEntity<Map<String, String>> removeFollower(@RequestBody FollowerUserRequest followerUserRequest, Authentication authentication) {
+    public ResponseEntity<Map<String, String>> removeFollower(@RequestBody FollowerUserRequest followerUserRequest,
+                                                              Authentication authentication) {
+
         this.userService.removeFollowerByUsername(followerUserRequest, authentication.getName());
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Follower removed successfully");
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity.ok(Map.of("message", "Follower removed successfully"));
     }
 
     @GetMapping("/are-friends")
     public ResponseEntity<Boolean> checkIfFriends(
             @RequestParam String targetUsername,
             Authentication authentication) {
-        String username = authentication.getName();
-        boolean areFriends = this.userService.areFriends(username, targetUsername);
-        return ResponseEntity.ok(areFriends);
+
+        return ResponseEntity.ok(this.userService.areFriends(authentication.getName(), targetUsername));
     }
 
     @GetMapping("/has-sent-friend-request")
     public ResponseEntity<Boolean> checkIfFriendRequestSent(
             @RequestParam String targetUsername,
             Authentication authentication) {
-        String username = authentication.getName();
-        boolean hasSentRequest = this.userService.hasSentFriendRequest(username, targetUsername);
-        return ResponseEntity.ok(hasSentRequest);
+
+        return ResponseEntity.ok(this.userService.hasSentFriendRequest(authentication.getName(), targetUsername));
     }
 
     @GetMapping("/is-following")
     public ResponseEntity<Boolean> checkIfFollowing(
             @RequestParam String targetUsername,
             Authentication authentication) {
-        String username = authentication.getName();
-        boolean isFollowing = this.userService.isFollowing(username, targetUsername);
-        return ResponseEntity.ok(isFollowing);
+
+        return ResponseEntity.ok(this.userService.isFollowing(authentication.getName(), targetUsername));
     }
 
     @GetMapping("/sent-requests")
     public ResponseEntity<Set<FriendsResponse>> getSentFriendRequests(Authentication authentication) {
-        String username = authentication.getName();
-        Set<FriendsResponse> sentRequests = this.userService.getSentFriendRequests(username);
-        return ResponseEntity.ok(sentRequests);
+
+        return ResponseEntity.ok(this.userService.getSentFriendRequests(authentication.getName()));
     }
 
     @GetMapping("/received-requests")
     public ResponseEntity<Set<FriendsResponse>> getReceiveFriendRequests(Authentication authentication) {
-        String username = authentication.getName();
-        Set<FriendsResponse> receiveRequests = this.userService.getReceiveFriendRequests(username);
-        return ResponseEntity.ok(receiveRequests);
+
+        return ResponseEntity.ok(this.userService.getReceiveFriendRequests(authentication.getName()));
     }
 
     @GetMapping("/followers")
     public ResponseEntity<Set<FollowersResponse>> getAllFollowers(Authentication authentication) {
-        String username = authentication.getName();
-        Set<FollowersResponse> followersResponse = this.userService.getAllFollowers(username);
-        return ResponseEntity.ok(followersResponse);
+
+        return ResponseEntity.ok(this.userService.getAllFollowers(authentication.getName()));
     }
 
     @GetMapping("/following")
     public ResponseEntity<Set<FollowersResponse>> getAllFollowings(Authentication authentication) {
-        String username = authentication.getName();
-        Set<FollowersResponse> followersResponse = this.userService.getAllFollowings(username);
-        return ResponseEntity.ok(followersResponse);
+
+        return ResponseEntity.ok(this.userService.getAllFollowings(authentication.getName()));
     }
 
     @GetMapping("/friends")
     public ResponseEntity<Set<FriendsResponse>> getAllFriends(Authentication authentication) {
-        String username = authentication.getName();
-        Set<FriendsResponse> friendsResponses = this.userService.getAllFriends(username);
-        return ResponseEntity.ok(friendsResponses);
+
+        return ResponseEntity.ok(this.userService.getAllFriends(authentication.getName()));
     }
 
     @PostMapping("/block")
     public ResponseEntity<String> blockUser(@RequestBody String blockedUsername, Authentication authentication) {
+
         this.userService.blockUser(authentication.getName(), blockedUsername);
+
         return ResponseEntity.ok("User blocked successfully.");
     }
 
     @PostMapping("/unblock")
     public ResponseEntity<String> unblockUser(@RequestBody String blockedUsername, Authentication authentication) {
+
         this.userService.unblockUser(authentication.getName(), blockedUsername);
+
         return ResponseEntity.ok("User unblocked successfully.");
     }
 
     @GetMapping("/blocked-users")
     public ResponseEntity<Set<BlockedUserResponse>> getBlockedUsers(Authentication authentication) {
-        Set<BlockedUserResponse> blockedUsers = userService.getBlockedUsers(authentication.getName());
-        return ResponseEntity.ok(blockedUsers);
+
+        return ResponseEntity.ok(this.userService.getBlockedUsers(authentication.getName()));
     }
 
     @GetMapping("/is-blocked/{username}")
     public ResponseEntity<Boolean> isUserBlocked(@PathVariable String username, Authentication authentication) {
-        boolean isBlocked = userService.isUserBlocked(authentication.getName(), username);
-        return ResponseEntity.ok(isBlocked);
+
+        return ResponseEntity.ok(this.userService.isUserBlocked(authentication.getName(), username));
     }
 
     @GetMapping("/curr/friends")
     public ResponseEntity<Set<FriendsResponse>> getFriends(@RequestParam String username) {
-        Set<FriendsResponse> friends = this.userService.getAllFriends(username);
-        return ResponseEntity.ok(friends);
+
+        return ResponseEntity.ok(this.userService.getAllFriends(username));
     }
 
     @GetMapping("/curr/followers")
     public ResponseEntity<Set<FollowersResponse>> getFollowers(@RequestParam String username) {
-        Set<FollowersResponse> followers = this.userService.getAllFollowers(username);
-        return ResponseEntity.ok(followers);
+
+        return ResponseEntity.ok(this.userService.getAllFollowers(username));
     }
 
     @GetMapping("/user-info")

@@ -14,17 +14,6 @@ public class BanUserResponse {
 
     private String reasonForBan;
 
-    public BanUserResponse() {
-    }
-
-    public BanUserResponse(UUID id, String username, String email, boolean banned, String reasonForBan) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.isBanned = banned;
-        this.reasonForBan = reasonForBan;
-    }
-
     public UUID getId() {
         return id;
     }

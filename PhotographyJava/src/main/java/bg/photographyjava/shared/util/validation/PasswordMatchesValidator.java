@@ -1,6 +1,6 @@
 package bg.photographyjava.shared.util.validation;
 
-import bg.photographyjava.web.dto.UserRegisterDTO;
+import bg.photographyjava.web.dto.UserRegisterRequest;
 import bg.photographyjava.shared.util.validation.annotation.PasswordMatches;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -13,7 +13,7 @@ public class PasswordMatchesValidator implements ConstraintValidator<PasswordMat
 
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
-        if (value instanceof UserRegisterDTO user) {
+        if (value instanceof UserRegisterRequest user) {
             return user.getPassword().equals(user.getConfirmPassword());
         }
         return false;

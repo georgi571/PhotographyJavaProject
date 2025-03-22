@@ -6,6 +6,8 @@ import java.util.UUID;
 public class PictureReportResponse implements Serializable {
     private UUID id;
 
+    private UUID authorId;
+
     private UUID challengeId;
 
     private UUID pictureId;
@@ -20,6 +22,14 @@ public class PictureReportResponse implements Serializable {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public UUID getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(UUID authorId) {
+        this.authorId = authorId;
     }
 
     public UUID getChallengeId() {

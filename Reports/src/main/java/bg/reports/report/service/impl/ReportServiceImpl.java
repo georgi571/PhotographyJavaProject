@@ -1,5 +1,6 @@
 package bg.reports.report.service.impl;
 
+import bg.reports.exception.ReportNotFoundException;
 import bg.reports.report.model.Report;
 import bg.reports.report.repository.ReportRepository;
 import bg.reports.report.service.ReportService;
@@ -8,6 +9,7 @@ import bg.reports.web.mapper.DtoMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -21,34 +23,45 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public void savePictureReport(PictureReportRequest pictureReportRequest, UUID reporterId) {
+    public PictureReportResponse savePictureReport(PictureReportRequest pictureReportRequest, UUID reporterId) {
         Report report = DtoMapper.mapPictureReportRequestToReport(pictureReportRequest, reporterId);
 
         this.reportRepository.saveAndFlush(report);
+
+        return DtoMapper.mapPictureReportToPictureReportResponse(report);
     }
 
     @Override
-    public void saveCommentReport(CommentReportRequest commentReportRequest, UUID reporterId) {
+    public CommentReportResponse saveCommentReport(CommentReportRequest commentReportRequest, UUID reporterId) {
         Report report = DtoMapper.mapCommentReportRequestToReport(commentReportRequest, reporterId);
 
         this.reportRepository.saveAndFlush(report);
+
+        return DtoMapper.mapCommentReportToCommentReportResponse(report);
     }
 
     @Override
-    public void saveUserReport(UserReportRequest userReportRequest, UUID reporterId) {
+    public UserReportResponse saveUserReport(UserReportRequest userReportRequest, UUID reporterId) {
         Report report = DtoMapper.mapUserReportRequestToReport(userReportRequest, reporterId);
 
         this.reportRepository.saveAndFlush(report);
+
+        return DtoMapper.mapUserReportToUserReportResponse(report);
     }
 
     @Override
     public void deleteReport(UUID reportId) {
-        this.reportRepository.deleteById(reportId);
+        Optional<Report> reportOptional = this.reportRepository.findById(reportId);
+        if (reportOptional.isPresent()) {
+            this.reportRepository.deleteById(reportId);
+        } else {
+            throw new ReportNotFoundException("Report with ID " + reportId + " not found");
+        }
     }
 
     @Override
     public List<PictureReportResponse> getAllPictureReports() {
-        List<Report> reports = reportRepository.findByPictureIdIsNotNullAndCommentIdIsNull();
+        List<Report> reports = this.reportRepository.findByPictureIdIsNotNullAndCommentIdIsNull();
         return reports.stream()
                 .map(DtoMapper::mapPictureReportToPictureReportResponse)
                 .collect(Collectors.toList());
@@ -56,7 +69,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public List<CommentReportResponse> getAllCommentReports() {
-        List<Report> reports = reportRepository.findByCommentIdIsNotNull();
+        List<Report> reports = this.reportRepository.findByCommentIdIsNotNull();
         return reports.stream()
                 .map(DtoMapper::mapCommentReportToCommentReportResponse)
                 .collect(Collectors.toList());
@@ -64,7 +77,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public List<UserReportResponse> getAllUserReports() {
-        List<Report> reports = reportRepository.findByUserIdIsNotNull();
+        List<Report> reports = this.reportRepository.findByUserIdIsNotNull();
         return reports.stream()
                 .map(DtoMapper::mapUserReportToUserReportResponse)
                 .collect(Collectors.toList());

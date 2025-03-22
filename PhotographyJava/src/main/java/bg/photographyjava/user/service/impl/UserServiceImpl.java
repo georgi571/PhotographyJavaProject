@@ -1,5 +1,10 @@
 package bg.photographyjava.user.service.impl;
 
+import bg.photographyjava.exception.InvalidPasswordException;
+import bg.photographyjava.exception.OldEmailMismatchException;
+import bg.photographyjava.exception.OldUsernameMismatchException;
+import bg.photographyjava.exception.UserNotFoundException;
+import bg.photographyjava.shared.service.CloudinaryService;
 import bg.photographyjava.user.model.Role;
 import bg.photographyjava.user.property.enums.*;
 import bg.photographyjava.web.dto.*;
@@ -10,16 +15,19 @@ import bg.photographyjava.user.repository.RoleRepository;
 import bg.photographyjava.user.repository.UserRepository;
 import bg.photographyjava.user.service.UserService;
 import bg.photographyjava.web.filter.JWTService;
-import org.modelmapper.ModelMapper;
+import bg.photographyjava.web.mapper.DtoMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,23 +35,23 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private final RankRepository userRankRepository;
     private final RoleRepository userRoleRepository;
     private final CountryRepository countryRepository;
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
+    private final CloudinaryService cloudinaryService;
 
-    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, RankRepository userRankRepository, RoleRepository userRoleRepository, CountryRepository countryRepository, AuthenticationManager authenticationManager, JWTService jwtService) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, RankRepository userRankRepository, RoleRepository userRoleRepository, CountryRepository countryRepository, AuthenticationManager authenticationManager, JWTService jwtService, CloudinaryService cloudinaryService) {
         this.userRepository = userRepository;
-        this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
         this.userRankRepository = userRankRepository;
         this.userRoleRepository = userRoleRepository;
         this.countryRepository = countryRepository;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @Override
@@ -81,19 +89,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void registerUser(UserRegisterDTO userRegisterDTO) {
-        UserEntity user = this.modelMapper.map(userRegisterDTO, UserEntity.class);
-        user.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword()));
-        user.setCountry(this.countryRepository.findByName(CountryEnum.fromString(userRegisterDTO.getCountry())));
-        user.setGender(GenderEnum.fromString(userRegisterDTO.getGender()));
+    public void registerUser(UserRegisterRequest userRegisterRequest) {
+        UserEntity user = DtoMapper.mapUserRegisterRequestToUserEntity(userRegisterRequest);
+        user.setPassword(this.passwordEncoder.encode(userRegisterRequest.getPassword()));
+        user.setCountry(this.countryRepository.findByName(CountryEnum.fromString(userRegisterRequest.getCountry())));
         user.setRank(this.userRankRepository.findByRank(UserRank.BEGINNER));
         user.setRole(this.userRoleRepository.findByRole(UserRole.USER));
-        user.setApproved(false);
-        user.setRealName("Anonymous");
-        user.setProfilePicturePath("https://res.cloudinary.com/dkyp0c0lz/image/upload/v1737304170/male-profile-picture_rltohq.avif");
-        user.setPoints(0);
-        user.setBanned(false);
-        user.setApproved(false);
         this.userRepository.saveAndFlush(user);
     }
 
@@ -109,7 +110,9 @@ public class UserServiceImpl implements UserService {
                     .map(GrantedAuthority::getAuthority)
                     .orElseThrow(() -> new IllegalStateException("User has no roles assigned"));
 
-            UserEntity user = this.userRepository.findByUsername(userLoginRequest.getUsername()).get();
+            UserEntity user = this.getUserByUsername(userLoginRequest.getUsername()).orElseThrow(() ->
+                    new UserNotFoundException("User with username " + userLoginRequest.getUsername() + " not found"));
+//            UserEntity user = this.userRepository.findByUsername(userLoginRequest.getUsername()).get();
             List<UserPermission> userPermissions = user.getPermissions().stream().toList();
 
             return jwtService.generateToken(userLoginRequest.getUsername(), role, userPermissions, user.getId());
@@ -118,74 +121,94 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserProfileDTO getProfileDetails(String username) {
-        UserEntity user = this.getUserByUsername(username).get();
-        UserProfileDTO userProfileDTO = this.modelMapper.map(user, UserProfileDTO.class);
-        userProfileDTO.setCountry(user.getCountry().getName().getCountryName());
-        userProfileDTO.setRank(user.getRank().getRank().toString());
-        userProfileDTO.setPoints(user.getPoints());
+    public UserProfileResponse getProfileDetails(String username) {
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
 
-        LocalDate birthDate = user.getBirthDate();
-        int age = Period.between(birthDate, LocalDate.now()).getYears();
-        userProfileDTO.setAge(age);
-
-        return userProfileDTO;
+        return DtoMapper.mapUserEntityToUserProfileResponse(user);
     }
 
     @Override
-    public UserEditProfileDTO getProfileEditDetails(String username) {
-        UserEntity user = this.getUserByUsername(username).get();
+    public UserEditProfileResponse getProfileEditDetails(String username) {
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
 
-        return this.modelMapper.map(user, UserEditProfileDTO.class);
+        return DtoMapper.mapUserEntityToUserEditProfileResponse(user);
     }
 
     @Override
-    public void editUserDetails(String username, UserEditProfileDTO userEditProfileDTO) {
-        UserEntity user = this.getUserByUsername(username).get();
-        user.setRealName(userEditProfileDTO.getRealName());
-        user.setCity(userEditProfileDTO.getCity());
-        user.setBirthDate(userEditProfileDTO.getBirthDate());
+    public void editUserDetails(String username, UserEditProfileRequest userEditProfileRequest) {
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        DtoMapper.mapUserEditProfileRequestToUserEntity(user, userEditProfileRequest);
 
         this.userRepository.saveAndFlush(user);
     }
 
     @Override
-    public UserChangeUsernameDTO getUserUsernameDetails(String username) {
-        UserEntity user = this.getUserByUsername(username).get();
-        UserChangeUsernameDTO userChangeUsernameDTO = new UserChangeUsernameDTO();
-        userChangeUsernameDTO.setOldUsername(user.getUsername());
+    public UserChangeUsernameResponse getUserUsernameDetails(String username) {
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
 
-        return userChangeUsernameDTO;
+        return DtoMapper.mapUserEntityToUserChangeUsernameResponse(user);
     }
 
     @Override
-    public UserChangeEmailDTO getUserEmailDetails(String username) {
-        UserEntity user = this.getUserByUsername(username).get();
+    public UserChangeEmailResponse getUserEmailDetails(String username) {
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
 
-        UserChangeEmailDTO userChangeEmailDTO = new UserChangeEmailDTO();
-        userChangeEmailDTO.setOldEmail(user.getEmail());
-        return userChangeEmailDTO;
+        return DtoMapper.mapUserEntityToUserChangeEmailResponse(user);
     }
 
     @Override
-    public void editUserUsernameDetails(String username, UserChangeUsernameDTO userChangeUsernameDTO) {
-        UserEntity user = this.getUserByUsername(username).get();
-        user.setUsername(userChangeUsernameDTO.getNewUsername());
+    public void editUserUsernameDetails(String username, UserChangeUsernameRequest userChangeUsernameRequest) {
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        if (!passwordEncoder.matches(userChangeUsernameRequest.getPassword(), user.getPassword())) {
+            throw new InvalidPasswordException("Invalid current password");
+        }
+
+        if (!username.equals(userChangeUsernameRequest.getOldUsername())) {
+            throw new OldUsernameMismatchException("Old username does not match the authenticated username.");
+        }
+
+        DtoMapper.mapUserChangeUsernameRequestToUserEntity(user, userChangeUsernameRequest);
 
         this.userRepository.saveAndFlush(user);
     }
 
     @Override
-    public void editUserEmailDetails(String username, UserChangeEmailDTO userChangeEmailDTO) {
-        UserEntity user = this.getUserByUsername(username).get();
-        user.setEmail(userChangeEmailDTO.getNewEmail());
+    public void editUserEmailDetails(String username, UserChangeEmailRequest userChangeEmailRequest) {
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        if (!passwordEncoder.matches(userChangeEmailRequest.getPassword(), user.getPassword())) {
+            throw new InvalidPasswordException("Invalid current password");
+        }
+
+        if (!user.getEmail().equals(userChangeEmailRequest.getOldEmail())) {
+            throw new OldEmailMismatchException("Old email does not match the authenticated user email.");
+        }
+
+        DtoMapper.mapUserChangeEmailRequestToUserEntity(user, userChangeEmailRequest);
 
         this.userRepository.saveAndFlush(user);
     }
 
     @Override
-    public void updatePassword(String username, String encodedNewPassword) {
-        UserEntity user = this.getUserByUsername(username).get();
+    public void updatePassword(String username, UserChangePasswordRequest userChangePasswordRequest) {
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        if (!passwordEncoder.matches(userChangePasswordRequest.getOldPassword(), user.getPassword())) {
+            throw new InvalidPasswordException("Invalid current password");
+        }
+
+        String encodedNewPassword = passwordEncoder.encode(userChangePasswordRequest.getNewPassword());
+
         user.setPassword(encodedNewPassword);
 
         this.userRepository.saveAndFlush(user);
@@ -193,16 +216,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<ChangeRoleUserResponse> getAllUsers() {
-        return userRepository.findAll().stream().map(user -> new ChangeRoleUserResponse(
-                user.getId(),
-                user.getUsername(),
-                user.getRole().getRole().name()
-        )).toList();
+        return this.userRepository.findAll()
+                .stream()
+                .map(DtoMapper::mapUserEntityToChangeRoleUserResponse)
+                .toList();
     }
 
     @Override
     public void updateUserRole(UUID userId, String roleToChange, String username) {
-        UserEntity admin = this.getUserByUsername(username).get();
+        UserEntity admin = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -217,18 +241,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<BanUserResponse> getAllUsersForBan() {
-        return userRepository.findAll().stream().map(user -> new BanUserResponse(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.isBanned(),
-                user.getReasonForBan()
-        )).toList();
+        return userRepository.findAll()
+                .stream()
+                .map(DtoMapper::mapUserEntityToBanUserResponse)
+                .toList();
     }
 
     @Override
     public void banUserAction(UUID id, BanUserReasonRequest reasonDTO, String username) {
-        UserEntity admin = this.userRepository.findByUsername(username).get();
+        UserEntity admin = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
         UserEntity user = this.userRepository.findById(id).get();
         if (reasonDTO.getAction().equals("ban")) {
             user.setBanned(true);
@@ -245,28 +268,29 @@ public class UserServiceImpl implements UserService {
     public BanUserResponse getUserForBan(UUID id) {
         UserEntity user = this.userRepository.findById(id).get();
 
-        return this.modelMapper.map(user, BanUserResponse.class);
+        return DtoMapper.mapUserEntityToBanUserResponse(user);
     }
 
     @Override
     public List<ApproveUsersResponse> getAllUsersForApprove() {
-        return userRepository.findAll().stream().filter(userEntity -> !userEntity.isApproved() && !userEntity.isBanned()).map(user -> new ApproveUsersResponse(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail()
-        )).toList();
+        return userRepository.findAll()
+                .stream()
+                .filter(userEntity -> !userEntity.isApproved() && !userEntity.isBanned())
+                .map(DtoMapper::mapUserEntityToApproveUsersResponse).toList();
     }
 
     @Override
-    public void approveUserAction(UUID id, ApproveUserReasonRequest reasonDTO, String username) {
-        UserEntity admin = this.userRepository.findByUsername(username).get();
+    public void approveUserAction(UUID id, ApproveUserReasonRequest reasonRequest, String username) {
+        UserEntity admin = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
         UserEntity user = this.userRepository.findById(id).get();
-        if (reasonDTO.getAction().equals("approve")) {
+        if (reasonRequest.getAction().equals("approve")) {
             user.setApproved(true);
         } else {
             user.setApproved(false);
             user.setBanned(true);
-            user.setReasonForBan(reasonDTO.getReason());
+            user.setReasonForBan(reasonRequest.getReason());
         }
 
         this.userRepository.saveAndFlush(user);
@@ -276,24 +300,22 @@ public class UserServiceImpl implements UserService {
     public ApproveUsersResponse getUserForApprove(UUID id) {
         UserEntity user = this.userRepository.findById(id).get();
 
-        return this.modelMapper.map(user, ApproveUsersResponse.class);
+        return DtoMapper.mapUserEntityToApproveUsersResponse(user);
     }
 
     @Override
     public List<AdminPermissionsResponse> getAllAdminsWithPermissions() {
         return this.userRepository.findAll().stream()
                 .filter(user -> user.getRole() != null && user.getRole().getRole() == UserRole.ADMIN)
-                .map(admin -> new AdminPermissionsResponse(
-                        admin.getId(),
-                        admin.getUsername(),
-                        admin.getPermissions()
-                ))
+                .map(DtoMapper::mapUserEntityToAdminPermissionsResponse)
                 .toList();
     }
 
     @Override
     public AdminPermissionsResponse updateAdminPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username) {
-        UserEntity superAdmin = this.userRepository.findByUsername(username).get();
+        UserEntity superAdmin = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
         UserEntity admin = this.userRepository.findById(id).get();
 
         admin.getPermissions().addAll(permissionsToAdd);
@@ -301,24 +323,22 @@ public class UserServiceImpl implements UserService {
 
         this.userRepository.saveAndFlush(admin);
 
-        return this.modelMapper.map(admin, AdminPermissionsResponse.class);
+        return DtoMapper.mapUserEntityToAdminPermissionsResponse(admin);
     }
 
     @Override
     public List<ModeratorPermissionsResponse> getAllModeratorsWithPermissions() {
         return this.userRepository.findAll().stream()
                 .filter(user -> user.getRole() != null && user.getRole().getRole() == UserRole.MODERATOR)
-                .map(admin -> new ModeratorPermissionsResponse(
-                        admin.getId(),
-                        admin.getUsername(),
-                        admin.getPermissions()
-                ))
+                .map(DtoMapper::mapUserEntityToModeratorPermissionsResponse)
                 .toList();
     }
 
     @Override
     public ModeratorPermissionsResponse updateModerationPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username) {
-        UserEntity superAdmin = this.userRepository.findByUsername(username).get();
+        UserEntity superAdmin = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
         UserEntity moderator = this.userRepository.findById(id).get();
 
         moderator.getPermissions().addAll(permissionsToAdd);
@@ -326,7 +346,7 @@ public class UserServiceImpl implements UserService {
 
         this.userRepository.saveAndFlush(moderator);
 
-        return this.modelMapper.map(moderator, ModeratorPermissionsResponse.class);
+        return DtoMapper.mapUserEntityToModeratorPermissionsResponse(moderator);
     }
 
     @Override
@@ -336,14 +356,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserPermission> getCurrentAdminPermissions(String username) {
-        UserEntity user = this.getUserByUsername(username).get();
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
         return user.getPermissions().stream().toList();
     }
 
     @Override
-    public void addFriendByUsername(AddFriendDTO addFriendDTO, String username) {
-        UserEntity user = this.getUserByUsername(username).get();
-        UserEntity friend = this.getUserByUsername(addFriendDTO.getUsername()).get();
+    public void addFriendByUsername(FriendRequest friendRequest, String username) {
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        UserEntity friend = this.getUserByUsername(friendRequest.getUsername()).orElseThrow(() ->
+                new UserNotFoundException("User with username " + friendRequest.getUsername() + " not found"));
 
         user.getSendFriendRequest().add(friend);
         friend.getReceiveFriendRequest().add(user);
@@ -354,8 +379,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void followUserByUsername(FollowerUserRequest followerUserRequest, String username) {
-        UserEntity user = this.getUserByUsername(username).get();
-        UserEntity follower = this.getUserByUsername(followerUserRequest.getUsername()).get();
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        UserEntity follower = this.getUserByUsername(followerUserRequest.getUsername()).orElseThrow(() ->
+                new UserNotFoundException("User with username " + followerUserRequest.getUsername() + " not found"));
 
         user.getFollowing().add(follower);
         follower.getFollowers().add(user);
@@ -365,9 +393,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void acceptFriendRequest(AddFriendDTO addFriendDTO, String username) {
-        UserEntity user = this.getUserByUsername(username).get();
-        UserEntity friend = this.getUserByUsername(addFriendDTO.getUsername()).get();
+    public void acceptFriendRequest(FriendRequest friendRequest, String username) {
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        UserEntity friend = this.getUserByUsername(friendRequest.getUsername()).orElseThrow(() ->
+                new UserNotFoundException("User with username " + friendRequest.getUsername() + " not found"));
 
         user.getFriends().add(friend);
         friend.getFriends().add(user);
@@ -380,9 +411,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void rejectFriendRequest(AddFriendDTO addFriendDTO, String username) {
-        UserEntity user = this.getUserByUsername(username).get();
-        UserEntity friend = this.getUserByUsername(addFriendDTO.getUsername()).get();
+    public void rejectFriendRequest(FriendRequest friendRequest, String username) {
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        UserEntity friend = this.getUserByUsername(friendRequest.getUsername()).orElseThrow(() ->
+                new UserNotFoundException("User with username " + friendRequest.getUsername() + " not found"));
 
         user.getReceiveFriendRequest().remove(friend);
         friend.getSendFriendRequest().remove(user);
@@ -399,9 +433,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void removeFriendByUsername(AddFriendDTO addFriendDTO, String username) {
-        UserEntity user = this.getUserByUsername(username).get();
-        UserEntity friend = this.getUserByUsername(addFriendDTO.getUsername()).get();
+    public void removeFriendByUsername(FriendRequest friendRequest, String username) {
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        UserEntity friend = this.getUserByUsername(friendRequest.getUsername()).orElseThrow(() ->
+                new UserNotFoundException("User with username " + friendRequest.getUsername() + " not found"));
 
         user.getFriends().remove(friend);
         friend.getFriends().remove(user);
@@ -411,9 +448,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void cancelFriendRequestByUsername(AddFriendDTO addFriendDTO, String username) {
-        UserEntity user = this.getUserByUsername(username).get();
-        UserEntity friend = this.getUserByUsername(addFriendDTO.getUsername()).get();
+    public void cancelFriendRequestByUsername(FriendRequest friendRequest, String username) {
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        UserEntity friend = this.getUserByUsername(friendRequest.getUsername()).orElseThrow(() ->
+                new UserNotFoundException("User with username " + friendRequest.getUsername() + " not found"));
 
         user.getSendFriendRequest().remove(friend);
         friend.getReceiveFriendRequest().remove(user);
@@ -424,8 +464,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void unfollowUserByUsername(FollowerUserRequest followerUserRequest, String username) {
-        UserEntity user = this.getUserByUsername(username).get();
-        UserEntity follower = this.getUserByUsername(followerUserRequest.getUsername()).get();
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        UserEntity follower = this.getUserByUsername(followerUserRequest.getUsername()).orElseThrow(() ->
+                new UserNotFoundException("User with username " + followerUserRequest.getUsername() + " not found"));
 
         user.getFollowing().remove(follower);
         follower.getFollowers().remove(user);
@@ -436,77 +479,99 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean areFriends(String username, String targetUsername) {
-        UserEntity user = userRepository.findByUsername(username).get();
-        UserEntity targetUser = userRepository.findByUsername(targetUsername).get();
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        UserEntity targetUser = this.getUserByUsername(targetUsername).orElseThrow(() ->
+                new UserNotFoundException("User with username " + targetUsername + " not found"));
 
         return user.getFriends().contains(targetUser);
     }
 
     @Override
     public boolean hasSentFriendRequest(String username, String targetUsername) {
-        UserEntity user = userRepository.findByUsername(username).get();
-        UserEntity targetUser = userRepository.findByUsername(targetUsername).get();
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        UserEntity targetUser = this.getUserByUsername(targetUsername).orElseThrow(() ->
+                new UserNotFoundException("User with username " + targetUsername + " not found"));
 
         return user.getSendFriendRequest().contains(targetUser);
     }
 
     @Override
     public boolean isFollowing(String username, String targetUsername) {
-        UserEntity user = userRepository.findByUsername(username).get();
-        UserEntity targetUser = userRepository.findByUsername(targetUsername).get();
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        UserEntity targetUser = this.getUserByUsername(targetUsername).orElseThrow(() ->
+                new UserNotFoundException("User with username " + targetUsername + " not found"));
 
         return targetUser.getFollowers().contains(user);
     }
 
     @Override
     public Set<FriendsResponse> getSentFriendRequests(String username) {
-        UserEntity user = userRepository.findByUsername(username).get();
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
         Set<UserEntity> friendRequest = user.getSendFriendRequest();
         return friendRequest.stream()
-                .map(request -> modelMapper.map(request, FriendsResponse.class))
+                .map(DtoMapper::mapUserEntityToFriendsResponse)
                 .collect(Collectors.toSet());
     }
 
     @Override
     public Set<FriendsResponse> getReceiveFriendRequests(String username) {
-        UserEntity user = userRepository.findByUsername(username).get();
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
         Set<UserEntity> receiveRequest = user.getReceiveFriendRequest();
         return receiveRequest.stream()
-                .map(request -> modelMapper.map(request, FriendsResponse.class))
+                .map(DtoMapper::mapUserEntityToFriendsResponse)
                 .collect(Collectors.toSet());
     }
 
     @Override
     public Set<FollowersResponse> getAllFollowers(String username) {
-        UserEntity user = userRepository.findByUsername(username).get();
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
         Set<UserEntity> followers = user.getFollowers();
         return followers.stream()
-                .map(request -> modelMapper.map(request, FollowersResponse.class))
+                .map(DtoMapper::mapUserEntityToFollowersResponse)
                 .collect(Collectors.toSet());
     }
 
     @Override
     public Set<FollowersResponse> getAllFollowings(String username) {
-        UserEntity user = userRepository.findByUsername(username).get();
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
         Set<UserEntity> followings = user.getFollowing();
         return followings.stream()
-                .map(request -> modelMapper.map(request, FollowersResponse.class))
+                .map(DtoMapper::mapUserEntityToFollowersResponse)
                 .collect(Collectors.toSet());
     }
 
     @Override
     public Set<FriendsResponse> getAllFriends(String username) {
-        UserEntity user = userRepository.findByUsername(username).get();
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
         Set<UserEntity> friends = user.getFriends();
         return friends.stream()
-                .map(request -> modelMapper.map(request, FriendsResponse.class))
+                .map(DtoMapper::mapUserEntityToFriendsResponse)
                 .collect(Collectors.toSet());
     }
 
     @Override
     public void removeFollowerByUsername(FollowerUserRequest followerUserRequest, String username) {
-        UserEntity user = this.getUserByUsername(username).get();
-        UserEntity follower = this.getUserByUsername(followerUserRequest.getUsername()).get();
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        UserEntity follower = this.getUserByUsername(followerUserRequest.getUsername()).orElseThrow(() ->
+                new UserNotFoundException("User with username " + followerUserRequest.getUsername() + " not found"));
 
         user.getFollowers().remove(follower);
         follower.getFollowing().remove(user);
@@ -517,8 +582,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void blockUser(String username, String blockedUsername) {
-        UserEntity user = this.getUserByUsername(username).get();
-        UserEntity blockedUser = this.getUserByUsername(blockedUsername).get();
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        UserEntity blockedUser = this.getUserByUsername(blockedUsername).orElseThrow(() ->
+                new UserNotFoundException("User with username " + blockedUsername + " not found"));
 
         user.getFriends().remove(blockedUser);
         user.getReceiveFriendRequest().remove(blockedUser);
@@ -539,8 +607,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void unblockUser(String username, String blockedUsername) {
-        UserEntity user = this.getUserByUsername(username).get();
-        UserEntity blockedUser = this.getUserByUsername(blockedUsername).get();
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        UserEntity blockedUser = this.getUserByUsername(blockedUsername).orElseThrow(() ->
+                new UserNotFoundException("User with username " + blockedUsername + " not found"));
 
         user.getBlockedUsers().remove(blockedUser);
         this.userRepository.saveAndFlush(user);
@@ -548,31 +619,65 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Set<BlockedUserResponse> getBlockedUsers(String username) {
-        UserEntity user = this.getUserByUsername(username).get();
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
         Set<UserEntity> blockedUsers = user.getBlockedUsers();
 
         return blockedUsers.stream()
-                .map(request -> this.modelMapper.map(request, BlockedUserResponse.class))
+                .map(DtoMapper::mapUserEntityToBlockedUserResponse)
                 .collect(Collectors.toSet());
     }
 
     @Override
     public boolean isUserBlocked(String username, String blockedUsername) {
-        UserEntity user = this.userRepository.findByUsername(username).get();
-        UserEntity targetUser = this.userRepository.findByUsername(blockedUsername).get();
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
 
-        return targetUser.getBlockedUsers().contains(user);
+        UserEntity blockedUser = this.getUserByUsername(blockedUsername).orElseThrow(() ->
+                new UserNotFoundException("User with username " + blockedUsername + " not found"));
+
+        return blockedUser.getBlockedUsers().contains(user);
     }
 
     @Override
     public ContactUserResponse getUserDetails(String username) {
-        UserEntity user = this.getUserByUsername(username).get();
-        return this.modelMapper.map(user, ContactUserResponse.class);
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        return DtoMapper.mapUserEntityToContactUserResponse(user);
     }
 
     @Override
-    public UserInformationForPictureDTO getUserById(UUID userId) {
+    public UserInformationForPictureResponse getUserById(UUID userId) {
         UserEntity user = this.userRepository.findById(userId).get();
-        return this.modelMapper.map(user, UserInformationForPictureDTO.class);
+
+        return DtoMapper.mapUserEntityToUserInformationForPictureResponse(user);
+    }
+
+    @Override
+    public Map<String, String> handleValidationErrors(BindingResult bindingResult) {
+        Map<String, String> errorResponse = new HashMap<>();
+        if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(error -> {
+                String fieldName = ((FieldError) error).getField();
+                String errorMessage = error.getDefaultMessage();
+                errorResponse.put(fieldName, errorMessage);
+            });
+        }
+        return errorResponse;
+    }
+
+    @Override
+    public void editUserProfilePicture(MultipartFile file, String username) throws IOException {
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        Map<String, Object> uploadResult = this.cloudinaryService.uploadImage(file);
+        String pictureFilePath = (String) uploadResult.get("secure_url");
+
+        user.setProfilePicturePath(pictureFilePath);
+
+        this.userRepository.saveAndFlush(user);
     }
 }

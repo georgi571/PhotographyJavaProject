@@ -8,9 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -39,45 +37,36 @@ public class ReportController {
     }
 
     @PostMapping("/pictures")
-    public ResponseEntity<Map<String, String>> reportPicture(@Valid @RequestBody PictureReportRequest pictureReportRequest,
+    public ResponseEntity<PictureReportResponse> reportPicture(@Valid @RequestBody PictureReportRequest pictureReportRequest,
                                                              Authentication authentication) {
         UUID reporterId = (UUID) authentication.getDetails();
 
-        this.reportService.savePictureReport(pictureReportRequest, reporterId);
+        PictureReportResponse pictureReportResponse = this.reportService.savePictureReport(pictureReportRequest, reporterId);
 
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Picture reported successfully");
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(pictureReportResponse);
     }
 
     @PostMapping("/comments")
-    public ResponseEntity<Map<String, String>> reportComment(@Valid @RequestBody CommentReportRequest commentReportRequest,
+    public ResponseEntity<CommentReportResponse> reportComment(@Valid @RequestBody CommentReportRequest commentReportRequest,
                                                              Authentication authentication) {
         UUID reporterId = (UUID) authentication.getDetails();
 
-        this.reportService.saveCommentReport(commentReportRequest, reporterId);
+        CommentReportResponse commentReportResponse = this.reportService.saveCommentReport(commentReportRequest, reporterId);
 
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Comment reported successfully");
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(commentReportResponse);
     }
 
     @PostMapping("/user")
-    public ResponseEntity<Map<String, String>> reportUser(@Valid @RequestBody UserReportRequest userReportRequest,
+    public ResponseEntity<UserReportResponse> reportUser(@Valid @RequestBody UserReportRequest userReportRequest,
                                                           Authentication authentication) {
         UUID reporterId = (UUID) authentication.getDetails();
 
-        this.reportService.saveUserReport(userReportRequest, reporterId);
+        UserReportResponse userReportResponse = this.reportService.saveUserReport(userReportRequest, reporterId);
 
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "User reported successfully");
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userReportResponse);
     }
 
-    @DeleteMapping("/report/{reportId}")
+    @DeleteMapping("/{reportId}")
     public ResponseEntity<Void> deleteReport(@PathVariable UUID reportId) {
         this.reportService.deleteReport(reportId);
 

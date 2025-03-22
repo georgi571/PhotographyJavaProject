@@ -30,7 +30,7 @@
 
             <div class="form-group">
                 <label for="currentPassword">Current Password</label>
-                <input type="password" id="currentPassword" [(ngModel)]="userDetails.currentPassword"
+                <input type="password" id="currentPassword" [(ngModel)]="userDetails.password"
                        name="currentPassword" required/>
                 @if (fieldErrors['currentPassword']) {
                     <div class="error-message">

@@ -44,6 +44,8 @@ import {ReportComponent} from './report/report.component';
 import {ReportUsersComponent} from './report/report-users/report-users.component';
 import {ReportPicturesComponent} from './report/report-pictures/report-pictures.component';
 import {ReportCommentsComponent} from './report/report-comments/report-comments.component';
+import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
+import {ServerErrorComponent} from './server-error/server-error.component';
 
 export const routes: Routes = [
     {path: '', component: IntroComponent},
@@ -101,7 +103,10 @@ export const routes: Routes = [
             { path: 'users', component: ReportUsersComponent },
             { path: 'picture', component: ReportPicturesComponent },
             { path: 'comments', component: ReportCommentsComponent }
-        ] }
+        ] },
+    { path: 'page-not-found', component: PageNotFoundComponent },
+    { path: 'server-error', component: ServerErrorComponent },
+    { path: '**', redirectTo: '/page-not-found' },
 ];
 
 @NgModule({

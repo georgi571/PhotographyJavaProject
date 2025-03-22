@@ -1,13 +1,21 @@
 package bg.photographyjava.web.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.io.Serializable;
 
-public class UserChangePasswordDTO implements Serializable {
+public class UserChangePasswordRequest implements Serializable {
 
+    @NotNull
     private String oldPassword;
 
+    @NotNull
+    @Size(min = 6, max = 20, message = "{password.length}")
     private String newPassword;
 
+    @NotNull
+    @Size(min = 6, max = 20, message = "{password.length}")
     private String confirmPassword;
 
     public String getOldPassword() {

@@ -44,7 +44,7 @@ export class EditInformationComponent implements OnInit {
             next: (response) => {
                 this.errorMessage = null;
                 this.fieldErrors = {};
-                this.router.navigate(['/profile']);
+                this.router.navigate(['/profile/edit']);
             },
             error: (error) => {
                 if (error.status === 400 && typeof error.error === 'object') {

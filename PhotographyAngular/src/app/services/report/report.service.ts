@@ -43,7 +43,7 @@ export class ReportService {
 
     deleteReport(reportId: string) {
         const token = this.authService.getToken();
-        return this.http.delete<void>(`${this.apiUrl}/v1/reports/report/${reportId}`, {
+        return this.http.delete<void>(`${this.apiUrl}/v1/reports/${reportId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

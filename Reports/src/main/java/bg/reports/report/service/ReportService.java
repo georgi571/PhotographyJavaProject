@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ReportService {
-    void savePictureReport(PictureReportRequest pictureReportRequest, UUID reporterId);
+    PictureReportResponse savePictureReport(PictureReportRequest pictureReportRequest, UUID reporterId);
 
-    void saveCommentReport(CommentReportRequest commentReportRequest, UUID reporterId);
+    CommentReportResponse saveCommentReport(CommentReportRequest commentReportRequest, UUID reporterId);
 
-    void saveUserReport(UserReportRequest userReportRequest, UUID reporterId);
+    UserReportResponse saveUserReport(UserReportRequest userReportRequest, UUID reporterId);
 
     void deleteReport(UUID reportId);
 

@@ -21,7 +21,7 @@ export class EditEmailComponent implements OnInit {
     userDetails = {
         oldEmail: '',
         newEmail: '',
-        currentPassword: ''
+        password: ''
     };
 
     fieldErrors: { [key: string]: string } = {};
@@ -46,7 +46,7 @@ export class EditEmailComponent implements OnInit {
             next: (response) => {
                 this.errorMessage = null;
                 this.fieldErrors = {};
-                this.router.navigate(['/profile']);
+                this.router.navigate(['/profile/edit']);
             },
             error: (error) => {
                 if (error.status === 400 && typeof error.error === 'object') {

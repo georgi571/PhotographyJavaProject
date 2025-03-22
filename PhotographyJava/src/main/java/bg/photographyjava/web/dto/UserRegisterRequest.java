@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 @PasswordMatches
-public class UserRegisterDTO implements Serializable {
+public class UserRegisterRequest implements Serializable {
 
     @NotEmpty(message = "{username.empty}")
     @UniqueUsername

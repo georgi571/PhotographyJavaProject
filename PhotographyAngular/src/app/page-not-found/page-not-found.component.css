@@ -1,0 +1,32 @@
+body {
+    height: 84vh;
+}
+
+.page-not-found-container {
+    height: 84vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background:rgba(0, 0, 0, 0.6) url('../../assets/images/page-not-found.jpg') no-repeat center center;
+    background-size: cover;
+    text-align: center;
+    font-size: 30px;
+    padding-top: 90px;
+}
+
+.page-not-found-container button {
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    padding: 15px 15px;
+    cursor: pointer;
+    font-size: 20px;
+    position: absolute;
+    bottom: 100px;
+    right: 100px;
+}
+
+.page-not-found-container button:hover {
+    background-color: #e64a19;
+}

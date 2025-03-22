@@ -18,18 +18,7 @@ export class EditPictureComponent {
 
     selectedImage: string | ArrayBuffer | null = null;
 
-    userDetails = {
-        realName: '',
-        city: '',
-        age: null,
-        picture: ''
-    };
-
-    passwordDetails = {
-        oldPassword: '',
-        newPassword: '',
-        confirmPassword: ''
-    };
+    selectedFile: File | null = null;
 
     fieldErrors: { [key: string]: string } = {};
 
@@ -38,48 +27,32 @@ export class EditPictureComponent {
                 private router: Router) {
     }
 
-    ngOnInit(): void {
-        this.profile.getUserEditDetails().subscribe({
-            next: (data: any) => {
-                this.userDetails = data;
-            }
-        });
-    }
-
     onFileChange(event: any): void {
         const file = event.target.files[0];
         if (file) {
+            this.selectedFile = file;
             const reader = new FileReader();
             reader.onload = (e: any) => {
-                this.selectedImage = e.target.result; // stores the image data as a URL
+                this.selectedImage = e.target.result;
             };
-            reader.readAsDataURL(file); // reads the image as a base64-encoded URL
+            reader.readAsDataURL(file);
         }
     }
 
     onSubmitPictureUpdate() {
-        this.profile.editUserDetail(this.userDetails).subscribe({
-            next: (response) => {
-                this.errorMessage = null;
-                this.fieldErrors = {};
-                this.router.navigate(['/profile']);
-            },
-            error: (error) => {
-                if (error.status === 400 && typeof error.error === 'object') {
-                    this.fieldErrors = error.error;
-                } else {
-                    this.errorMessage = 'An unexpected error occurred!';
-                }
-            }
-        });
-    }
+        if (!this.selectedFile) {
+            this.errorMessage = 'Please select a file to upload.';
+            return;
+        }
 
-    onSubmitPassword() {
-        this.profile.editUserDetail(this.userDetails).subscribe({
-            next: (response) => {
+        const formData = new FormData();
+        formData.append('file', this.selectedFile);
+
+        this.profile.editUserPicture(formData).subscribe({
+            next: () => {
                 this.errorMessage = null;
                 this.fieldErrors = {};
-                this.router.navigate(['/profile']);
+                this.router.navigate(['/profile/edit']);
             },
             error: (error) => {
                 if (error.status === 400 && typeof error.error === 'object') {

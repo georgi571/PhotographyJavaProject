@@ -3,7 +3,7 @@ package bg.photographyjava.web.dto;
 import java.io.Serializable;
 import java.util.UUID;
 
-public class UserProfileDTO implements Serializable {
+public class UserProfileResponse implements Serializable {
 
     private UUID id;
 

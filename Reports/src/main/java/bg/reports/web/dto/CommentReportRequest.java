@@ -17,6 +17,9 @@ public class CommentReportRequest implements Serializable {
     private UUID commentId;
 
     @NotNull
+    private UUID authorId;
+
+    @NotNull
     private String reason;
 
     public UUID getChallengeId() {
@@ -41,6 +44,14 @@ public class CommentReportRequest implements Serializable {
 
     public void setCommentId(UUID commentId) {
         this.commentId = commentId;
+    }
+
+    public UUID getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(UUID authorId) {
+        this.authorId = authorId;
     }
 
     public String getReason() {

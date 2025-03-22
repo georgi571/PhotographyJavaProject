@@ -14,6 +14,9 @@ public class PictureReportRequest implements Serializable {
     private UUID pictureId;
 
     @NotNull
+    private UUID authorId;
+
+    @NotNull
     private String reason;
 
     public UUID getChallengeId() {
@@ -30,6 +33,14 @@ public class PictureReportRequest implements Serializable {
 
     public void setPictureId(UUID pictureId) {
         this.pictureId = pictureId;
+    }
+
+    public UUID getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(UUID authorId) {
+        this.authorId = authorId;
     }
 
     public String getReason() {

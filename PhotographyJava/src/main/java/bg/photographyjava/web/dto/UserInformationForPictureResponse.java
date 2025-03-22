@@ -1,8 +1,9 @@
 package bg.photographyjava.web.dto;
 
+import java.io.Serializable;
 import java.util.UUID;
 
-public class UserInformationForPictureDTO {
+public class UserInformationForPictureResponse implements Serializable {
     private UUID id;
 
     private String username;

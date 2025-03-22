@@ -1,22 +1,14 @@
 package bg.photographyjava.web.dto;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public class UserEditProfileDTO implements Serializable {
+public class UserEditProfileResponse implements Serializable {
 
-    @NotEmpty(message = "{real.name.empty}")
-    @Size(min = 2, max = 50, message = "{real.name.length}")
     private String realName;
 
-    @NotEmpty(message = "{city.empty}")
     private String city;
 
-    @NotNull(message = "{age.empty}")
     private LocalDate birthDate;
 
     public String getRealName() {

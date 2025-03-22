@@ -3,11 +3,11 @@ package bg.photographyjava.user.service;
 import bg.photographyjava.user.property.enums.UserPermission;
 import bg.photographyjava.web.dto.*;
 import bg.photographyjava.user.model.UserEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.*;
 
 public interface UserService {
     void seedUsers();
@@ -16,25 +16,25 @@ public interface UserService {
 
     Optional<UserEntity> getUserByUsername(String username);
 
-    void registerUser(UserRegisterDTO userRegisterDTO);
+    void registerUser(UserRegisterRequest userRegisterRequest);
 
     String verify(UserLoginRequest userLoginRequest);
 
-    UserProfileDTO getProfileDetails(String username);
+    UserProfileResponse getProfileDetails(String username);
 
-    UserEditProfileDTO getProfileEditDetails(String username);
+    UserEditProfileResponse getProfileEditDetails(String username);
 
-    void editUserDetails(String username, UserEditProfileDTO userEditProfileDTO);
+    void editUserDetails(String username, UserEditProfileRequest userEditProfileRequest);
 
-    UserChangeUsernameDTO getUserUsernameDetails(String username);
+    UserChangeUsernameResponse getUserUsernameDetails(String username);
 
-    UserChangeEmailDTO getUserEmailDetails(String username);
+    UserChangeEmailResponse getUserEmailDetails(String username);
 
-    void editUserUsernameDetails(String username, UserChangeUsernameDTO userChangeUsernameDTO);
+    void editUserUsernameDetails(String username, UserChangeUsernameRequest userChangeUsernameRequest);
 
-    void editUserEmailDetails(String username, UserChangeEmailDTO userChangeEmailDTO);
+    void editUserEmailDetails(String username, UserChangeEmailRequest userChangeEmailRequest);
 
-    void updatePassword(String username, String encodedNewPassword);
+    void updatePassword(String username, UserChangePasswordRequest userChangePasswordRequest);
 
     List<ChangeRoleUserResponse> getAllUsers();
 
@@ -64,19 +64,19 @@ public interface UserService {
 
     List<UserPermission> getCurrentAdminPermissions(String username);
 
-    void addFriendByUsername(AddFriendDTO addFriendDTO, String username);
+    void addFriendByUsername(FriendRequest friendRequest, String username);
 
     void followUserByUsername(FollowerUserRequest followerUserRequest, String username);
 
-    void acceptFriendRequest(AddFriendDTO addFriendDTO, String username);
+    void acceptFriendRequest(FriendRequest friendRequest, String username);
 
-    void rejectFriendRequest(AddFriendDTO addFriendDTO, String username);
+    void rejectFriendRequest(FriendRequest friendRequest, String username);
 
     boolean isValidUser(String username, String password);
 
-    void removeFriendByUsername(AddFriendDTO addFriendDTO, String username);
+    void removeFriendByUsername(FriendRequest friendRequest, String username);
 
-    void cancelFriendRequestByUsername(AddFriendDTO addFriendDTO, String username);
+    void cancelFriendRequestByUsername(FriendRequest friendRequest, String username);
 
     void unfollowUserByUsername(FollowerUserRequest followerUserRequest, String username);
 
@@ -108,5 +108,9 @@ public interface UserService {
 
     ContactUserResponse getUserDetails(String username);
 
-    UserInformationForPictureDTO getUserById(UUID userId);
+    UserInformationForPictureResponse getUserById(UUID userId);
+
+    Map<String, String> handleValidationErrors(BindingResult bindingResult);
+
+    void editUserProfilePicture(MultipartFile file, String username) throws IOException;
 }

@@ -57,6 +57,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/v1/reports/pictures").hasAnyAuthority("PERMISSION_deletePicture")
                         .requestMatchers(HttpMethod.GET, "/api/v1/reports/comments").hasAnyAuthority("PERMISSION_deleteMessage")
                         .requestMatchers(HttpMethod.GET, "/api/v1/reports/users").hasAnyAuthority("PERMISSION_banUsers")
+                        .requestMatchers(HttpMethod.DELETE, "api/v1/reports/**").hasAnyAuthority("PERMISSION_deletePicture", "PERMISSION_deleteMessage", "PERMISSION_banUsers")
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

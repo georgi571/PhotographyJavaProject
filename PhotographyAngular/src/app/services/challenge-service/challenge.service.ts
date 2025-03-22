@@ -60,11 +60,11 @@ export class ChallengeService {
         });
     }
 
-    reportPicture(challengeId: string, pictureId: string, reason: string) {
+    reportPicture(challengeId: string, pictureId: string, reason: string, authorId: string) {
         const token = this.authService.getToken();
         return this.http.post(
             `${this.reportUrl}/v1/reports/pictures`,
-            { challengeId: challengeId, pictureId: pictureId, reason: reason },
+            { challengeId: challengeId, pictureId: pictureId, reason: reason, authorId: authorId },
             {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -73,10 +73,10 @@ export class ChallengeService {
         );
     }
 
-    reportComment(challengeId: string, pictureId: string, commentId: string, reason: string) {
+    reportComment(challengeId: string, pictureId: string, commentId: string, reason: string, authorId: string) {
         const token = this.authService.getToken();
         return this.http.post(`${this.reportUrl}/v1/reports/comments`,
-            { challengeId: challengeId, pictureId: pictureId, commentId: commentId, reason: reason },
+            { challengeId: challengeId, pictureId: pictureId, commentId: commentId, reason: reason, authorId: authorId },
             {
                 headers: {
                     Authorization: `Bearer ${token}`

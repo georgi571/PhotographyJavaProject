@@ -5,7 +5,7 @@ import bg.photographyjava.user.service.UserService;
 import bg.photographyjava.web.dto.RegisterInfoResponse;
 import bg.photographyjava.web.dto.UserLoginRequest;
 import bg.photographyjava.web.dto.UserLoginResponse;
-import bg.photographyjava.web.dto.UserRegisterDTO;
+import bg.photographyjava.web.dto.UserRegisterRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +47,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> registerUser(
-            @RequestBody @Valid UserRegisterDTO userRegisterDTO,
+            @RequestBody @Valid UserRegisterRequest userRegisterRequest,
             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -61,7 +61,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
-        this.userService.registerUser(userRegisterDTO);
+        this.userService.registerUser(userRegisterRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Collections.singletonMap("message", "User registered successfully"));

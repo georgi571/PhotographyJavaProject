@@ -270,14 +270,20 @@ export class ChallengeDetailsComponent implements OnInit {
     }
 
     reportPicture(picture: any, reason: string): void {
-        this.challengeService.reportPicture(this.challengeId, picture.id, reason).subscribe(
-            (response) => {
-                console.log('Picture reported successfully:', response);
-            }
-        );
+        console.log(picture)
+        this.challengeService.reportPicture(this.challengeId, picture.id, reason, picture.authorId)
+            .subscribe({
+                next: () => {
+                    alert("Picture reported successfully!");
+                },
+                error: (error) => {
+                    alert("Failed to report the picture. Please try again.");
+                }
+            });
     }
 
     reportComment(comment: any, reason: string): void {
+        console.log(comment)
         if (!this.selectedPicture) {
             console.error('No picture selected');
             return;
@@ -291,11 +297,15 @@ export class ChallengeDetailsComponent implements OnInit {
             return;
         }
 
-        this.challengeService.reportComment(this.challengeId, picture.id, comment.id, reason).subscribe(
-            (response) => {
-                console.log('Comment reported successfully:', response);
-            }
-        );
+        this.challengeService.reportComment(this.challengeId, picture.id, comment.id, reason, comment.authorId)
+            .subscribe({
+                next: () => {
+                    alert("Comment reported successfully!");
+                },
+                error: (error) => {
+                    alert("Failed to report the comment. Please try again.");
+                }
+            });
     }
 
     openDeleteConfirmation(type: string, item: any): void {

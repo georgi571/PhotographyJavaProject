@@ -20,7 +20,7 @@ export class EditUsernameComponent implements OnInit {
     userDetails = {
         oldUsername: '',
         newUsername: '',
-        currentPassword: ''
+        password: ''
     };
 
     fieldErrors: { [key: string]: string } = {};

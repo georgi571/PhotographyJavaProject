@@ -13,15 +13,6 @@ public class AdminPermissionsResponse {
 
     private Set<UserPermission> permissions;
 
-    public AdminPermissionsResponse() {
-    }
-
-    public AdminPermissionsResponse(UUID id, String username, Set<UserPermission> permissions) {
-        this.id = id;
-        this.username = username;
-        this.permissions = permissions;
-    }
-
     public UUID getId() {
         return id;
     }

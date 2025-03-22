@@ -2,17 +2,21 @@ package bg.photographyjava.web.dto;
 
 import bg.photographyjava.shared.util.validation.annotation.UniqueEmail;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 
-public class UserChangeEmailDTO implements Serializable {
+public class UserChangeEmailRequest implements Serializable {
 
+    @NotNull
     private String oldEmail;
 
+    @NotNull
     @Email
     @UniqueEmail
     private String newEmail;
 
+    @NotNull
     private String password;
 
     public String getOldEmail() {
