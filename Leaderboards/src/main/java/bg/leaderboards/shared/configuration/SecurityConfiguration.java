@@ -54,6 +54,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.GET, "api/v1/leaderboards").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/leaderboards/rising").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/leaderboards/month").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/leaderboards/challenges").permitAll()

@@ -44,15 +44,15 @@ export class LeaderboardsComponent implements OnInit {
                 return of(null);
             })
         ).subscribe(() => {
+            this.fetchUsersByPoints();
+            this.fetchUsersByChallenges();
+            this.fetchPhotographersOfMonth();
+            this.fetchRisingStars();
+            this.loadCountries();
+            this.loadChallengeTypes();
+
             this.isLoading = false;
         });
-
-        this.fetchUsersByPoints();
-        this.fetchUsersByChallenges();
-        this.fetchPhotographersOfMonth();
-        this.fetchRisingStars();
-        this.loadCountries();
-        this.loadChallengeTypes();
     }
 
     loadCountries(): void {
