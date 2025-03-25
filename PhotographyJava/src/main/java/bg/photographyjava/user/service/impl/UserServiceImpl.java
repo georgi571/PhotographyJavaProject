@@ -5,6 +5,7 @@ import bg.photographyjava.exception.OldEmailMismatchException;
 import bg.photographyjava.exception.OldUsernameMismatchException;
 import bg.photographyjava.exception.UserNotFoundException;
 import bg.photographyjava.shared.service.CloudinaryService;
+import bg.photographyjava.shared.service.impl.KafkaProducer;
 import bg.photographyjava.user.model.Role;
 import bg.photographyjava.user.property.enums.*;
 import bg.photographyjava.web.dto.*;
@@ -42,8 +43,9 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
     private final CloudinaryService cloudinaryService;
+    private final KafkaProducer kafkaProducer;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, RankRepository userRankRepository, RoleRepository userRoleRepository, CountryRepository countryRepository, AuthenticationManager authenticationManager, JWTService jwtService, CloudinaryService cloudinaryService) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, RankRepository userRankRepository, RoleRepository userRoleRepository, CountryRepository countryRepository, AuthenticationManager authenticationManager, JWTService jwtService, CloudinaryService cloudinaryService, KafkaProducer kafkaProducer) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userRankRepository = userRankRepository;
@@ -52,6 +54,7 @@ public class UserServiceImpl implements UserService {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.cloudinaryService = cloudinaryService;
+        this.kafkaProducer = kafkaProducer;
     }
 
     @Override
@@ -96,6 +99,8 @@ public class UserServiceImpl implements UserService {
         user.setRank(this.userRankRepository.findByRank(UserRank.BEGINNER));
         user.setRole(this.userRoleRepository.findByRole(UserRole.USER));
         this.userRepository.saveAndFlush(user);
+
+        kafkaProducer.sendMessage(DtoMapper.mapUserEntityToUserRegisterV1(user));
     }
 
     @Override

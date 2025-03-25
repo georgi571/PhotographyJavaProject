@@ -1,12 +1,15 @@
 package bg.leaderboards.leaderboard.service.impl;
 
 import bg.leaderboards.leaderboard.model.MonthlyStatistic;
-import bg.leaderboards.leaderboard.property.CountryEnum;
+import bg.leaderboards.leaderboard.model.UserStatistic;
+import bg.leaderboards.leaderboard.model.CountryEnum;
 import bg.leaderboards.leaderboard.repository.MonthlyStatisticRepository;
 import bg.leaderboards.leaderboard.service.DailyStatisticService;
 import bg.leaderboards.leaderboard.service.MonthlyStatisticService;
-import bg.leaderboards.web.dto.DailyPointsRequest;
+import bg.leaderboards.leaderboard.service.UserStatisticService;
+import bg.leaderboards.web.dto.WinnerRegisterV1;
 import bg.leaderboards.web.dto.LeaderboardsMonthlyResponse;
+import bg.leaderboards.web.mapper.DtoMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -18,13 +21,15 @@ import java.util.Optional;
 @Service
 public class MonthlyStatisticServiceImpl implements MonthlyStatisticService {
     private final MonthlyStatisticRepository monthlyStatisticRepository;
+    private final UserStatisticService userStatisticService;
 
-    public MonthlyStatisticServiceImpl(MonthlyStatisticRepository monthlyStatisticRepository, DailyStatisticService dailyStatisticService) {
+    public MonthlyStatisticServiceImpl(MonthlyStatisticRepository monthlyStatisticRepository, DailyStatisticService dailyStatisticService, UserStatisticService userStatisticService) {
         this.monthlyStatisticRepository = monthlyStatisticRepository;
+        this.userStatisticService = userStatisticService;
     }
 
     @Override
-    public void updateMonthlyStatistic(List<DailyPointsRequest> statistics) {
+    public void updateMonthlyStatistic(WinnerRegisterV1 winnerRegisterV1) {
         LocalDate currentDate = LocalDate.now();
         YearMonth currentMonth = YearMonth.now();
 
@@ -32,34 +37,30 @@ public class MonthlyStatisticServiceImpl implements MonthlyStatisticService {
             currentMonth = currentMonth.minusMonths(1);
         }
 
-        for (DailyPointsRequest statistic : statistics) {
-            Optional<MonthlyStatistic> optionalMonthlyStatistic = monthlyStatisticRepository
-                    .findByUsernameAndYearAndMonth(statistic.getUsername(), currentMonth.getYear(), currentMonth.getMonth());
+        Optional<MonthlyStatistic> optionalMonthlyStatistic = this.monthlyStatisticRepository
+                .findByIdAndYearAndMonth(winnerRegisterV1.getUserId(), currentMonth.getYear(), currentMonth.getMonth());
 
-            MonthlyStatistic monthlyStatistic;
+        MonthlyStatistic monthlyStatistic;
 
-            if (optionalMonthlyStatistic.isPresent()) {
-                monthlyStatistic = optionalMonthlyStatistic.get();
-            } else {
-                monthlyStatistic = new MonthlyStatistic();
-                monthlyStatistic.setUsername(statistic.getUsername());
-                monthlyStatistic.setCountry(CountryEnum.valueOf(statistic.getCountry()));
-                monthlyStatistic.setYear(currentMonth.getYear());
-                monthlyStatistic.setMonth(currentMonth.getMonth());
-                monthlyStatistic.setPointsEarned(0);
-            }
+        if (optionalMonthlyStatistic.isPresent()) {
+            monthlyStatistic = optionalMonthlyStatistic.get();
+        } else {
+            UserStatistic userStatistic = this.userStatisticService.getUserRankById(winnerRegisterV1.getUserId());
 
-            monthlyStatistic.setPointsEarned(monthlyStatistic.getPointsEarned() + statistic.getPoints());
+            CountryEnum country = userStatistic.getCountry();
 
-            this.monthlyStatisticRepository.saveAndFlush(monthlyStatistic);
+            monthlyStatistic = DtoMapper.mapWinnerRegisterV1ToMonthlyStatistic(winnerRegisterV1, country, currentMonth);
         }
+
+        monthlyStatistic.setPointsEarned(monthlyStatistic.getPointsEarned() + winnerRegisterV1.getPoints());
+
+        this.monthlyStatisticRepository.saveAndFlush(monthlyStatistic);
     }
 
     @Override
     public List<LeaderboardsMonthlyResponse> getTopUsersForMonth(int year, Month month) {
 
-        List<LeaderboardsMonthlyResponse> allUsers =
-                this.monthlyStatisticRepository.findTopUsersForMonth(year, month);
+        List<LeaderboardsMonthlyResponse> allUsers = this.monthlyStatisticRepository.findTopUsersForMonth(year, month);
 
         int rank = 1;
         for (LeaderboardsMonthlyResponse user : allUsers) {

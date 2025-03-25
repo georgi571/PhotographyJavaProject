@@ -1,4 +1,4 @@
-package bg.leaderboards.leaderboard.property;
+package bg.leaderboards.leaderboard.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;

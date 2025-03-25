@@ -169,6 +169,7 @@ public class DtoMapper {
         user.setRealName("Anonymous");
         user.setBirthDate(userRegisterRequest.getBirthDate());
         user.setGender(GenderEnum.fromString(userRegisterRequest.getGender()));
+        user.setCity(userRegisterRequest.getCity());
 
         return user;
     }
@@ -191,5 +192,13 @@ public class DtoMapper {
         userProfileResponse.setRealName(user.getRealName());
 
         return userProfileResponse;
+    }
+
+    public static UserRegisterV1 mapUserEntityToUserRegisterV1(UserEntity user) {
+        UserRegisterV1 userRegisterV1 = new UserRegisterV1();
+        userRegisterV1.setUserId(user.getId());
+        userRegisterV1.setCountry(user.getCountry().getName());
+
+        return userRegisterV1;
     }
 }

@@ -14,9 +14,9 @@ import java.util.UUID;
 
 @Repository
 public interface MonthlyStatisticRepository extends JpaRepository<MonthlyStatistic, UUID> {
-    Optional<MonthlyStatistic> findByUsernameAndYearAndMonth(String username, int year, Month month);
+    Optional<MonthlyStatistic> findByIdAndYearAndMonth(UUID userId, int year, Month month);
 
-    @Query("SELECT new bg.leaderboards.web.dto.LeaderboardsMonthlyResponse(m.username, m.country, m.pointsEarned) " +
+    @Query("SELECT new bg.leaderboards.web.dto.LeaderboardsMonthlyResponse(m.userId, m.country, m.pointsEarned) " +
             "FROM MonthlyStatistic m " +
             "WHERE m.year = :year AND m.month = :month " +
             "ORDER BY m.pointsEarned DESC")

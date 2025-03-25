@@ -13,6 +13,10 @@ export class LeaderboardsService {
                 private authService: AuthService) {
     }
 
+    getLeaderboardsPage() {
+        return this.http.get<any[]>(`${this.apiUrl}/v1/leaderboards`);
+    }
+
     getCountries() {
         return this.http.get<string[]>(`${this.apiUrl}/v1/leaderboards/countries-choice`);
     }

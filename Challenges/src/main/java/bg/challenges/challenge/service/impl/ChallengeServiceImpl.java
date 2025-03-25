@@ -3,6 +3,7 @@ package bg.challenges.challenge.service.impl;
 import bg.challenges.challenge.model.Challenge;
 import bg.challenges.challenge.model.Comment;
 import bg.challenges.challenge.model.Picture;
+import bg.challenges.challenge.model.Winner;
 import bg.challenges.challenge.property.enums.ChallengeActivity;
 import bg.challenges.challenge.property.enums.ChallengeType;
 import bg.challenges.challenge.repository.ChallengeRepository;
@@ -10,6 +11,7 @@ import bg.challenges.challenge.service.ChallengeService;
 import bg.challenges.challenge.service.CommentService;
 import bg.challenges.challenge.service.PictureService;
 import bg.challenges.exception.*;
+import bg.challenges.shared.service.impl.KafkaProducer;
 import bg.challenges.web.dto.*;
 import bg.challenges.web.mapper.DtoMapper;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,15 +29,17 @@ public class ChallengeServiceImpl implements ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final PictureService pictureService;
     private final CommentService commentService;
+    private final KafkaProducer kafkaProducer;
 
-    public ChallengeServiceImpl(ChallengeRepository challengeRepository, PictureService pictureService, CommentService commentService) {
+    public ChallengeServiceImpl(ChallengeRepository challengeRepository, PictureService pictureService, CommentService commentService, KafkaProducer kafkaProducer) {
         this.challengeRepository = challengeRepository;
         this.pictureService = pictureService;
         this.commentService = commentService;
+        this.kafkaProducer = kafkaProducer;
     }
 
     @Override
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "00 02 01 * * *")
     public void startDailyChallenge() {
         LocalDateTime now = LocalDateTime.now();
 
@@ -54,8 +58,40 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         for (Challenge challenge : finishedChallenges) {
             setChallengeWinners(challenge.getId());
-            this.challengeRepository.saveAndFlush(upcomingChallenge);
         }
+
+        for (Challenge challenge : finishedChallenges) {
+            Challenge uploadeChallenge = this.challengeRepository.findById(challenge.getId()).get();
+            List<WinnerRegisterV1> winnersWithPoints = getWinnersWithPoints(uploadeChallenge);
+            for (WinnerRegisterV1 winnersWithPoint : winnersWithPoints) {
+                this.kafkaProducer.sendMessage(winnersWithPoint);
+            }
+        }
+    }
+
+    private List<WinnerRegisterV1> getWinnersWithPoints(Challenge challenge) {
+        List<WinnerRegisterV1> winnersWithPoints = new ArrayList<>();
+
+        List<Winner> winners = challenge.getWinners();
+
+        for (int i = 0; i < Math.min(3, winners.size()); i++) {
+            Winner winner = winners.get(i);
+
+            WinnerRegisterV1 winnerRegisterV1 = new WinnerRegisterV1();
+            winnerRegisterV1.setUserId(winner.getUserId());
+            if (winner.getPosition() == 1) {
+                winnerRegisterV1.setPoints(10);
+            } else if (winner.getPosition() == 2) {
+                winnerRegisterV1.setPoints(7);
+            } else {
+                winnerRegisterV1.setPoints(4);
+            }
+            winnerRegisterV1.setType(challenge.getType());
+
+            winnersWithPoints.add(winnerRegisterV1);
+        }
+
+        return winnersWithPoints;
     }
 
     private static Challenge createNewDailyChallenge(LocalDateTime time) {
@@ -86,13 +122,19 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         List<Picture> pictures = this.pictureService.getWinnersPicture(challengeId);
 
-        List<String> topUsers = new ArrayList<>();
+        List<Winner> winners = new ArrayList<>();
         for (int i = 0; i < Math.min(3, pictures.size()); i++) {
             Picture topPicture = pictures.get(i);
-            String username = topPicture.getAuthorId().toString();
-            topUsers.add(username);
+            UUID userId = topPicture.getAuthorId();
+
+            Winner winner = new Winner();
+            winner.setChallenge(challenge);
+            winner.setUserId(userId);
+            winner.setPosition(i + 1);
+
+            winners.add(winner);
         }
-        challenge.setWinners(topUsers);
+        challenge.setWinners(winners);
         challenge.setActivity(ChallengeActivity.PAST);
 
         challengeRepository.saveAndFlush(challenge);

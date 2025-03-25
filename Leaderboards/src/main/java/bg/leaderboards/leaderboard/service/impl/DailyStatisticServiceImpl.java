@@ -1,9 +1,12 @@
 package bg.leaderboards.leaderboard.service.impl;
 
 import bg.leaderboards.leaderboard.model.DailyStatistic;
+import bg.leaderboards.leaderboard.model.UserStatistic;
+import bg.leaderboards.leaderboard.model.CountryEnum;
 import bg.leaderboards.leaderboard.repository.DailyStatisticRepository;
 import bg.leaderboards.leaderboard.service.DailyStatisticService;
-import bg.leaderboards.web.dto.DailyPointsRequest;
+import bg.leaderboards.leaderboard.service.UserStatisticService;
+import bg.leaderboards.web.dto.WinnerRegisterV1;
 import bg.leaderboards.web.dto.LeaderboardsLastThirtyDaysResponse;
 import bg.leaderboards.web.mapper.DtoMapper;
 import jakarta.transaction.Transactional;
@@ -16,9 +19,11 @@ import java.util.List;
 @Service
 public class DailyStatisticServiceImpl implements DailyStatisticService {
     private final DailyStatisticRepository dailyStatisticRepository;
+    private final UserStatisticService userStatisticService;
 
-    public DailyStatisticServiceImpl(DailyStatisticRepository dailyStatisticRepository) {
+    public DailyStatisticServiceImpl(DailyStatisticRepository dailyStatisticRepository, UserStatisticService userStatisticService) {
         this.dailyStatisticRepository = dailyStatisticRepository;
+        this.userStatisticService = userStatisticService;
     }
 
     @Scheduled(cron = "0 0 1 * * ?")
@@ -29,11 +34,14 @@ public class DailyStatisticServiceImpl implements DailyStatisticService {
     }
 
     @Override
-    public void saveDailyStatistic(List<DailyPointsRequest> statistics) {
-        for (DailyPointsRequest statistic : statistics) {
-            DailyStatistic dailyStatistic = DtoMapper.mapDailyPointsRequestToDailyStatistic(statistic);
-            this.dailyStatisticRepository.saveAndFlush(dailyStatistic);
-        }
+    public void saveDailyStatistic(WinnerRegisterV1 winnerRegisterV1) {
+        UserStatistic userStatistic = this.userStatisticService.getUserRankById(winnerRegisterV1.getUserId());
+
+        CountryEnum country = userStatistic.getCountry();
+
+        DailyStatistic dailyStatistic = DtoMapper.mapWinnerRegisterV1ToDailyStatistic(winnerRegisterV1, country);
+
+        this.dailyStatisticRepository.saveAndFlush(dailyStatistic);
     }
 
     @Override

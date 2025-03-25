@@ -1,142 +1,150 @@
 <app-header/>
 
 <body>
-    <div class="container">
-        <section class="leaderboard-section">
-            <h2>Users by Points</h2>
-            <div class="filters">
-                <label for="country-filter">Filter by Country:</label>
-                <select id="country-filter" [(ngModel)]="selectedCountry" (change)="applyCountryFilter()">
-                    <option value="all">All Countries</option>
-                    @for (country of countries; track country) {
-                        <option [value]="country">{{ country }}</option>
-                    }
-                </select>
-            </div>
-            <table class="leaderboard-table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>User</th>
-                        <th>Country</th>
-                        <th>Points</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (usersByPoints.length === 0) {
-                        <td colspan="4" style="text-align: center;">No users from this country!</td>
-                    } @else {
-                        @for (user of usersByPoints; track user) {
-                            <tr>
-                                <td>{{ user.rank }}</td>
-                                <td>{{ user.username }}</td>
-                                <td>{{ user.country }}</td>
-                                <td>{{ user.points }}</td>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
-            <button class="see-more-button" [routerLink]="'/leaderboards/points'">See More</button>
-        </section>
+    @if (isLoading) {
+        <div class="spinner-container">
+            <div class="spinner"></div>
+        </div>
+    }
 
-        <section class="leaderboard-section">
-            <h2>Users with Most Challenges Won</h2>
-            <div class="filters">
-                <label for="challenge-type-filter">Filter by Challenge Type:</label>
-                <select id="challenge-type-filter" [(ngModel)]="selectedChallengeType"
-                        (change)="applyChallengeTypeFilter()">
-                    <option value="all">All Types</option>
-                    @for (type of challengeTypes; track type) {
-                        <option [value]="type">{{ type }}</option>
-                    }
-                </select>
-            </div>
-            <table class="leaderboard-table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>User</th>
-                        <th>Country</th>
-                        <th>Challenges Won</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (usersByChallenges.length === 0) {
-                        <td colspan="4" style="text-align: center;">No users from this country!</td>
-                    } @else {
-                        @for (user of usersByChallenges; track user) {
-                            <tr>
-                                <td>{{ user.rank }}</td>
-                                <td>{{ user.username }}</td>
-                                <td>{{ user.country }}</td>
-                                <td>{{ user.numberOfWinChallenges }}</td>
-                            </tr>
+    @if (!isLoading) {
+        <div class="container">
+            <section class="leaderboard-section">
+                <h2>Users by Points</h2>
+                <div class="filters">
+                    <label for="country-filter">Filter by Country:</label>
+                    <select id="country-filter" [(ngModel)]="selectedCountry" (change)="applyCountryFilter()">
+                        <option value="all">All Countries</option>
+                        @for (country of countries; track country) {
+                            <option [value]="country">{{ country }}</option>
                         }
-                    }
-                </tbody>
-            </table>
-            <button class="see-more-button" [routerLink]="'/leaderboards/challenges'">See More</button>
-        </section>
+                    </select>
+                </div>
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>User</th>
+                            <th>Country</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (usersByPoints.length === 0) {
+                            <td colspan="4" style="text-align: center;">No users from this country!</td>
+                        } @else {
+                            @for (user of usersByPoints; track user) {
+                                <tr>
+                                    <td>{{ user.rank }}</td>
+                                    <td>{{ user.username }}</td>
+                                    <td>{{ user.country }}</td>
+                                    <td>{{ user.points }}</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                <button class="see-more-button" [routerLink]="'/leaderboards/points'">See More</button>
+            </section>
 
-        <section class="leaderboard-section">
-            <h2>Top Photographers of the Month</h2>
-            <table class="leaderboard-table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>User</th>
-                        <th>Country</th>
-                        <th>Points Earned This Month</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (photographersOfMonth.length === 0) {
-                        <td colspan="4" style="text-align: center;">No users for gain points for this month!</td>
-                    } @else {
-                        @for (user of photographersOfMonth; track user) {
-                            <tr>
-                                <td>{{ user.rank }}</td>
-                                <td>{{ user.username }}</td>
-                                <td>{{ user.country }}</td>
-                                <td>{{ user.points }}</td>
-                            </tr>
+            <section class="leaderboard-section">
+                <h2>Users with Most Challenges Won</h2>
+                <div class="filters">
+                    <label for="challenge-type-filter">Filter by Challenge Type:</label>
+                    <select id="challenge-type-filter" [(ngModel)]="selectedChallengeType"
+                            (change)="applyChallengeTypeFilter()">
+                        <option value="all">All Types</option>
+                        @for (type of challengeTypes; track type) {
+                            <option [value]="type">{{ type }}</option>
                         }
-                    }
-                </tbody>
-            </table>
-            <button class="see-more-button" [routerLink]="'/leaderboards/months'">See More</button>
-        </section>
+                    </select>
+                </div>
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>User</th>
+                            <th>Country</th>
+                            <th>Challenges Won</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (usersByChallenges.length === 0) {
+                            <td colspan="4" style="text-align: center;">No users from this country!</td>
+                        } @else {
+                            @for (user of usersByChallenges; track user) {
+                                <tr>
+                                    <td>{{ user.rank }}</td>
+                                    <td>{{ user.username }}</td>
+                                    <td>{{ user.country }}</td>
+                                    <td>{{ user.numberOfWinChallenges }}</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                <button class="see-more-button" [routerLink]="'/leaderboards/challenges'">See More</button>
+            </section>
 
-        <section class="leaderboard-section">
-            <h2>Rising Stars</h2>
-            <table class="leaderboard-table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>User</th>
-                        <th>Country</th>
-                        <th>Points Gained (Last 30 Days)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (risingStars.length === 0) {
-                        <td colspan="4" style="text-align: center;">No users gain points in last 30 days!</td>
-                    } @else {
-                        @for (user of risingStars; track user) {
-                            <tr>
-                                <td>{{ user.rank }}</td>
-                                <td>{{ user.username }}</td>
-                                <td>{{ user.country }}</td>
-                                <td>{{ user.points }}</td>
-                            </tr>
+            <section class="leaderboard-section">
+                <h2>Top Photographers of the Month</h2>
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>User</th>
+                            <th>Country</th>
+                            <th>Points Earned This Month</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (photographersOfMonth.length === 0) {
+                            <td colspan="4" style="text-align: center;">No users for gain points for this month!</td>
+                        } @else {
+                            @for (user of photographersOfMonth; track user) {
+                                <tr>
+                                    <td>{{ user.rank }}</td>
+                                    <td>{{ user.username }}</td>
+                                    <td>{{ user.country }}</td>
+                                    <td>{{ user.points }}</td>
+                                </tr>
+                            }
                         }
-                    }
-                </tbody>
-            </table>
-            <button class="see-more-button" [routerLink]="'/leaderboards/rising'">See More</button>
-        </section>
-    </div>
+                    </tbody>
+                </table>
+                <button class="see-more-button" [routerLink]="'/leaderboards/months'">See More</button>
+            </section>
+
+            <section class="leaderboard-section">
+                <h2>Rising Stars</h2>
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>User</th>
+                            <th>Country</th>
+                            <th>Points Gained (Last 30 Days)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (risingStars.length === 0) {
+                            <td colspan="4" style="text-align: center;">No users gain points in last 30 days!</td>
+                        } @else {
+                            @for (user of risingStars; track user) {
+                                <tr>
+                                    <td>{{ user.rank }}</td>
+                                    <td>{{ user.username }}</td>
+                                    <td>{{ user.country }}</td>
+                                    <td>{{ user.points }}</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                <button class="see-more-button" [routerLink]="'/leaderboards/rising'">See More</button>
+            </section>
+        </div>
+    }
 </body>
 
 <app-footer/>

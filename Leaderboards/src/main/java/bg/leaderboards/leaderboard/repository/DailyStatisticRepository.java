@@ -20,9 +20,9 @@ public interface DailyStatisticRepository extends JpaRepository<DailyStatistic, 
     @Query("DELETE FROM DailyStatistic d WHERE d.day < :cutoffDate")
     void deleteByDayBefore(@Param("cutoffDate") LocalDate cutoffDate);
 
-    @Query(value = "SELECT new bg.leaderboards.web.dto.LeaderboardsLastThirtyDaysResponse(d.username, d.country, SUM(d.pointsEarned)) " +
+    @Query(value = "SELECT new bg.leaderboards.web.dto.LeaderboardsLastThirtyDaysResponse(d.userId, d.country, SUM(d.pointsEarned)) " +
             "FROM DailyStatistic d " +
-            "GROUP BY d.username, d.country " +
+            "GROUP BY d.userId, d.country " +
             "ORDER BY SUM(d.pointsEarned) DESC")
     List<LeaderboardsLastThirtyDaysResponse> findPointsForLast30Days();
 }

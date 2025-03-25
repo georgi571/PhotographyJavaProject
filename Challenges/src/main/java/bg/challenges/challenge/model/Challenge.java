@@ -43,7 +43,7 @@ public class Challenge {
     @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Picture> pictures = new ArrayList<>();
 
-    @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Winner> winners = new ArrayList<>();
 
     public UUID getId() {
@@ -122,13 +122,7 @@ public class Challenge {
         return winners;
     }
 
-    public void setWinners(List<String> topUsers) {
-        for (int i = 0; i < topUsers.size(); i++) {
-            Winner winner = new Winner();
-            winner.setChallenge(this);
-            winner.setUsername(topUsers.get(i));
-            winner.setPosition(i + 1);
-            this.winners.add(winner);
-        }
+    public void setWinners(List<Winner> winners) {
+        this.winners = winners;
     }
 }

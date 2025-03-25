@@ -3,7 +3,8 @@ import {HeaderComponent} from "../core/header/header.component";
 import {FooterComponent} from "../core/footer/footer.component";
 import {LeaderboardsService} from '../services/leaderboards-service/leaderboards.service';
 import {FormsModule} from '@angular/forms';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
+import {catchError, of} from 'rxjs';
 
 @Component({
     selector: 'app-leaderboards',
@@ -18,6 +19,8 @@ import {RouterLink} from '@angular/router';
     styleUrl: './leaderboards.component.css'
 })
 export class LeaderboardsComponent implements OnInit {
+    isLoading = true;
+
     rawUsersByPoints: any[] = [];
     rawUsersByChallenges: any[] = [];
     usersByPoints: any[] = [];
@@ -30,9 +33,20 @@ export class LeaderboardsComponent implements OnInit {
     selectedCountry: string = 'all';
     selectedChallengeType: string = 'all';
 
-    constructor(private leaderboardsService: LeaderboardsService) {}
+    constructor(private leaderboardsService: LeaderboardsService,
+                private router: Router) {}
 
     ngOnInit(): void {
+
+        this.leaderboardsService.getLeaderboardsPage().pipe(
+            catchError((error) => {
+                this.router.navigate(['/server-down']);
+                return of(null);
+            })
+        ).subscribe(() => {
+            this.isLoading = false;
+        });
+
         this.fetchUsersByPoints();
         this.fetchUsersByChallenges();
         this.fetchPhotographersOfMonth();

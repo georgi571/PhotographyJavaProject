@@ -1,12 +1,12 @@
 package bg.leaderboards.leaderboard.repository;
 
 import bg.leaderboards.leaderboard.model.UserStatistic;
-import bg.leaderboards.leaderboard.property.CountryEnum;
-import bg.leaderboards.web.dto.DailyPointsRequest;
+import bg.leaderboards.leaderboard.model.CountryEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -22,5 +22,5 @@ public interface UserStatisticRepository extends JpaRepository<UserStatistic, UU
 
     List<UserStatistic> findTop10ByOrderByTotalChallengesWonAdminDesc();
 
-    UserStatistic findByUsername(String username);
+    Optional<UserStatistic> findByUserId(UUID userId);
 }

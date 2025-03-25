@@ -1,4 +1,4 @@
-package bg.leaderboards.leaderboard.property;
+package bg.leaderboards.leaderboard.model;
 
 public enum ChallengeType {
     DAILY,

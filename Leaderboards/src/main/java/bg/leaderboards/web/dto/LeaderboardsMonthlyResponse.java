@@ -1,12 +1,13 @@
 package bg.leaderboards.web.dto;
 
-import bg.leaderboards.leaderboard.property.CountryEnum;
+import bg.leaderboards.leaderboard.model.CountryEnum;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 public class LeaderboardsMonthlyResponse implements Serializable {
 
-    private String username;
+    private UUID userId;
 
     private CountryEnum country;
 
@@ -17,18 +18,18 @@ public class LeaderboardsMonthlyResponse implements Serializable {
     public LeaderboardsMonthlyResponse() {
     }
 
-    public LeaderboardsMonthlyResponse(String username, CountryEnum country, long points) {
-        this.username = username;
+    public LeaderboardsMonthlyResponse(UUID userId, CountryEnum country, long points) {
+        this.userId = userId;
         this.country = country;
         this.points = points;
     }
 
-    public String getUsername() {
-        return username;
+    public UUID getUserId() {
+        return userId;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 
     public CountryEnum getCountry() {

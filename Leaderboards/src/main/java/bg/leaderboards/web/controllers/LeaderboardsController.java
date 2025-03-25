@@ -4,11 +4,13 @@ import bg.leaderboards.leaderboard.service.DailyStatisticService;
 import bg.leaderboards.leaderboard.service.MonthlyStatisticService;
 import bg.leaderboards.leaderboard.service.UserStatisticService;
 import bg.leaderboards.web.dto.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Month;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/leaderboards")
@@ -24,18 +26,9 @@ public class LeaderboardsController {
         this.monthlyStatisticService = monthlyStatisticService;
     }
 
-    @PostMapping("/daily-statistics")
-    public ResponseEntity<Void> receiveDailyStatistics(@RequestBody List<DailyPointsRequest> statistics) {
-        this.dailyStatisticService.saveDailyStatistic(statistics);
-        this.monthlyStatisticService.updateMonthlyStatistic(statistics);
-        this.userStatisticService.updateUserStatistics(statistics);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping
-    public ResponseEntity<Void> registerUser(@RequestParam String username, @RequestParam String country) {
-        this.userStatisticService.saveUserInUserStatistic(username, country);
-        return ResponseEntity.ok().build();
+    @GetMapping()
+    public ResponseEntity<Void> getLeaderboardsPage() {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/countries-choice")
@@ -73,5 +66,11 @@ public class LeaderboardsController {
     public ResponseEntity<List<LeaderboardsLastThirtyDaysResponse>> getRisingStars() {
         List<LeaderboardsLastThirtyDaysResponse> users = this.dailyStatisticService.getUserByPointsForLast30Days();
         return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/rank")
+    public ResponseEntity<UserRankResponse> getUserRank(@RequestParam UUID userId) {
+        UserRankResponse userRankResponse = this.userStatisticService.getUserRankResponseById(userId);
+        return ResponseEntity.ok(userRankResponse);
     }
 }

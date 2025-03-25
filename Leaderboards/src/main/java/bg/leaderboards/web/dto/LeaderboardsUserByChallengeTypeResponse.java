@@ -1,10 +1,11 @@
 package bg.leaderboards.web.dto;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 public class LeaderboardsUserByChallengeTypeResponse implements Serializable {
 
-    private String username;
+    private UUID userId;
 
     private long numberOfWinChallenges;
 
@@ -14,12 +15,12 @@ public class LeaderboardsUserByChallengeTypeResponse implements Serializable {
 
     private int rank;
 
-    public String getUsername() {
-        return username;
+    public UUID getUserId() {
+        return userId;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 
     public long getNumberOfWinChallenges() {

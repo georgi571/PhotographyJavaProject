@@ -1,10 +1,10 @@
 package bg.leaderboards.leaderboard.service;
 
-import bg.leaderboards.web.dto.DailyPointsRequest;
-import bg.leaderboards.web.dto.LeaderboardsUserByChallengeTypeResponse;
-import bg.leaderboards.web.dto.LeaderboardsUserByCountryResponse;
+import bg.leaderboards.leaderboard.model.UserStatistic;
+import bg.leaderboards.web.dto.*;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface UserStatisticService {
     List<String> getAvailableCountries();
@@ -15,7 +15,11 @@ public interface UserStatisticService {
 
     List<LeaderboardsUserByChallengeTypeResponse> getTop10ByChallengeType();
 
-    void updateUserStatistics(List<DailyPointsRequest> statistics);
+    void updateUserStatistics(WinnerRegisterV1 winnerRegisterV1);
 
-    void saveUserInUserStatistic(String username, String country);
+    void saveUserInUserStatistic(UserRegisterV1 userRegisterV1);
+
+    UserStatistic getUserRankById(UUID userId);
+
+    UserRankResponse getUserRankResponseById(UUID userId);
 }

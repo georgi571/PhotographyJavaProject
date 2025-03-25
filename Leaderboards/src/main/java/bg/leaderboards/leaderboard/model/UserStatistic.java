@@ -1,6 +1,5 @@
 package bg.leaderboards.leaderboard.model;
 
-import bg.leaderboards.leaderboard.property.CountryEnum;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -13,8 +12,8 @@ public class UserStatistic {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "username", nullable = false, unique = true)
-    private String username;
+    @Column(name = "user_id", nullable = false, unique = true)
+    private UUID userId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "country", nullable = false)
@@ -35,6 +34,10 @@ public class UserStatistic {
     @Column(name = "total_challenges_won_admin", nullable = false)
     private long totalChallengesWonAdmin;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_rank", nullable = false)
+    private UserRank userRank;
+
     public UUID getId() {
         return id;
     }
@@ -43,12 +46,12 @@ public class UserStatistic {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public UUID getUserId() {
+        return userId;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 
     public CountryEnum getCountry() {
@@ -97,5 +100,13 @@ public class UserStatistic {
 
     public void setTotalChallengesWonAdmin(long totalChallengesWonAdmin) {
         this.totalChallengesWonAdmin = totalChallengesWonAdmin;
+    }
+
+    public UserRank getUserRank() {
+        return userRank;
+    }
+
+    public void setUserRank(UserRank userRank) {
+        this.userRank = userRank;
     }
 }

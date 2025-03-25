@@ -17,8 +17,8 @@ public class Winner {
     @JoinColumn(name = "challenge_id", nullable = false)
     private Challenge challenge;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "user_id")
+    private UUID userId;
 
     @Column(name = "position")
     private int position;
@@ -39,12 +39,12 @@ public class Winner {
         this.challenge = challenge;
     }
 
-    public String getUsername() {
-        return username;
+    public UUID getUserId() {
+        return userId;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 
     public int getPosition() {

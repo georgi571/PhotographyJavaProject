@@ -1,6 +1,5 @@
 package bg.leaderboards.leaderboard.model;
 
-import bg.leaderboards.leaderboard.property.CountryEnum;
 import jakarta.persistence.*;
 
 import java.time.Month;
@@ -14,8 +13,8 @@ public class MonthlyStatistic {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "username", nullable = false)
-    private String username;
+    @Column(name = "user_id", nullable = false)
+    private UUID userId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "country", nullable = false)
@@ -39,12 +38,12 @@ public class MonthlyStatistic {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public UUID getUserId() {
+        return userId;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 
     public CountryEnum getCountry() {
