@@ -28,9 +28,9 @@ export class ContactService {
         return this.http.post(`${this.contactUrl}/v1/contacts/receive`, data);
     }
 
-    sendReply(data: { id: string; answer: string; userId: string | null }): Observable<any> {
+    sendReply(data: { id: string; answer: string }): Observable<any> {
         const token = this.authService.getToken();
-            return this.http.post(`${this.contactUrl}/v1/contacts/reply`, data , {
+            return this.http.patch(`${this.contactUrl}/v1/contacts/reply`, data , {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -39,7 +39,7 @@ export class ContactService {
 
     deleteMessage(id: string): Observable<any> {
         const token = this.authService.getToken();
-        return this.http.delete(`${this.contactUrl}/v1/contacts/delete/${id}`, {
+        return this.http.delete(`${this.contactUrl}/v1/contacts/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

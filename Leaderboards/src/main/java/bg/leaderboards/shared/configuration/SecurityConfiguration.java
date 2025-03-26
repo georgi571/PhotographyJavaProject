@@ -61,7 +61,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/v1/leaderboards/challenge-types").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/leaderboards/country").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/leaderboards/countries-choice").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/leaderboards/rank").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/leaderboards/rank/{userId}").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

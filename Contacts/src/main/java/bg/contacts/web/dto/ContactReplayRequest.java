@@ -14,9 +14,6 @@ public class ContactReplayRequest {
     @Size(min = 1, max = 2000)
     private String answer;
 
-    @NotNull
-    private UUID userId;
-
     public UUID getId() {
         return id;
     }
@@ -31,13 +28,5 @@ public class ContactReplayRequest {
 
     public void setAnswer(String answer) {
         this.answer = answer;
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
     }
 }

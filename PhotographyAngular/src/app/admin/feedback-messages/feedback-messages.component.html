@@ -10,17 +10,17 @@
         <button class="filter-btn"
                 [class.active]="filter === 'unanswered'"
                 (click)="setFilter('unanswered')">
-            Pending Feedback
+            Needs Response
         </button>
         <button class="filter-btn"
                 [class.active]="filter === 'answered'"
                 (click)="setFilter('answered')">
-            Resolved Feedback
+            Responded
         </button>
         <button class="filter-btn"
                 [class.active]="filter === 'deleted'"
                 (click)="setFilter('deleted')">
-            Deleted Feedback
+            Archived
         </button>
         <button class="filter-btn"
                 [class.active]="filter === 'all'"

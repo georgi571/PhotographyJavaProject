@@ -54,9 +54,10 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.GET, "api/v1/contacts").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/contacts/receive").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/contacts/receive").hasAnyAuthority("PERMISSION_answerFeedback")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/contacts/reply").hasAnyAuthority("PERMISSION_answerFeedback")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/contacts/reply").hasAnyAuthority("PERMISSION_answerFeedback")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/contacts/delete/**").hasAnyAuthority("PERMISSION_answerFeedback")
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

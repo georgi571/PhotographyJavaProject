@@ -68,8 +68,8 @@ public class LeaderboardsController {
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/rank")
-    public ResponseEntity<UserRankResponse> getUserRank(@RequestParam UUID userId) {
+    @GetMapping("/rank/{userId}")
+    public ResponseEntity<UserRankResponse> getUserRank(@PathVariable UUID userId) {
         UserRankResponse userRankResponse = this.userStatisticService.getUserRankResponseById(userId);
         return ResponseEntity.ok(userRankResponse);
     }

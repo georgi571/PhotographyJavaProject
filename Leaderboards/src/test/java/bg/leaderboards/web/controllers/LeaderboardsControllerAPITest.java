@@ -172,7 +172,7 @@ class LeaderboardsControllerAPITest {
 
         when(userStatisticService.getUserRankResponseById(userId)).thenReturn(response);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/leaderboards/rank")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/leaderboards/rank/{userId}", userId)
                         .header("Authorization", "Bearer mock-valid-token")
                         .param("userId", userId.toString()))
                 .andExpect(status().isOk())

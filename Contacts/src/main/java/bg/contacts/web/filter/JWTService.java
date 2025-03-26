@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.Base64;
+import java.util.Date;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Service
@@ -51,6 +53,11 @@ public class JWTService {
                 .getPayload();
     }
 
+    public UUID extractUserId(String jwtToken) {
+        Claims claims = extractAllClaims(jwtToken);
+        return UUID.fromString(claims.get("userId", String.class));
+    }
+
     public boolean validateToken(String jwtToken) {
         return !isTokenExpired(jwtToken);
     }
@@ -63,3 +70,4 @@ public class JWTService {
         return extractClaim(jwtToken, Claims::getExpiration);
     }
 }
+

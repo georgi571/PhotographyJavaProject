@@ -49,11 +49,13 @@ public class ContactMessageServiceImpl implements ContactMessageService {
     }
 
     @Override
-    public void receiveContactMessage(ContactMessageRequest contactMessageRequest) {
+    public ContactMessageResponse receiveContactMessage(ContactMessageRequest contactMessageRequest) {
 
         ContactMessage contactMessage = DtoMapper.mapContactMessageRequestToContactMessage(contactMessageRequest);
 
         this.contactMessageRepository.saveAndFlush(contactMessage);
+
+        return DtoMapper.mapContactMessageToContactMessageResponse(contactMessage);
     }
 
     @Override
@@ -70,7 +72,7 @@ public class ContactMessageServiceImpl implements ContactMessageService {
     }
 
     @Override
-    public void sendAnswer(ContactReplayRequest contactReplayRequest) {
+    public ContactMessageResponse sendAnswer(ContactReplayRequest contactReplayRequest, UUID adminId) {
 
         ContactMessage contactMessage = this.contactMessageRepository.findById(contactReplayRequest.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Contact message not found with ID: " + contactReplayRequest.getId()));
@@ -87,20 +89,25 @@ public class ContactMessageServiceImpl implements ContactMessageService {
         this.emailService.sendEmail(contactMessage.getEmail(), subject, message);
 
         contactMessage.setAnswer(contactReplayRequest.getAnswer());
-        contactMessage.setWhoAnswer(contactReplayRequest.getUserId());
+        contactMessage.setWhoAnswer(adminId);
         contactMessage.setAnswered(true);
 
         this.contactMessageRepository.saveAndFlush(contactMessage);
+
+        return DtoMapper.mapContactMessageToContactMessageResponse(contactMessage);
     }
 
     @Override
-    public void deleteMessage(UUID id) {
+    public ContactMessageResponse deleteMessage(UUID id, UUID adminId) {
 
         ContactMessage contactMessage = this.contactMessageRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Contact message not found with ID: " + id));
 
         contactMessage.setDeleted(true);
+        contactMessage.setWhoDelete(adminId);
 
         this.contactMessageRepository.saveAndFlush(contactMessage);
+
+        return DtoMapper.mapContactMessageToContactMessageResponse(contactMessage);
     }
 }

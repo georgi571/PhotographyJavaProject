@@ -9,11 +9,11 @@ import java.util.UUID;
 
 public interface ContactMessageService {
 
-    void receiveContactMessage(ContactMessageRequest contactMessageRequest);
+    ContactMessageResponse receiveContactMessage(ContactMessageRequest contactMessageRequest);
 
     List<ContactMessageResponse> getAllMessages();
 
-    void sendAnswer(ContactReplayRequest contactReplayRequest);
+    ContactMessageResponse sendAnswer(ContactReplayRequest contactReplayRequest, UUID adminId);
 
-    void deleteMessage(UUID id);
+    ContactMessageResponse deleteMessage(UUID id, UUID adminId);
 }

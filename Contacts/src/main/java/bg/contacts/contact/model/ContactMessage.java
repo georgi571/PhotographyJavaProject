@@ -41,6 +41,9 @@ public class ContactMessage {
     @Column(name = "is_deleted")
     private boolean isDeleted;
 
+    @Column(name = "who_delete")
+    private UUID whoDelete;
+
     public UUID getId() {
         return id;
     }
@@ -111,5 +114,13 @@ public class ContactMessage {
 
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
+    }
+
+    public UUID getWhoDelete() {
+        return whoDelete;
+    }
+
+    public void setWhoDelete(UUID whoDelete) {
+        this.whoDelete = whoDelete;
     }
 }

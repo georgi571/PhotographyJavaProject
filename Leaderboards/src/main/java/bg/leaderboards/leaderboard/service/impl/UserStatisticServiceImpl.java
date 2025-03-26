@@ -125,6 +125,14 @@ public class UserStatisticServiceImpl implements UserStatisticService {
         return DtoMapper.mapUserStatisticToUserRankResponse(this.getUserRankById(userId));
     }
 
+    @Override
+    public UserChallengesResponse getUserStatisticsByUserId(UUID userId) {
+        UserStatistic userStatistic = this.userStatisticRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("UserStatistic not found for userId: " + userId));
+
+        return DtoMapper.mapUserStatisticToUserChallengesResponse(userStatistic);
+    }
+
     public LeaderboardsUserByChallengeTypeResponse mapUserByChallengeType(UserStatistic userStatistic, ChallengeType challengeType, int ranking) {
         return switch (challengeType) {
             case DAILY ->

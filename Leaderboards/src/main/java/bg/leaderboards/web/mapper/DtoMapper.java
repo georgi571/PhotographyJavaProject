@@ -115,7 +115,20 @@ public class DtoMapper {
         userRankResponse.setUserId(userStatistic.getUserId());
         userRankResponse.setTotalPoints(userStatistic.getTotalPoints());
         userRankResponse.setUserRank(userStatistic.getUserRank());
+        userRankResponse.setNumberOfDailyWinChallenges(userStatistic.getTotalChallengesWonDaily());
+        userRankResponse.setNumberOfThemedWinChallenges(userStatistic.getTotalChallengesWonThemed());
+        userRankResponse.setNumberOFAdminWinChallenges(userStatistic.getTotalChallengesWonAdmin());
 
         return userRankResponse;
+    }
+
+    public static UserChallengesResponse mapUserStatisticToUserChallengesResponse(UserStatistic userStatistic) {
+
+        UserChallengesResponse userChallengesResponse = new UserChallengesResponse();
+        userChallengesResponse.setNumberOfDailyWinChallenges(userStatistic.getTotalChallengesWonDaily());
+        userChallengesResponse.setNumberOfThemedWinChallenges(userStatistic.getTotalChallengesWonThemed());
+        userChallengesResponse.setNumberOFAdminWinChallenges(userStatistic.getTotalChallengesWonAdmin());
+
+        return userChallengesResponse;
     }
 }

@@ -22,4 +22,6 @@ public interface UserStatisticService {
     UserStatistic getUserRankById(UUID userId);
 
     UserRankResponse getUserRankResponseById(UUID userId);
+
+    UserChallengesResponse getUserStatisticsByUserId(UUID userId);
 }

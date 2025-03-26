@@ -6,6 +6,7 @@ import {ActivatedRoute} from '@angular/router';
 import {AuthService} from '../../services/auth-service/auth.service';
 import {JwtService} from '../../services/jwt-service/jwt.service';
 import {FormsModule} from '@angular/forms';
+import {LeaderboardsService} from '../../services/leaderboards-service/leaderboards.service';
 
 @Component({
     selector: 'app-profile',
@@ -37,6 +38,7 @@ export class ProfileComponent implements OnInit {
     errorMessage: string | null = null;
     username: string | null = null;
     role: string | null = null;
+    userChallengesStats: any = {};
 
     isFriend: boolean = false;
     hasPendingRequest: boolean = false;
@@ -46,6 +48,7 @@ export class ProfileComponent implements OnInit {
     currFollowers: any[] = [];
 
     constructor(private profileService: ProfileService,
+                private leaderboardsService: LeaderboardsService,
                 private route: ActivatedRoute,
                 private authService: AuthService,
                 private jwtService: JwtService) {
@@ -134,8 +137,8 @@ export class ProfileComponent implements OnInit {
                 this.userDetails.city = data.city;
                 this.userDetails.gender = data.gender;
                 this.userDetails.age = data.age;
-                this.userDetails.rank = data.rank;
-                this.userDetails.points = data.points;
+                // this.userDetails.rank = data.rank;
+                // this.userDetails.points = data.points;
                 this.userDetails.picture = data.profilePicturePath;
                 this.userDetails.id = data.id;
                 this.trophies = data.trophies;
@@ -143,10 +146,31 @@ export class ProfileComponent implements OnInit {
                 this.pictures = data.pictures;
 
                 this.checkFriendshipStatus();
+
+                console.log(this.userDetails.id)
+                if (this.userDetails.id) {
+                    this.fetchUserStatistics(this.userDetails.id);
+                }
             },
             error: (error) => {
                 this.errorMessage = 'Failed to load user information. Please try again later.';
                 console.error(error);
+            }
+        });
+    }
+
+    fetchUserStatistics(userId: string) {
+        console.log(userId)
+        this.leaderboardsService.getUserStatistics(userId).subscribe({
+            next: (data:any) => {
+                this.userDetails.points = data.totalPoints;
+                this.userDetails.rank = data.userRank;
+                this.userChallengesStats.numberOfDailyWinChallenges = data.numberOfDailyWinChallenges;
+                this.userChallengesStats.numberOfThemedWinChallenges = data.numberOfThemedWinChallenges;
+                this.userChallengesStats.numberOFAdminWinChallenges = data.numberOFAdminWinChallenges;
+            },
+            error: (error) => {
+                console.error('Error fetching user challenge statistics:', error);
             }
         });
     }

@@ -43,4 +43,13 @@ export class LeaderboardsService {
     getRisingStars() {
         return this.http.get(`${this.apiUrl}/v1/leaderboards/rising`);
     }
+
+    getUserStatistics(userId: string) {
+        const token = this.authService.getToken();
+        return this.http.get(`${this.apiUrl}/v1/leaderboards/rank/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
 }
