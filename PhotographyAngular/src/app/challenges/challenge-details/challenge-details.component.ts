@@ -180,7 +180,7 @@ export class ChallengeDetailsComponent implements OnInit {
         picture.liked = !picture.liked;
         picture.likes += picture.liked ? 1 : -1;
 
-        this.challengeService.toggleLikePicture(this.challengeId, picture.id).subscribe(
+        this.challengeService.toggleLikePicture(picture.id).subscribe(
             (response) => {
                 picture.liked = response.liked;
                 picture.likes = response.likes;
@@ -204,7 +204,6 @@ export class ChallengeDetailsComponent implements OnInit {
             this.selectedComments.push(newComment);
 
             this.challengeService.addCommentToPicture(
-                this.challengeId,
                 this.selectedPicture.id,
                 this.newComment
             ).subscribe(
@@ -331,7 +330,7 @@ export class ChallengeDetailsComponent implements OnInit {
     deletePicture(picture: any): void {
         console.log('Deleting picture:', picture);
 
-        this.challengeService.deletePicture(this.challengeId, picture.id).subscribe(
+        this.challengeService.deletePicture(picture.id).subscribe(
             (response) => {
                 console.log('Picture deleted successfully:', response);
 
@@ -342,21 +341,33 @@ export class ChallengeDetailsComponent implements OnInit {
                 if (this.selectedPicture?.id === picture.id) {
                     this.selectedPicture = null;
                 }
-
-                console.log('Updated challengeDetails.pictures:', this.challengeDetails.pictures);
+                alert('Picture deleted successfully!');
+            },
+            (error) => {
+                if (error.status === 403) {
+                    alert('You do not have permission to delete this picture.');
+                } else {
+                    alert('Something went wrong. Please try again later.');
+                }
             }
         );
     }
 
     deleteComment(comment: any): void {
         console.log('Deleting comment:', comment);
-        this.challengeService.deleteComment(this.challengeId, this.selectedPicture.id, comment.id).subscribe(
+        this.challengeService.deleteComment(comment.id).subscribe(
             (response) => {
-                console.log('Comment deleted successfully:', response);
                 this.selectedComments = this.selectedComments.filter(
                     (c: any) => c.id !== comment.id
                 );
-                console.log('Updated selectedComments:', this.selectedComments);
+                alert('Comment deleted successfully!');
+            },
+            (error) => {
+                if (error.status === 403) {
+                    alert('You do not have permission to delete this comment.');
+                } else {
+                    alert('Something went wrong. Please try again later.');
+                }
             }
         );
     }

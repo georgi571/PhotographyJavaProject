@@ -270,6 +270,7 @@ body {
     width: 1250px;
     height: 1250px;
     border-radius: 50%;
+    cursor: pointer;
 }
 
 .modal {

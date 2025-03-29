@@ -1,4 +1,4 @@
-package bg.challenges.challenge.property.enums;
+package bg.challenges.challenge.model;
 
 public enum ChallengeActivity {
     UPCOMING,

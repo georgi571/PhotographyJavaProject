@@ -4,13 +4,46 @@
         <p>No comment reports found.</p>
     </div>
 }
-@for (report of commentReports; track report) {
-    <div>
-        <p><strong>Challenge ID:</strong> {{ report.challengeId }}</p>
-        <p><strong>Picture ID:</strong> {{ report.pictureId }}</p>
-        <p><strong>Comment ID:</strong> {{ report.commentId }}</p>
-        <p><strong>Reason:</strong> {{ report.reason }}</p>
-        <p><strong>Reported By:</strong> {{ report.reportedBy }}</p>
-        <button (click)="deleteReport(report.id)" class="btn btn-danger">Delete Report</button>
+<table>
+    @for (report of commentReports; track report.id) {
+        <tr>
+            <td>{{ report.id }}</td>
+            <td>
+                <button (click)="getCommentDetails(report.commentId, report.reason, report.authorId, report.reportedBy)">View Comment</button>
+            </td>
+            <td>
+                <button class="delete-btn" (click)="deleteReport(report.id)">Delete Report</button>
+            </td>
+        </tr>
+    }
+</table>
+
+@if (selectedComment) {
+    <div class="comment-modal-backdrop">
+        <div class="comment-modal">
+            <h3>Comment Details</h3>
+            <p><strong>Comment Text: </strong> {{ selectedComment.text }}</p>
+            <p>
+                <strong>Author Name: </strong>
+                <a [href]="'/profile/username/' + authorName" target="_blank">{{ authorName }}</a>
+            </p>
+            <p>
+                <strong>Challenge ID: </strong>
+                <a [href]="'/challenge/' + selectedComment.challengeId" target="_blank">{{ selectedComment.challengeId }}</a>
+            </p>
+            <p>
+                <strong>Reported By: </strong>
+                <a [href]="'/profile/username/' + reportedBy" target="_blank">{{ reportedBy }}</a>
+            </p>
+            <p><strong>Reason For Report: </strong> {{ reason }}</p>
+            <p><strong>Comment on picture: </strong></p>
+            @if (selectedComment.imageUrl) {
+                <img [src]="selectedComment.imageUrl" alt="Comment Image" width="300">
+            }
+            <div class="modal-actions">
+                <button class="delete-btn" (click)="deleteComment(selectedComment.id)">Delete Comment</button>
+                <button class="close-btn" (click)="closeModal()">Close</button>
+            </div>
+        </div>
     </div>
 }

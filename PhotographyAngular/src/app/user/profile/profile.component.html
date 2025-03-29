@@ -136,41 +136,30 @@
                     </div>
                 </div>
             </div>
-            <div class="inner-section events">
-                <h2>Recent Events</h2>
-                <div class="content">
-                    <div class="item">
-                        <img src="../../../assets/images/gold-winner.png" alt="Gold Winner">
-                        <a href="#">Event 1</a>
-                    </div>
-                    <div class="item">
-                        <img src="../../../assets/images/silver-winner.png" alt="Silver Winner">
-                        <a href="#">Event 2</a>
-                    </div>
-                    <div class="item">
-                        <img src="../../../assets/images/bronze-winner.png" alt="Bronze Winner">
-                        <a href="#">Event 3</a>
-                    </div>
-                </div>
-                <a href="#" class="button">See All Events</a>
-            </div>
             <div class="inner-section pictures">
                 <h2>Most Liked Pictures</h2>
                 <div class="content">
-                    <div class="item">
-                        <img src="../../../assets/images/gold-winner.png" alt="Gold Winner">
-                        <a href="#">Picture 1</a>
+                    @if (pictures.length === 0) {
+                    <div>
+                        <p>No pictures uploaded yet.</p>
                     </div>
-                    <div class="item">
-                        <img src="../../../assets/images/silver-winner.png" alt="Silver Winner">
-                        <a href="#">Picture 2</a>
-                    </div>
-                    <div class="item">
-                        <img src="../../../assets/images/bronze-winner.png" alt="Bronze Winner">
-                        <a href="#">Picture 3</a>
-                    </div>
+                    }
+                    @for (picture of pictures; track picture.id) {
+                        <div class="item">
+                            <a (click)="openPicturePopup()">
+                                <img [src]="picture.imageUrl" alt="One of most liked picture for the user" class="profile-picture">
+                            </a>
+                            @if (showPicturePopup) {
+                                <div class="modal" (click)="closePicturePopup()">
+                                    <div class="modal-content" (click)="$event.stopPropagation()">
+                                        <img [src]="picture.imageUrl" alt="One of most liked picture for the user" class="modal-picture">
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
                 </div>
-                <a href="#" class="button">See All Pictures</a>
+                <a [routerLink]="['/profile/username', username, 'all-pictures']" class="button">See All Pictures</a>
             </div>
         </div>
     </div>

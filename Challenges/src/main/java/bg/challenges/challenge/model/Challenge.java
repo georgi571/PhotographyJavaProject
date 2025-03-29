@@ -1,7 +1,5 @@
 package bg.challenges.challenge.model;
 
-import bg.challenges.challenge.property.enums.ChallengeActivity;
-import bg.challenges.challenge.property.enums.ChallengeType;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

@@ -46,6 +46,7 @@ import {ReportPicturesComponent} from './report/report-pictures/report-pictures.
 import {ReportCommentsComponent} from './report/report-comments/report-comments.component';
 import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import {ServerErrorComponent} from './server-error/server-error.component';
+import {AllPicturesComponent} from './user/all-pictures/all-pictures.component';
 
 export const routes: Routes = [
     {path: '', component: IntroComponent},
@@ -86,6 +87,7 @@ export const routes: Routes = [
         ]
     },
     {path: 'profile/username/:username', component: ProfileComponent},
+    {path: 'profile/username/:username/all-pictures', component: AllPicturesComponent },
     {
         path: 'admin',
         component: AdminComponent,

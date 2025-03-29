@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ReportService} from '../../services/report/report.service';
+import {ChallengeService} from '../../services/challenge-service/challenge.service';
+import {ProfileService} from '../../services/profile-service/profile.service';
 
 @Component({
   selector: 'app-report-pictures',
@@ -9,8 +11,15 @@ import {ReportService} from '../../services/report/report.service';
 })
 export class ReportPicturesComponent implements OnInit{
     pictureReports: any[] = [];
+    selectedPicture: any = null;
+    reason: string = '';
+    authorName: string = '';
+    reportedBy: string = '';
+    showPicturePopup: boolean = false;
 
-    constructor(private reportService: ReportService) {}
+    constructor(private reportService: ReportService,
+                private challengeService: ChallengeService,
+                private profileService: ProfileService) {}
 
     ngOnInit(): void {
         this.fetchPictureReports();
@@ -23,6 +32,35 @@ export class ReportPicturesComponent implements OnInit{
         });
     }
 
+    getPictureDetails(pictureId: string, reason: string, authorId: string, reportedBy: string) {
+        console.log('Fetching reported picture with ID:', pictureId);
+
+        this.challengeService.getReportedPicture(pictureId).subscribe({
+            next: (data) => {
+                console.log('Received picture details:', data);
+                this.selectedPicture = data;
+                this.reason = reason;
+            },
+            error: (error) => console.error('Error fetching picture details:', error)
+        });
+
+        this.profileService.getUserById(authorId).subscribe({
+            next: (data) => {
+                console.log('Received picture details:', data);
+                this.authorName = data.username;
+            },
+            error: (error) => console.error('Error fetching picture details:', error)
+        });
+
+        this.profileService.getUserById(reportedBy).subscribe({
+            next: (data) => {
+                console.log('Received picture details:', data);
+                this.reportedBy = data.username;
+            },
+            error: (error) => console.error('Error fetching picture details:', error)
+        });
+    }
+
     deleteReport(reportId: string) {
         if (confirm('Are you sure you want to delete this report?')) {
             this.reportService.deleteReport(reportId).subscribe({
@@ -30,5 +68,25 @@ export class ReportPicturesComponent implements OnInit{
                 error: (error) => console.error('Error deleting report:', error)
             });
         }
+    }
+
+    closeModal() {
+        this.selectedPicture = null;
+    }
+
+    deletePicture(pictureId: string) {
+        if (confirm('Are you sure you want to delete this picture?')) {
+            this.challengeService.deletePicture(pictureId).subscribe({
+                next: () => this.fetchPictureReports()
+            });
+        }
+    }
+
+    openPicturePopup() {
+        this.showPicturePopup = true;
+    }
+
+    closePicturePopup() {
+        this.showPicturePopup = false;
     }
 }

@@ -3,8 +3,8 @@ package bg.challenges.web.mapper;
 import bg.challenges.challenge.model.Challenge;
 import bg.challenges.challenge.model.Comment;
 import bg.challenges.challenge.model.Picture;
-import bg.challenges.challenge.property.enums.ChallengeActivity;
-import bg.challenges.challenge.property.enums.ChallengeType;
+import bg.challenges.challenge.model.ChallengeActivity;
+import bg.challenges.challenge.model.ChallengeType;
 import bg.challenges.web.dto.*;
 
 import java.time.LocalDateTime;
@@ -116,7 +116,7 @@ public class DtoMapper {
         return challenge;
     }
 
-    public static Challenge mapEditChallengeRequestToChallenge(Challenge challenge,EditChallengeRequest editChallengeRequest) {
+    public static void mapEditChallengeRequestToChallenge(Challenge challenge, EditChallengeRequest editChallengeRequest) {
         LocalDateTime startAt = editChallengeRequest.getStartAt().atTime(0, 0, 0);
         LocalDateTime endAt = editChallengeRequest.getEndAt().atTime(23, 59, 59);
 
@@ -127,7 +127,6 @@ public class DtoMapper {
         challenge.setEndAt(endAt);
         challenge.setType(ChallengeType.valueOf(editChallengeRequest.getType()));
 
-        return challenge;
     }
 
     public static Picture mapPictureUploadRequestToPicture(Challenge challenge ,String pictureFilePath, String caption, String story, UUID userId) {
@@ -141,4 +140,26 @@ public class DtoMapper {
         return picture;
     }
 
+    public static CommentReportResponse mapCommentToCommentReportTResponse(Comment comment) {
+
+        CommentReportResponse commentReportResponse = new CommentReportResponse();
+        commentReportResponse.setId(comment.getId());
+        commentReportResponse.setText(comment.getText());
+        commentReportResponse.setChallengeId(comment.getPicture().getChallenge().getId());
+        commentReportResponse.setImageUrl(comment.getPicture().getImageUrl());
+        commentReportResponse.setAuthorId(comment.getAuthorId());
+
+        return commentReportResponse;
+    }
+
+    public static PictureReportResponse mapPictureToPictureReportResponse(Picture picture) {
+
+        PictureReportResponse pictureReportResponse = new PictureReportResponse();
+        pictureReportResponse.setId(picture.getId());
+        pictureReportResponse.setImageUrl(picture.getImageUrl());
+        pictureReportResponse.setChallengeId(picture.getChallenge().getId());
+        pictureReportResponse.setAuthorId(picture.getAuthorId());
+
+        return pictureReportResponse;
+    }
 }

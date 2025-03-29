@@ -4,12 +4,45 @@
         <p>No picture reports found.</p>
     </div>
 }
-@for (report of pictureReports; track report) {
-    <div>
-        <p><strong>Challenge ID:</strong> {{ report.challengeId }}</p>
-        <p><strong>Picture ID:</strong> {{ report.pictureId }}</p>
-        <p><strong>Reason:</strong> {{ report.reason }}</p>
-        <p><strong>Reported By:</strong> {{ report.reportedBy }}</p>
-        <button (click)="deleteReport(report.id)" class="btn btn-danger">Delete Report</button>
+<table>
+    @for (report of pictureReports; track report.id) {
+        <tr>
+            <td>{{ report.id }}</td>
+            <td>
+                <button (click)="getPictureDetails(report.pictureId, report.reason, report.authorId, report.reportedBy)">View Comment</button>
+            </td>
+            <td>
+                <button class="delete-btn" (click)="deleteReport(report.id)">Delete Report</button>
+            </td>
+        </tr>
+    }
+</table>
+
+@if (selectedPicture) {
+    <div class="picture-modal-backdrop">
+        <div class="picture-modal">
+            <h3>Picture Details</h3>
+            <p>
+                <strong>Author Name: </strong>
+                <a [href]="'/profile/username/' + authorName" target="_blank">{{ authorName }}</a>
+            </p>
+            <p>
+                <strong>Challenge ID: </strong>
+                <a [href]="'/challenge/' + selectedPicture.challengeId" target="_blank">{{ selectedPicture.challengeId }}</a>
+            </p>
+            <p>
+                <strong>Reported By: </strong>
+                <a [href]="'/profile/username/' + reportedBy" target="_blank">{{ reportedBy }}</a>
+            </p>
+            <p><strong>Reason For Report: </strong> {{ reason }}</p>
+            <p><strong>Picture: </strong></p>
+            @if (selectedPicture.imageUrl) {
+                <img [src]="selectedPicture.imageUrl" alt="Comment Image" width="300">
+            }
+            <div class="modal-actions">
+                <button class="delete-btn" (click)="deletePicture(selectedPicture.id)">Delete Picture</button>
+                <button class="close-btn" (click)="closeModal()">Close</button>
+            </div>
+        </div>
     </div>
 }

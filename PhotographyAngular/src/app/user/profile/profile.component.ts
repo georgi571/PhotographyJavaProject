@@ -2,11 +2,12 @@ import {Component, Input, OnInit} from '@angular/core';
 import {HeaderComponent} from '../../core/header/header.component';
 import {FooterComponent} from '../../core/footer/footer.component';
 import {ProfileService} from '../../services/profile-service/profile.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import {AuthService} from '../../services/auth-service/auth.service';
 import {JwtService} from '../../services/jwt-service/jwt.service';
 import {FormsModule} from '@angular/forms';
 import {LeaderboardsService} from '../../services/leaderboards-service/leaderboards.service';
+import {ChallengeService} from '../../services/challenge-service/challenge.service';
 
 @Component({
     selector: 'app-profile',
@@ -14,7 +15,8 @@ import {LeaderboardsService} from '../../services/leaderboards-service/leaderboa
     imports: [
         HeaderComponent,
         FooterComponent,
-        FormsModule
+        FormsModule,
+        RouterLink
     ],
     templateUrl: './profile.component.html',
     styleUrl: './profile.component.css'
@@ -25,6 +27,7 @@ export class ProfileComponent implements OnInit {
 
     showPopup: boolean = false;
     showReportModal: boolean = false;
+    showPicturePopup: boolean = false;
 
     reportReason: string = '';
     reportTarget: any = null;
@@ -51,12 +54,13 @@ export class ProfileComponent implements OnInit {
                 private leaderboardsService: LeaderboardsService,
                 private route: ActivatedRoute,
                 private authService: AuthService,
-                private jwtService: JwtService) {
+                private jwtService: JwtService,
+                private challengesService: ChallengeService) {
     }
 
     ngOnInit() {
-        this.loadUserProfile(); // Load profile on initialization
-        this.listenToRouteChanges(); // Listen for route changes
+        this.loadUserProfile();
+        this.listenToRouteChanges();
         this.getAllFriends();
         this.getAllFollowers();
         this.getAllFriendsForUser();
@@ -75,6 +79,24 @@ export class ProfileComponent implements OnInit {
         //     this.username = decodedToken?.username || null;
         //     this.role = decodedToken?.role ? decodedToken?.role.replace("ROLE_", "") : null;
         // }
+    }
+
+    getAllUsersPicture(userId: string): void {
+        this.challengesService.getAllPicturesForUser(userId).subscribe(data => {
+            if (Array.isArray(data)) {
+                this.pictures = data
+                    .sort((a, b) => b.likes - a.likes)
+                    .slice(0, 3);
+            }
+        });
+    }
+
+    openPicturePopup() {
+        this.showPicturePopup = true;
+    }
+
+    closePicturePopup() {
+        this.showPicturePopup = false;
     }
 
     getAllFriends(): void {
@@ -150,6 +172,7 @@ export class ProfileComponent implements OnInit {
                 console.log(this.userDetails.id)
                 if (this.userDetails.id) {
                     this.fetchUserStatistics(this.userDetails.id);
+                    this.getAllUsersPicture(this.userDetails.id);
                 }
             },
             error: (error) => {

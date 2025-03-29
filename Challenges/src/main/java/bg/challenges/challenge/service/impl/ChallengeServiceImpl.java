@@ -1,26 +1,28 @@
 package bg.challenges.challenge.service.impl;
 
 import bg.challenges.challenge.model.Challenge;
-import bg.challenges.challenge.model.Comment;
 import bg.challenges.challenge.model.Picture;
 import bg.challenges.challenge.model.Winner;
-import bg.challenges.challenge.property.enums.ChallengeActivity;
-import bg.challenges.challenge.property.enums.ChallengeType;
+import bg.challenges.challenge.model.ChallengeActivity;
+import bg.challenges.challenge.model.ChallengeType;
 import bg.challenges.challenge.repository.ChallengeRepository;
 import bg.challenges.challenge.service.ChallengeService;
-import bg.challenges.challenge.service.CommentService;
 import bg.challenges.challenge.service.PictureService;
 import bg.challenges.exception.*;
+import bg.challenges.shared.service.CloudinaryService;
 import bg.challenges.shared.service.impl.KafkaProducer;
 import bg.challenges.web.dto.*;
 import bg.challenges.web.mapper.DtoMapper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -28,14 +30,14 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     private final ChallengeRepository challengeRepository;
     private final PictureService pictureService;
-    private final CommentService commentService;
     private final KafkaProducer kafkaProducer;
+    private final CloudinaryService cloudinaryService;
 
-    public ChallengeServiceImpl(ChallengeRepository challengeRepository, PictureService pictureService, CommentService commentService, KafkaProducer kafkaProducer) {
+    public ChallengeServiceImpl(ChallengeRepository challengeRepository, PictureService pictureService, KafkaProducer kafkaProducer, CloudinaryService cloudinaryService) {
         this.challengeRepository = challengeRepository;
         this.pictureService = pictureService;
-        this.commentService = commentService;
         this.kafkaProducer = kafkaProducer;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @Override
@@ -61,7 +63,9 @@ public class ChallengeServiceImpl implements ChallengeService {
         }
 
         for (Challenge challenge : finishedChallenges) {
-            Challenge uploadeChallenge = this.challengeRepository.findById(challenge.getId()).get();
+            Challenge uploadeChallenge = this.challengeRepository.findById(challenge.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Challenge not found"));
+
             List<WinnerRegisterV1> winnersWithPoints = getWinnersWithPoints(uploadeChallenge);
             for (WinnerRegisterV1 winnersWithPoint : winnersWithPoints) {
                 this.kafkaProducer.sendMessage(winnersWithPoint);
@@ -118,7 +122,8 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     public void setChallengeWinners(UUID challengeId) {
-        Challenge challenge = this.challengeRepository.findById(challengeId).orElseThrow();
+        Challenge challenge = this.challengeRepository.findById(challengeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Challenge not found"));
 
         List<Picture> pictures = this.pictureService.getWinnersPicture(challengeId);
 
@@ -155,13 +160,13 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     public ChallengeDetailsResponse getChallengeDetails(UUID id, UUID userId) {
         Challenge challenge = challengeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Challenge not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Challenge not found"));
 
         return DtoMapper.mapChallengeToChallengeDetailsResponse(challenge, userId);
     }
 
     @Override
-    public void savePictureForChallenge(UUID challengeId, String pictureFilePath, String caption, String story, UUID userId) {
+    public PictureResponse savePictureForChallenge(UUID challengeId, MultipartFile file, String caption, String story, UUID userId) throws IOException {
 
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Challenge not found"));
@@ -176,6 +181,9 @@ public class ChallengeServiceImpl implements ChallengeService {
             throw new ChallengeAlreadyFinishException("Cannot upload picture. Challenge has already finished.");
         }
 
+        Map<String, Object> uploadResult = this.cloudinaryService.uploadImage(file);
+        String pictureFilePath = (String) uploadResult.get("secure_url");
+
         Picture picture = DtoMapper.mapPictureUploadRequestToPicture(challenge, pictureFilePath, caption, story, userId);
 
         this.pictureService.savePicture(picture);
@@ -183,79 +191,8 @@ public class ChallengeServiceImpl implements ChallengeService {
         challenge.getPictures().add(picture);
 
         this.challengeRepository.saveAndFlush(challenge);
-    }
 
-    @Override
-    public PictureToggleResponse toggleLikePicture(UUID challengeId, UUID pictureId, UUID userId) {
-        Challenge challenge = this.challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Challenge not found with id: " + challengeId));
-
-        Picture picture = this.pictureService.getPictureById(pictureId);
-
-        if (picture.getLikedByUsers().contains(userId)) {
-            picture.setLikes(picture.getLikes() - 1);
-            picture.getLikedByUsers().remove(userId);
-        } else {
-            picture.setLikes(picture.getLikes() + 1);
-            picture.getLikedByUsers().add(userId);
-        }
-
-        pictureService.savePicture(picture);
-
-        return DtoMapper.mapPictureToPictureToggleResponse(picture, userId);
-    }
-
-    @Override
-    public CommentResponse addComment(UUID challengeId, UUID pictureId, String text, UUID userId) {
-
-        Challenge challenge = this.challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Challenge not found with id: " + challengeId));
-
-        Picture picture = this.pictureService.getPictureById(pictureId);
-
-        Comment comment = DtoMapper.mapCommentResponseToComment(picture, text, userId);
-
-        this.commentService.saveComment(comment);
-
-        picture.getComments().add(comment);
-        this.pictureService.savePicture(picture);
-
-        return DtoMapper.mapCommentToCommentResponse(comment);
-    }
-
-
-    @Override
-    public void deletePicture(UUID challengeId, UUID pictureId, UUID userId) {
-
-        Challenge challenge = this.challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Challenge not found with id: " + challengeId));
-
-        Picture picture = this.pictureService.getPictureById(pictureId);
-
-        if (!picture.getAuthorId().equals(userId)) {
-            throw new UnauthorizedActionException("User is not authorized to delete this picture");
-        }
-
-        picture.setDeleted(true);
-        this.pictureService.savePicture(picture);
-    }
-
-    @Override
-    public void deleteComment(UUID challengeId, UUID pictureId, UUID commentId, UUID userId) {
-
-        Challenge challenge = this.challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Challenge not found with id: " + challengeId));
-
-        Picture picture = this.pictureService.getPictureById(pictureId);
-
-        Comment comment = this.commentService.getCommentById(commentId);
-
-        if (!comment.getAuthorId().equals(userId)) {
-            throw new UnauthorizedActionException("User is not authorized to delete this comment");
-        }
-
-        comment.setDeleted(true);
-        this.commentService.saveComment(comment);
+        return DtoMapper.mapPictureToPictureResponse(picture, userId);
     }
 
     @Override

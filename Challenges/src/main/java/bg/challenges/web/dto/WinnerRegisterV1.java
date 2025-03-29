@@ -1,6 +1,6 @@
 package bg.challenges.web.dto;
 
-import bg.challenges.challenge.property.enums.ChallengeType;
+import bg.challenges.challenge.model.ChallengeType;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;

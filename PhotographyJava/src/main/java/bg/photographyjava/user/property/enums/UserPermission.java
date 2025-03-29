@@ -9,7 +9,8 @@ public enum UserPermission {
     BAN_USERS("banUsers"),
     ANSWER_FEEDBACK("answerFeedback"),
     DELETE_MESSAGE("deleteMessage"),
-    DELETE_PICTURE("deletePicture");
+    DELETE_PICTURE("deletePicture"),
+    MANAGE_CHALLENGE("manageChallenge");
 
     private final String permissionName;
 

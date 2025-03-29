@@ -10,4 +10,6 @@ import java.util.UUID;
 @Repository
 public interface PictureRepository extends JpaRepository<Picture, UUID> {
     List<Picture> findByChallengeId(UUID challengeId);
+
+    List<Picture> findByAuthorIdAndIsDeletedFalse(UUID id);
 }

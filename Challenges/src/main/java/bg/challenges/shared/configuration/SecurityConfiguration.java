@@ -56,6 +56,9 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET, "api/v1/challenges").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/v1/challenges/list").permitAll()
+                        .requestMatchers(HttpMethod.POST, "api/v1/challenges/create-challenge").hasAnyAuthority("PERMISSION_manageChallenge")
+                        .requestMatchers(HttpMethod.PUT, "api/v1/challenges/{id}").hasAnyAuthority("PERMISSION_manageChallenge")
+                        .requestMatchers(HttpMethod.DELETE, "api/v1/challenges/{id}").hasAnyAuthority("PERMISSION_manageChallenge")
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

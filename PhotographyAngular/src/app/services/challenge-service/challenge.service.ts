@@ -41,19 +41,19 @@ export class ChallengeService {
         });
     }
 
-    toggleLikePicture(challengeId: string, pictureId: string) {
+    toggleLikePicture(pictureId: string) {
         const token = this.authService.getToken();
-        return this.http.patch<any>(`${this.challengeUrl}/v1/challenges/${challengeId}/pictures/${pictureId}/toggle-like`, {}, {
+        return this.http.patch<any>(`${this.challengeUrl}/v1/challenges/pictures/${pictureId}/toggle-like`, {}, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
     }
 
-    addCommentToPicture(challengeId: string, pictureId: string, commentText: string) {
+    addCommentToPicture(pictureId: string, commentText: string) {
         const token = this.authService.getToken();
         const commentData = { text: commentText };
-        return this.http.post(`${this.challengeUrl}/v1/challenges/${challengeId}/pictures/${pictureId}/comments`, commentData, {
+        return this.http.post(`${this.challengeUrl}/v1/challenges/pictures/${pictureId}/comments`, commentData, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -85,10 +85,10 @@ export class ChallengeService {
         );
     }
 
-    deletePicture(challengeId: string, pictureId: string) {
+    deletePicture(pictureId: string) {
         const token = this.authService.getToken();
         return this.http.delete(
-            `${this.challengeUrl}/v1/challenges/${challengeId}/pictures/${pictureId}/delete`,
+            `${this.challengeUrl}/v1/challenges/pictures/${pictureId}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -97,10 +97,10 @@ export class ChallengeService {
         );
     }
 
-    deleteComment(challengeId: string, pictureId: string, commentId: string) {
+    deleteComment(commentId: string) {
         const token = this.authService.getToken();
         return this.http.delete<any>(
-            `${this.challengeUrl}/v1/challenges/${challengeId}/pictures/${pictureId}/comments/${commentId}/delete`,
+            `${this.challengeUrl}/v1/challenges/comments/${commentId}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -118,15 +118,42 @@ export class ChallengeService {
 
     updateChallenge(challengeId: string, updatedDetails: any) {
         const token = this.authService.getToken();
-        return this.http.put<any>(`${this.challengeUrl}/v1/challenges/edit-challenge/${challengeId}`, updatedDetails, {
+        return this.http.put<any>(`${this.challengeUrl}/v1/challenges/${challengeId}`, updatedDetails, {
             headers: { Authorization: `Bearer ${token}` }
         });
     }
 
     deleteChallenge(challengeId: string) {
         const token = this.authService.getToken();
-        return this.http.delete<void>(`${this.challengeUrl}/v1/challenges/delete-challenge/${challengeId}`, {
+        return this.http.delete<void>(`${this.challengeUrl}/v1/challenges/${challengeId}`, {
             headers: { Authorization: `Bearer ${token}` }
+        });
+    }
+
+    getReportedPicture(pictureId: string) {
+        const token = this.authService.getToken();
+        return this.http.get<any>(`${this.challengeUrl}/v1/challenges/reported/picture/${pictureId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
+    getReportedComment(commentId: string) {
+        const token = this.authService.getToken();
+        return this.http.get<any>(`${this.challengeUrl}/v1/challenges/reported/comment/${commentId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
+    getAllPicturesForUser(id: string) {
+        const token = this.authService.getToken();
+        return this.http.get<any>(`${this.challengeUrl}/v1/challenges/pictures/all/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         });
     }
 }

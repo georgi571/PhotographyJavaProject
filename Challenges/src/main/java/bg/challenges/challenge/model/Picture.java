@@ -2,9 +2,7 @@ package bg.challenges.challenge.model;
 
 import jakarta.persistence.*;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "pictures")
@@ -36,10 +34,10 @@ public class Picture {
     @ElementCollection
     @CollectionTable(name = "liked_by_users", joinColumns = @JoinColumn(name = "picture_id"))
     @Column(name = "user_id")
-    private Set<UUID> likedByUsers;
+    private Set<UUID> likedByUsers = new HashSet<>();
 
     @OneToMany(mappedBy = "picture", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     @Column(name = "is_deleted")
     private boolean isDeleted;

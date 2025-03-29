@@ -1,7 +1,7 @@
 package bg.challenges.challenge.repository;
 
 import bg.challenges.challenge.model.Challenge;
-import bg.challenges.challenge.property.enums.ChallengeType;
+import bg.challenges.challenge.model.ChallengeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
