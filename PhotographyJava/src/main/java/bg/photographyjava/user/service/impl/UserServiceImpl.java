@@ -1,9 +1,6 @@
 package bg.photographyjava.user.service.impl;
 
-import bg.photographyjava.exception.InvalidPasswordException;
-import bg.photographyjava.exception.OldEmailMismatchException;
-import bg.photographyjava.exception.OldUsernameMismatchException;
-import bg.photographyjava.exception.UserNotFoundException;
+import bg.photographyjava.exception.*;
 import bg.photographyjava.shared.service.CloudinaryService;
 import bg.photographyjava.shared.service.impl.KafkaProducer;
 import bg.photographyjava.user.model.Role;
@@ -11,7 +8,6 @@ import bg.photographyjava.user.property.enums.*;
 import bg.photographyjava.web.dto.*;
 import bg.photographyjava.user.model.UserEntity;
 import bg.photographyjava.user.repository.CountryRepository;
-import bg.photographyjava.user.repository.RankRepository;
 import bg.photographyjava.user.repository.RoleRepository;
 import bg.photographyjava.user.repository.UserRepository;
 import bg.photographyjava.user.service.UserService;
@@ -37,7 +33,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RankRepository userRankRepository;
     private final RoleRepository userRoleRepository;
     private final CountryRepository countryRepository;
     private final AuthenticationManager authenticationManager;
@@ -45,10 +40,9 @@ public class UserServiceImpl implements UserService {
     private final CloudinaryService cloudinaryService;
     private final KafkaProducer kafkaProducer;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, RankRepository userRankRepository, RoleRepository userRoleRepository, CountryRepository countryRepository, AuthenticationManager authenticationManager, JWTService jwtService, CloudinaryService cloudinaryService, KafkaProducer kafkaProducer) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository userRoleRepository, CountryRepository countryRepository, AuthenticationManager authenticationManager, JWTService jwtService, CloudinaryService cloudinaryService, KafkaProducer kafkaProducer) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.userRankRepository = userRankRepository;
         this.userRoleRepository = userRoleRepository;
         this.countryRepository = countryRepository;
         this.authenticationManager = authenticationManager;
@@ -68,16 +62,16 @@ public class UserServiceImpl implements UserService {
             admin.setCountry(this.countryRepository.findByName(CountryEnum.BULGARIA));
             admin.setCity("Blagoevgrad");
             admin.setGender(GenderEnum.MALE);
-            admin.setRank(this.userRankRepository.findByRank(UserRank.MASTER));
             admin.setRole(this.userRoleRepository.findByRole(UserRole.ADMIN));
             admin.setApproved(true);
             admin.setRealName("Admin Admin");
-            admin.setPoints(2500);
             admin.setApproved(true);
             admin.setBanned(false);
             admin.setProfilePicturePath("https://res.cloudinary.com/dkyp0c0lz/image/upload/v1737304170/male-profile-picture_rltohq.avif");
             admin.setPermissions(Set.of(UserPermission.APPROVE_USERS, UserPermission.CHANGE_USER_ROLES, UserPermission.BAN_USERS, UserPermission.ANSWER_FEEDBACK, UserPermission.DELETE_MESSAGE, UserPermission.DELETE_PICTURE, UserPermission.MANAGE_CHALLENGE));
             this.userRepository.saveAndFlush(admin);
+
+            kafkaProducer.sendMessage(DtoMapper.mapUserEntityToUserRegisterV1(admin));
         }
     }
 
@@ -96,7 +90,6 @@ public class UserServiceImpl implements UserService {
         UserEntity user = DtoMapper.mapUserRegisterRequestToUserEntity(userRegisterRequest);
         user.setPassword(this.passwordEncoder.encode(userRegisterRequest.getPassword()));
         user.setCountry(this.countryRepository.findByName(CountryEnum.fromString(userRegisterRequest.getCountry())));
-        user.setRank(this.userRankRepository.findByRank(UserRank.BEGINNER));
         user.setRole(this.userRoleRepository.findByRole(UserRole.USER));
         this.userRepository.saveAndFlush(user);
 
@@ -105,6 +98,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String verify(UserLoginRequest userLoginRequest) {
+        UserEntity user = this.getUserByUsername(userLoginRequest.getUsername()).orElseThrow(() ->
+                new UserNotFoundException("User with username " + userLoginRequest.getUsername() + " not found"));
+
+        if (!user.isApproved()) {
+            throw new UnapprovedUserException("User is not approved yet.");
+        }
+
+        if (user.isBanned()) {
+            throw new BannedUserException("Your account has been banned. Reason: " + user.getReasonForBan());
+        }
+
         Authentication authentication =
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginRequest.getUsername(), userLoginRequest.getPassword()));
 
@@ -115,9 +119,6 @@ public class UserServiceImpl implements UserService {
                     .map(GrantedAuthority::getAuthority)
                     .orElseThrow(() -> new IllegalStateException("User has no roles assigned"));
 
-            UserEntity user = this.getUserByUsername(userLoginRequest.getUsername()).orElseThrow(() ->
-                    new UserNotFoundException("User with username " + userLoginRequest.getUsername() + " not found"));
-//            UserEntity user = this.userRepository.findByUsername(userLoginRequest.getUsername()).get();
             List<UserPermission> userPermissions = user.getPermissions().stream().toList();
 
             return jwtService.generateToken(userLoginRequest.getUsername(), role, userPermissions, user.getId());
@@ -228,20 +229,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUserRole(UUID userId, String roleToChange, String username) {
-        UserEntity admin = this.getUserByUsername(username).orElseThrow(() ->
-                new UserNotFoundException("User with username " + username + " not found"));
+    public ChangeRoleUserResponse updateUserRole(UUID userId, RoleRequest roleRequest) {
 
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        UserRole userRole = Enum.valueOf(UserRole.class, roleToChange);
+        UserRole userRole = Enum.valueOf(UserRole.class, roleRequest.getRole());
         Role role = this.userRoleRepository.findByRole(userRole);
 
         user.getPermissions().clear();
 
         user.setRole(role);
         userRepository.saveAndFlush(user);
+
+        return DtoMapper.mapUserEntityToChangeRoleUserResponse(user);
     }
 
     @Override
@@ -253,25 +254,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void banUserAction(UUID id, BanUserReasonRequest reasonDTO, String username) {
-        UserEntity admin = this.getUserByUsername(username).orElseThrow(() ->
-                new UserNotFoundException("User with username " + username + " not found"));
+    public BanUserResponse banUserAction(UUID id, BanUserReasonRequest banUserReasonRequest) {
 
-        UserEntity user = this.userRepository.findById(id).get();
-        if (reasonDTO.getAction().equals("ban")) {
+        UserEntity user = this.userRepository.findById(id).orElseThrow(() ->
+                new UserNotFoundException("User with ID " + id + " not found"));
+
+        if (banUserReasonRequest.getAction().equals("ban")) {
             user.setBanned(true);
-            user.setReasonForBan(reasonDTO.getReason());
+            user.setReasonForBan(banUserReasonRequest.getReason());
         } else {
             user.setBanned(false);
             user.setReasonForBan(null);
         }
 
         this.userRepository.saveAndFlush(user);
+
+        return this.getUserForBan(id);
     }
 
     @Override
     public BanUserResponse getUserForBan(UUID id) {
-        UserEntity user = this.userRepository.findById(id).get();
+        UserEntity user = this.userRepository.findById(id).orElseThrow(() ->
+                new UserNotFoundException("User with ID " + id + " not found"));
 
         return DtoMapper.mapUserEntityToBanUserResponse(user);
     }
@@ -285,11 +289,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void approveUserAction(UUID id, ApproveUserReasonRequest reasonRequest, String username) {
-        UserEntity admin = this.getUserByUsername(username).orElseThrow(() ->
-                new UserNotFoundException("User with username " + username + " not found"));
+    public ApproveUsersResponse approveUserAction(UUID id, ApproveUserReasonRequest reasonRequest) {
 
-        UserEntity user = this.userRepository.findById(id).get();
+        UserEntity user = this.userRepository.findById(id).orElseThrow(() ->
+                new UserNotFoundException("User with ID " + id + " not found"));
         if (reasonRequest.getAction().equals("approve")) {
             user.setApproved(true);
         } else {
@@ -299,11 +302,14 @@ public class UserServiceImpl implements UserService {
         }
 
         this.userRepository.saveAndFlush(user);
+
+        return this.getUserForApprove(id);
     }
 
     @Override
     public ApproveUsersResponse getUserForApprove(UUID id) {
-        UserEntity user = this.userRepository.findById(id).get();
+        UserEntity user = this.userRepository.findById(id).orElseThrow(() ->
+                new UserNotFoundException("User with ID " + id + " not found"));
 
         return DtoMapper.mapUserEntityToApproveUsersResponse(user);
     }
@@ -317,14 +323,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AdminPermissionsResponse updateAdminPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username) {
-        UserEntity superAdmin = this.getUserByUsername(username).orElseThrow(() ->
-                new UserNotFoundException("User with username " + username + " not found"));
+    public AdminPermissionsResponse updateAdminPermissions(UUID id, AdminPermissionsUpdateRequest updatePermission) {
+        UserEntity admin = this.userRepository.findById(id).orElseThrow(() ->
+                new UserNotFoundException("User with ID " + id + " not found"));
 
-        UserEntity admin = this.userRepository.findById(id).get();
-
-        admin.getPermissions().addAll(permissionsToAdd);
-        admin.getPermissions().removeAll(permissionsToRemove);
+        admin.getPermissions().addAll(updatePermission.getPermissionsToAdd());
+        admin.getPermissions().removeAll(updatePermission.getPermissionsToRemove());
 
         this.userRepository.saveAndFlush(admin);
 
@@ -340,14 +344,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ModeratorPermissionsResponse updateModerationPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username) {
-        UserEntity superAdmin = this.getUserByUsername(username).orElseThrow(() ->
-                new UserNotFoundException("User with username " + username + " not found"));
+    public ModeratorPermissionsResponse updateModerationPermissions(UUID id, ModeratorPermissionsUpdateRequest updatePermission) {
+        UserEntity moderator = this.userRepository.findById(id).orElseThrow(() ->
+                new UserNotFoundException("User with ID " + id + " not found"));
 
-        UserEntity moderator = this.userRepository.findById(id).get();
-
-        moderator.getPermissions().addAll(permissionsToAdd);
-        moderator.getPermissions().removeAll(permissionsToRemove);
+        moderator.getPermissions().addAll(updatePermission.getPermissionsToAdd());
+        moderator.getPermissions().removeAll(updatePermission.getPermissionsToRemove());
 
         this.userRepository.saveAndFlush(moderator);
 
@@ -368,7 +370,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addFriendByUsername(FriendRequest friendRequest, String username) {
+    public boolean addFriendByUsername(FriendRequest friendRequest, String username) {
         UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
                 new UserNotFoundException("User with username " + username + " not found"));
 
@@ -380,10 +382,12 @@ public class UserServiceImpl implements UserService {
 
         this.userRepository.saveAndFlush(user);
         this.userRepository.saveAndFlush(friend);
+
+        return true;
     }
 
     @Override
-    public void followUserByUsername(FollowerUserRequest followerUserRequest, String username) {
+    public boolean followUserByUsername(FollowerUserRequest followerUserRequest, String username) {
         UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
                 new UserNotFoundException("User with username " + username + " not found"));
 
@@ -395,10 +399,12 @@ public class UserServiceImpl implements UserService {
 
         this.userRepository.saveAndFlush(user);
         this.userRepository.saveAndFlush(follower);
+
+        return true;
     }
 
     @Override
-    public void acceptFriendRequest(FriendRequest friendRequest, String username) {
+    public boolean acceptFriendRequest(FriendRequest friendRequest, String username) {
         UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
                 new UserNotFoundException("User with username " + username + " not found"));
 
@@ -413,10 +419,12 @@ public class UserServiceImpl implements UserService {
 
         this.userRepository.saveAndFlush(user);
         this.userRepository.saveAndFlush(friend);
+
+        return true;
     }
 
     @Override
-    public void rejectFriendRequest(FriendRequest friendRequest, String username) {
+    public boolean rejectFriendRequest(FriendRequest friendRequest, String username) {
         UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
                 new UserNotFoundException("User with username " + username + " not found"));
 
@@ -428,6 +436,8 @@ public class UserServiceImpl implements UserService {
 
         this.userRepository.saveAndFlush(user);
         this.userRepository.saveAndFlush(friend);
+
+        return true;
     }
 
     @Override
@@ -438,7 +448,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void removeFriendByUsername(FriendRequest friendRequest, String username) {
+    public boolean removeFriendByUsername(FriendRequest friendRequest, String username) {
         UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
                 new UserNotFoundException("User with username " + username + " not found"));
 
@@ -450,10 +460,12 @@ public class UserServiceImpl implements UserService {
 
         this.userRepository.saveAndFlush(user);
         this.userRepository.saveAndFlush(friend);
+
+        return true;
     }
 
     @Override
-    public void cancelFriendRequestByUsername(FriendRequest friendRequest, String username) {
+    public boolean cancelFriendRequestByUsername(FriendRequest friendRequest, String username) {
         UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
                 new UserNotFoundException("User with username " + username + " not found"));
 
@@ -465,10 +477,12 @@ public class UserServiceImpl implements UserService {
 
         this.userRepository.saveAndFlush(user);
         this.userRepository.saveAndFlush(friend);
+
+        return true;
     }
 
     @Override
-    public void unfollowUserByUsername(FollowerUserRequest followerUserRequest, String username) {
+    public boolean unfollowUserByUsername(FollowerUserRequest followerUserRequest, String username) {
         UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
                 new UserNotFoundException("User with username " + username + " not found"));
 
@@ -480,6 +494,8 @@ public class UserServiceImpl implements UserService {
 
         this.userRepository.saveAndFlush(user);
         this.userRepository.saveAndFlush(follower);
+
+        return true;
     }
 
     @Override
@@ -571,7 +587,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void removeFollowerByUsername(FollowerUserRequest followerUserRequest, String username) {
+    public boolean removeFollowerByUsername(FollowerUserRequest followerUserRequest, String username) {
         UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
                 new UserNotFoundException("User with username " + username + " not found"));
 
@@ -583,10 +599,12 @@ public class UserServiceImpl implements UserService {
 
         this.userRepository.saveAndFlush(user);
         this.userRepository.saveAndFlush(follower);
+
+        return true;
     }
 
     @Override
-    public void blockUser(String username, String blockedUsername) {
+    public boolean blockUser(String username, String blockedUsername) {
         UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
                 new UserNotFoundException("User with username " + username + " not found"));
 
@@ -608,10 +626,12 @@ public class UserServiceImpl implements UserService {
         user.getBlockedUsers().add(blockedUser);
         userRepository.saveAndFlush(user);
         userRepository.saveAndFlush(blockedUser);
+
+        return true;
     }
 
     @Override
-    public void unblockUser(String username, String blockedUsername) {
+    public boolean unblockUser(String username, String blockedUsername) {
         UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
                 new UserNotFoundException("User with username " + username + " not found"));
 
@@ -620,6 +640,8 @@ public class UserServiceImpl implements UserService {
 
         user.getBlockedUsers().remove(blockedUser);
         this.userRepository.saveAndFlush(user);
+
+        return true;
     }
 
     @Override
@@ -655,7 +677,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserInformationForPictureResponse getUserById(UUID userId) {
-        UserEntity user = this.userRepository.findById(userId).get();
+        UserEntity user = this.userRepository.findById(userId).orElseThrow(() ->
+                new UserNotFoundException("User with ID " + userId + " not found"));
 
         return DtoMapper.mapUserEntityToUserInformationForPictureResponse(user);
     }
@@ -663,18 +686,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public Map<String, String> handleValidationErrors(BindingResult bindingResult) {
         Map<String, String> errorResponse = new HashMap<>();
-        if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().forEach(error -> {
-                String fieldName = ((FieldError) error).getField();
-                String errorMessage = error.getDefaultMessage();
-                errorResponse.put(fieldName, errorMessage);
-            });
-        }
+        bindingResult.getAllErrors().forEach(error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errorResponse.put(fieldName, errorMessage);
+        });
+
         return errorResponse;
     }
 
     @Override
-    public void editUserProfilePicture(MultipartFile file, String username) throws IOException {
+    public boolean editUserProfilePicture(MultipartFile file, String username) throws IOException {
         UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
                 new UserNotFoundException("User with username " + username + " not found"));
 
@@ -684,5 +706,7 @@ public class UserServiceImpl implements UserService {
         user.setProfilePicturePath(pictureFilePath);
 
         this.userRepository.saveAndFlush(user);
+
+        return true;
     }
 }

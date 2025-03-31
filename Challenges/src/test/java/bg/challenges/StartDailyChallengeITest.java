@@ -44,8 +44,8 @@ public class StartDailyChallengeITest {
 
     @Test
     public void testStartDailyChallengeWithMockedDate() {
-        Clock fixedClock = Clock.fixed(Instant.parse("2025-03-29T00:00:00.00Z"), ZoneOffset.UTC);
-        LocalDateTime now = LocalDateTime.now(fixedClock);
+        Clock clock = Clock.systemUTC();
+        LocalDateTime now = LocalDateTime.now(clock);
 
         Challenge challenge = new Challenge();
         challenge.setActivity(ChallengeActivity.UPCOMING);

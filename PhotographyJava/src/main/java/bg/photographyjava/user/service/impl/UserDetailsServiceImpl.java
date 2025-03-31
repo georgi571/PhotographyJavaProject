@@ -11,8 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -25,16 +24,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = this.userRepository.findByUsername(username).get();
+        Optional<UserEntity> user = this.userRepository.findByUsername(username);
 
-        if (user == null) {
-            System.out.printf("User %s not found.\n", username);
+        if (user.isEmpty()) {
             throw new UsernameNotFoundException("User not found.");
         }
 
-        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + user.getRole().getRole());
+        UserEntity userForLogin = user.get();
 
-        return new UserPrincipal(user);
+        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + userForLogin.getRole().getRole());
+
+        return new UserPrincipal(userForLogin);
     }
 
     private UserDetails map(UserEntity userEntity) {

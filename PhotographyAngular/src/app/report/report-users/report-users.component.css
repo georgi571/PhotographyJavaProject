@@ -152,3 +152,39 @@ button {
     cursor: pointer;
     color: #000;
 }
+
+.ban-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 500px;
+    width: 100%;
+    height: 100%;
+    background: none;
+    z-index: 1100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ban-modal {
+    background: white;
+    padding: 20px;
+    width: 400px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    z-index: 1101;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.confirm-ban {
+    background-color: #dc3545;
+    color: white;
+}
+
+.confirm-ban:hover {
+    background-color: #a71d2a;
+}

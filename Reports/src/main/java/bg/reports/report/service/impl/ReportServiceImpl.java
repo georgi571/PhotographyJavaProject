@@ -79,6 +79,8 @@ public class ReportServiceImpl implements ReportService {
     public List<UserReportResponse> getAllUserReports() {
         List<Report> reports = this.reportRepository.findByUserIdIsNotNull();
         return reports.stream()
+                .filter(userReport -> userReport.getCommentId() == null)
+                .filter(userReport -> userReport.getPictureId() == null)
                 .map(DtoMapper::mapUserReportToUserReportResponse)
                 .collect(Collectors.toList());
     }

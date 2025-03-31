@@ -38,47 +38,47 @@ public interface UserService {
 
     List<ChangeRoleUserResponse> getAllUsers();
 
-    void updateUserRole(UUID userId, String role, String username);
+    ChangeRoleUserResponse updateUserRole(UUID userId, RoleRequest roleRequest);
 
     List<BanUserResponse> getAllUsersForBan();
 
-    void banUserAction(UUID id, BanUserReasonRequest reasonDTO, String username);
+    BanUserResponse banUserAction(UUID id, BanUserReasonRequest banUserReasonRequest);
 
     BanUserResponse getUserForBan(UUID id);
 
     List<ApproveUsersResponse> getAllUsersForApprove();
 
-    void approveUserAction(UUID id, ApproveUserReasonRequest reasonDTO, String username);
+    ApproveUsersResponse approveUserAction(UUID id, ApproveUserReasonRequest approveUserReasonRequest);
 
     ApproveUsersResponse getUserForApprove(UUID id);
 
-    AdminPermissionsResponse updateAdminPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username);
+    AdminPermissionsResponse updateAdminPermissions(UUID id, AdminPermissionsUpdateRequest updatePermission);
 
     List<AdminPermissionsResponse> getAllAdminsWithPermissions();
 
     List<ModeratorPermissionsResponse> getAllModeratorsWithPermissions();
 
-    ModeratorPermissionsResponse updateModerationPermissions(UUID id, Set<UserPermission> permissionsToAdd, Set<UserPermission> permissionsToRemove, String username);
+    ModeratorPermissionsResponse updateModerationPermissions(UUID id, ModeratorPermissionsUpdateRequest updatePermission);
 
     List<UserEntity> getAllUsersForCountries();
 
     List<UserPermission> getCurrentAdminPermissions(String username);
 
-    void addFriendByUsername(FriendRequest friendRequest, String username);
+    boolean addFriendByUsername(FriendRequest friendRequest, String username);
 
-    void followUserByUsername(FollowerUserRequest followerUserRequest, String username);
+    boolean followUserByUsername(FollowerUserRequest followerUserRequest, String username);
 
-    void acceptFriendRequest(FriendRequest friendRequest, String username);
+    boolean acceptFriendRequest(FriendRequest friendRequest, String username);
 
-    void rejectFriendRequest(FriendRequest friendRequest, String username);
+    boolean rejectFriendRequest(FriendRequest friendRequest, String username);
 
     boolean isValidUser(String username, String password);
 
-    void removeFriendByUsername(FriendRequest friendRequest, String username);
+    boolean removeFriendByUsername(FriendRequest friendRequest, String username);
 
-    void cancelFriendRequestByUsername(FriendRequest friendRequest, String username);
+    boolean cancelFriendRequestByUsername(FriendRequest friendRequest, String username);
 
-    void unfollowUserByUsername(FollowerUserRequest followerUserRequest, String username);
+    boolean unfollowUserByUsername(FollowerUserRequest followerUserRequest, String username);
 
     boolean areFriends(String username, String targetUsername);
 
@@ -96,11 +96,11 @@ public interface UserService {
 
     Set<FriendsResponse> getAllFriends(String username);
 
-    void removeFollowerByUsername(FollowerUserRequest followerUserRequest, String username);
+    boolean removeFollowerByUsername(FollowerUserRequest followerUserRequest, String username);
 
-    void blockUser(String username, String blockedUsername);
+    boolean blockUser(String username, String blockedUsername);
 
-    void unblockUser(String username, String blockedUsername);
+    boolean unblockUser(String username, String blockedUsername);
 
     Set<BlockedUserResponse> getBlockedUsers(String username);
 
@@ -112,5 +112,5 @@ public interface UserService {
 
     Map<String, String> handleValidationErrors(BindingResult bindingResult);
 
-    void editUserProfilePicture(MultipartFile file, String username) throws IOException;
+    boolean editUserProfilePicture(MultipartFile file, String username) throws IOException;
 }

@@ -1,9 +1,13 @@
 package bg.photographyjava.web.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public class BanUserReasonRequest {
 
+    @NotNull
     private String action;
 
+    @NotNull
     private String reason;
 
     public String getAction() {

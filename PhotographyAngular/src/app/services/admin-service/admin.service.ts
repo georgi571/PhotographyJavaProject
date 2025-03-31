@@ -15,7 +15,12 @@ export class AdminService {
     }
 
     getUsers() {
-        return this.http.get<any[]>(`${this.apiUrl}/v1/admin/change-roles`);
+        const token = this.authService.getToken();
+        return this.http.get<any[]>(`${this.apiUrl}/v1/admin/change-roles`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
     }
 
     updateUserRole(userId: string, role: string): Observable<any> {
@@ -28,7 +33,12 @@ export class AdminService {
     }
 
     getUsersForBan() {
-        return this.http.get<any[]>(`${this.apiUrl}/v1/admin/ban-users`);
+        const token = this.authService.getToken();
+        return this.http.get<any[]>(`${this.apiUrl}/v1/admin/ban-users`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
     }
 
     banUser(userId: string, reason: string): Observable<any> {
@@ -53,7 +63,12 @@ export class AdminService {
     }
 
     getUsersForApprove() {
-        return this.http.get<any[]>(`${this.apiUrl}/v1/admin/approve-users`);
+        const token = this.authService.getToken();
+        return this.http.get<any[]>(`${this.apiUrl}/v1/admin/approve-users`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
     }
 
     approveUser(userId: number): Observable<void> {
@@ -78,7 +93,12 @@ export class AdminService {
     }
 
     getAdminsWithPermissions() {
-        return this.http.get<any[]>(`${this.apiUrl}/v1/admin/admin-permissions`);
+        const token = this.authService.getToken();
+        return this.http.get<any[]>(`${this.apiUrl}/v1/admin/admin-permissions`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
     }
 
     updateAdminPermissions(adminId: string, permissionsToAdd: string[], permissionsToRemove: string[]): Observable<any> {
@@ -95,7 +115,12 @@ export class AdminService {
     }
 
     getModeratorsWithPermissions() {
-        return this.http.get<any[]>(`${this.apiUrl}/v1/admin/moderator-permissions`);
+        const token = this.authService.getToken();
+        return this.http.get<any[]>(`${this.apiUrl}/v1/admin/moderator-permissions`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
     }
 
     updateModeratorPermissions(moderatorId: string, permissionsToAdd: string[], permissionsToRemove: string[]): Observable<any> {

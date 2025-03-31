@@ -34,6 +34,7 @@ export class ReportUsersComponent implements OnInit{
     fetchUserReports() {
         this.reportService.getAllUserReports().subscribe({
             next: (data) => this.userReports = data,
+            // next: (data) => console.log(data),
             error: (error) => console.error('Error fetching user reports:', error)
         });
     }
@@ -45,6 +46,7 @@ export class ReportUsersComponent implements OnInit{
                 this.userName = data.username;
                 this.userId = userId;
                 this.reason = reason;
+                this.selectedUser = data;
             },
             error: (error) => console.error('Error fetching picture details:', error)
         });

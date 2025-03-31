@@ -8,7 +8,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -28,13 +27,10 @@ public class AdminController {
     }
 
     @PutMapping("/change-roles/{id}")
-    public ResponseEntity<Map<String, String>> updateUserRole(
-            @PathVariable UUID id,
-            @RequestBody RoleRequest roleRequest,
-            Authentication authentication) {
+    public ResponseEntity<ChangeRoleUserResponse> updateUserRole(@PathVariable UUID id,
+                                                                 @RequestBody RoleRequest roleRequest) {
 
-        this.userService.updateUserRole(id, roleRequest.getRole(), authentication.getName());
-        return ResponseEntity.ok(Map.of("message", "Role updated successfully"));
+        return ResponseEntity.ok(this.userService.updateUserRole(id, roleRequest));
     }
 
     @GetMapping("/ban-users")
@@ -45,13 +41,10 @@ public class AdminController {
 
 
     @PutMapping("/ban-users/{id}")
-    public ResponseEntity<BanUserResponse> banOrUnbanUser(
-            @PathVariable UUID id,
-            @RequestBody BanUserReasonRequest request,
-            Authentication authentication) {
+    public ResponseEntity<BanUserResponse> banOrUnbanUser(@PathVariable UUID id,
+                                                          @RequestBody BanUserReasonRequest request) {
 
-        this.userService.banUserAction(id, request, authentication.getName());
-        return ResponseEntity.ok(this.userService.getUserForBan(id));
+        return ResponseEntity.ok(this.userService.banUserAction(id, request));
     }
 
     @GetMapping("/approve-users")
@@ -61,13 +54,10 @@ public class AdminController {
     }
 
     @PutMapping("/approve-users/{id}")
-    public ResponseEntity<ApproveUsersResponse> approveUser(
-            @PathVariable UUID id,
-            @RequestBody ApproveUserReasonRequest request,
-            Authentication authentication) {
+    public ResponseEntity<ApproveUsersResponse> approveUser(@PathVariable UUID id,
+                                                            @RequestBody ApproveUserReasonRequest request) {
 
-        this.userService.approveUserAction(id, request, authentication.getName());
-        return ResponseEntity.ok(this.userService.getUserForApprove(id));
+        return ResponseEntity.ok(this.userService.approveUserAction(id, request));
     }
 
     @GetMapping("/admin-permissions")
@@ -77,13 +67,10 @@ public class AdminController {
     }
 
     @PutMapping("/admin-permissions/{id}")
-    public ResponseEntity<AdminPermissionsResponse> updateAdminPermissions(
-            @PathVariable UUID id,
-            @RequestBody AdminPermissionsUpdateRequest updatePermission,
-            Authentication authentication) {
+    public ResponseEntity<AdminPermissionsResponse> updateAdminPermissions(@PathVariable UUID id,
+                                                                           @RequestBody AdminPermissionsUpdateRequest updatePermission) {
 
-        return ResponseEntity.ok(this.userService.updateAdminPermissions(
-                id, updatePermission.getPermissionsToAdd(), updatePermission.getPermissionsToRemove(), authentication.getName()));
+        return ResponseEntity.ok(this.userService.updateAdminPermissions(id, updatePermission));
     }
 
     @GetMapping("/moderator-permissions")
@@ -93,13 +80,10 @@ public class AdminController {
     }
 
     @PutMapping("/moderator-permissions/{id}")
-    public ResponseEntity<ModeratorPermissionsResponse> updateModeratorPermissions(
-            @PathVariable UUID id,
-            @RequestBody ModeratorPermissionsUpdateRequest updatePermission,
-            Authentication authentication) {
+    public ResponseEntity<ModeratorPermissionsResponse> updateModeratorPermissions(@PathVariable UUID id,
+                                                                                   @RequestBody ModeratorPermissionsUpdateRequest updatePermission) {
 
-        return ResponseEntity.ok(this.userService.updateModerationPermissions(
-                id, updatePermission.getPermissionsToAdd(), updatePermission.getPermissionsToRemove(), authentication.getName()));
+        return ResponseEntity.ok(this.userService.updateModerationPermissions(id, updatePermission));
     }
 
     @GetMapping("/permissions")

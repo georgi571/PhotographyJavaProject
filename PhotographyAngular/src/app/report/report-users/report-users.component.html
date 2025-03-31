@@ -9,7 +9,7 @@
         <tr>
             <td>{{ report.id }}</td>
             <td>
-                <button (click)="getUserDetails(report.reason, report.authorId, report.reportedBy)">View Comment</button>
+                <button (click)="getUserDetails(report.reason, report.userId, report.reportedBy)">View Report</button>
             </td>
             <td>
                 <button class="delete-btn" (click)="deleteReport(report.id)">Delete Report</button>
@@ -31,7 +31,6 @@
                 <a [href]="'/profile/username/' + reportedBy" target="_blank">{{ reportedBy }}</a>
             </p>
             <p><strong>Reason For Report: </strong> {{ reason }}</p>
-            <p><strong>Comment on picture: </strong></p>
             <div class="modal-actions">
                 <button class="delete-btn" (click)="openBanModal(userName)">Ban User</button>
                 <button class="close-btn" (click)="closeModal()">Close</button>
@@ -46,8 +45,10 @@
             <h3>Ban User - {{ userName }}</h3>
             <label for="banReason">Reason for Ban</label>
             <textarea id="banReason" [(ngModel)]="banReason"></textarea>
-            <button class="confirm-ban" (click)="confirmBan()" [disabled]="!banReason">Confirm Ban</button>
-            <button (click)="closeBanModal()">Cancel</button>
+            <div class="modal-actions">
+                <button class="confirm-ban" (click)="confirmBan()" [disabled]="!banReason">Confirm Ban</button>
+                <button (click)="closeBanModal()">Cancel</button>
+            </div>
         </div>
     </div>
 }

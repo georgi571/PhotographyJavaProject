@@ -19,10 +19,6 @@ public class UserProfileResponse implements Serializable {
 
     private int age;
 
-    private String rank;
-
-    private int points;
-
     private String profilePicturePath;
 
     public UUID getId() {
@@ -79,22 +75,6 @@ public class UserProfileResponse implements Serializable {
 
     public void setAge(int age) {
         this.age = age;
-    }
-
-    public String getRank() {
-        return rank;
-    }
-
-    public void setRank(String rank) {
-        this.rank = rank;
-    }
-
-    public int getPoints() {
-        return points;
-    }
-
-    public void setPoints(int points) {
-        this.points = points;
     }
 
     public String getProfilePicturePath() {

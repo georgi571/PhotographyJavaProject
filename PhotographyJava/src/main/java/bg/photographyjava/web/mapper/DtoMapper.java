@@ -1,10 +1,7 @@
 package bg.photographyjava.web.mapper;
 
 import bg.photographyjava.user.model.UserEntity;
-import bg.photographyjava.user.property.enums.CountryEnum;
 import bg.photographyjava.user.property.enums.GenderEnum;
-import bg.photographyjava.user.property.enums.UserRank;
-import bg.photographyjava.user.property.enums.UserRole;
 import bg.photographyjava.web.dto.*;
 
 import java.time.LocalDate;
@@ -165,7 +162,6 @@ public class DtoMapper {
         user.setBanned(false);
         user.setBirthDate(userRegisterRequest.getBirthDate());
         user.setApproved(false);
-        user.setPoints(0);
         user.setRealName("Anonymous");
         user.setBirthDate(userRegisterRequest.getBirthDate());
         user.setGender(GenderEnum.fromString(userRegisterRequest.getGender()));
@@ -185,8 +181,6 @@ public class DtoMapper {
         userProfileResponse.setCity(user.getCity());
         userProfileResponse.setCountry(user.getCountry().getName().getCountryName());
         userProfileResponse.setAge(age);
-        userProfileResponse.setRank(user.getRank().getRank().name());
-        userProfileResponse.setPoints(user.getPoints());
         userProfileResponse.setId(user.getId());
         userProfileResponse.setGender(user.getGender().getGenderType());
         userProfileResponse.setRealName(user.getRealName());

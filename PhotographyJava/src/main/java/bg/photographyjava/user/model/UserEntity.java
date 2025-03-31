@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -51,13 +52,6 @@ public class UserEntity {
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "rank_id", referencedColumnName = "id")
-    private Rank rank;
-
-    @Column(name = "points", nullable = false)
-    private int points;
-
     @Column(name = "is_approved")
     private boolean isApproved;
 
@@ -73,40 +67,40 @@ public class UserEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_permissions", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "permission")
-    private Set<UserPermission> permissions;
+    private Set<UserPermission> permissions = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "user_friends",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id"))
-    private Set<UserEntity> friends;
+    private Set<UserEntity> friends = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "user_send_friend_request",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id"))
-    private Set<UserEntity> sendFriendRequest;
+    private Set<UserEntity> sendFriendRequest = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "user_receive_friend_request",
             joinColumns = @JoinColumn(name = "friend_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<UserEntity> receiveFriendRequest;
+    private Set<UserEntity> receiveFriendRequest = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "user_followers",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "follower_id"))
-    private Set<UserEntity> followers;
+    private Set<UserEntity> followers = new HashSet<>();
 
     @ManyToMany(mappedBy = "followers")
-    private Set<UserEntity> following;
+    private Set<UserEntity> following = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "user_blocked_users",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "blocked_user_id"))
-    private Set<UserEntity> blockedUsers;
+    private Set<UserEntity> blockedUsers = new HashSet<>();
 
     public UUID getId() {
         return id;
@@ -186,22 +180,6 @@ public class UserEntity {
 
     public void setRole(Role role) {
         this.role = role;
-    }
-
-    public Rank getRank() {
-        return rank;
-    }
-
-    public int getPoints() {
-        return points;
-    }
-
-    public void setPoints(int points) {
-        this.points = points;
-    }
-
-    public void setRank(Rank rank) {
-        this.rank = rank;
     }
 
     public boolean isApproved() {

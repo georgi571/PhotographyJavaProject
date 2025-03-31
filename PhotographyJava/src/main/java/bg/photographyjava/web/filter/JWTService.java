@@ -62,16 +62,12 @@ public class JWTService {
         return extractClaim(jwtToken, Claims::getSubject);
     }
 
-    public String extractRole(String jwtToken) {
-        return extractClaim(jwtToken, claims -> claims.get("role", String.class));
-    }
-
     private <T> T extractClaim(String jwtToken, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(jwtToken);
         return claimsResolver.apply(claims);
     }
 
-    private Claims extractAllClaims(String jwtToken) {
+    public Claims extractAllClaims(String jwtToken) {
         return Jwts.parser()
                 .verifyWith(getKey())
                 .build()
@@ -79,18 +75,13 @@ public class JWTService {
                 .getPayload();
     }
 
-    public List<UserPermission> extractPermissions(String jwtToken) {
-        List<String> permissions = extractClaim(jwtToken, claims -> claims.get("permissions", List.class));
-        return permissions.stream()
-                .map(UserPermission::fromString)
-                .collect(Collectors.toList());
+    public UUID extractUserId(String jwtToken) {
+        Claims claims = extractAllClaims(jwtToken);
+        return UUID.fromString(claims.get("userId", String.class));
     }
 
-    public boolean validateToken(String jwtToken, UserDetails userDetails) {
-        final String username = extractUsername(jwtToken);
-        final String role = extractRole(jwtToken);
-        return (username.equals(userDetails.getUsername()) &&
-                !isTokenExpired(jwtToken));
+    public boolean validateToken(String jwtToken) {
+        return !isTokenExpired(jwtToken);
     }
 
     private boolean isTokenExpired(String jwtToken) {

@@ -53,7 +53,19 @@ export class LoginComponent {
                 }
             },
             error: (error) => {
-                alert('Invalid credentials, please try again.');
+                if (error.status === 403 && error.error) {
+                    const errorMessage = error.error.message;
+
+                    if (errorMessage.includes('not approved')) {
+                        alert('Your account is not yet approved. Please wait for admin approval.');
+                    } else if (errorMessage.includes('banned')) {
+                        alert(errorMessage);
+                    } else {
+                        alert('Access denied: ' + errorMessage);
+                    }
+                } else {
+                    alert('Invalid credentials, please try again.');
+                }
             }
         });
     }

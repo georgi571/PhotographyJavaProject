@@ -1,6 +1,10 @@
 package bg.photographyjava.web.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public class RoleRequest {
+
+    @NotNull
     private String role;
 
     public String getRole() {

@@ -1,13 +1,16 @@
 package bg.photographyjava.web.dto;
 
 import bg.photographyjava.user.property.enums.UserPermission;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Set;
 
 public class AdminPermissionsUpdateRequest {
 
+    @NotNull
     private Set<UserPermission> permissionsToAdd;
 
+    @NotNull
     private Set<UserPermission> permissionsToRemove;
 
     public Set<UserPermission> getPermissionsToAdd() {
