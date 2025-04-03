@@ -63,10 +63,10 @@
             </div>
             <div class="friends-followers">
                 @if (userDetails.username === username) {
-                    <h3>Friends - <span>{{ friends?.length }}</span></h3>
+                    <h3>Friends - <span>{{ friends.length }}</span></h3>
                 }
                 @if (userDetails.username !== username) {
-                    <h3>Friends - <span>{{ currFriends?.length }}</span></h3>
+                    <h3>Friends - <span>{{ currFriends.length }}</span></h3>
                 }
                 <div class="list">
                     @if (userDetails.username === username) {
@@ -99,10 +99,10 @@
                 }
 
                 @if (userDetails.username === username) {
-                    <h3>Followers - <span>{{ followers?.length }}</span></h3>
+                    <h3>Followers - <span>{{ followers.length }}</span></h3>
                 }
                 @if (userDetails.username !== username) {
-                    <h3>Followers - <span>{{ currFollowers?.length }}</span></h3>
+                    <h3>Followers - <span>{{ currFollowers.length }}</span></h3>
                 }
                 <div class="list">
                     @if (userDetails.username == username) {

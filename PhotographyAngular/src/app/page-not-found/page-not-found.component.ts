@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import {Router, RouterLink} from '@angular/router';
+import {Router} from '@angular/router';
 import {HeaderComponent} from '../core/header/header.component';
 import {FooterComponent} from '../core/footer/footer.component';
 
 @Component({
   selector: 'app-page-not-found',
     imports: [
-        RouterLink,
         HeaderComponent,
         FooterComponent
     ],

@@ -299,7 +299,6 @@ export class ChallengeDetailsComponent implements OnInit {
     }
 
     reportPicture(picture: any, reason: string): void {
-        console.log(picture)
         this.challengeService.reportPicture(this.challengeId, picture.id, reason, picture.authorId)
             .subscribe({
                 next: () => {

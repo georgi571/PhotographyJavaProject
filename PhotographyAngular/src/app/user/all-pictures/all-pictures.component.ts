@@ -182,7 +182,6 @@ export class AllPicturesComponent implements OnInit {
         forkJoin(userRequests).subscribe(
             (updatedComments) => {
                 this.selectedComments = updatedComments;
-                console.log('Comments with user data:', this.selectedComments);
 
                 this.loading = false;
             }
@@ -191,7 +190,6 @@ export class AllPicturesComponent implements OnInit {
         this.profileService.getUserById(picture.authorId).subscribe(
             (userData) => {
                 this.selectedPicture.user = userData;
-                console.log('Author Info:', this.selectedPicture.user);
             }
         );
     }
@@ -264,7 +262,6 @@ export class AllPicturesComponent implements OnInit {
     }
 
     deletePicture(picture: any): void {
-        console.log('Deleting picture:', picture);
 
         this.challengeService.deletePicture(picture.id).subscribe(
             (response) => {
@@ -290,7 +287,6 @@ export class AllPicturesComponent implements OnInit {
     }
 
     deleteComment(comment: any): void {
-        console.log('Deleting comment:', comment);
         this.challengeService.deleteComment(comment.id).subscribe(
             (response) => {
                 this.selectedComments = this.selectedComments.filter(
