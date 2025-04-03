@@ -36,7 +36,7 @@ Running the Frontend (Angular)
 
 1. Install Dependencies - npm install
 
-2. Start the Angular - npm serve or from package.json file press start button on "start: ng serve" on row 6
+2. Start the Angular - ng serve or from package.json file press start button on "start: ng serve" on row 6
 
 Running the Backend (Spring)
 
