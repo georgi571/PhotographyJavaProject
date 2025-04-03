@@ -5,6 +5,7 @@ import {DatePipe} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {HeaderComponent} from '../../core/header/header.component';
 import {FooterComponent} from '../../core/footer/footer.component';
+import {AdminService} from '../../services/admin-service/admin.service';
 
 @Component({
     selector: 'app-challenge-detail',
@@ -26,6 +27,8 @@ export class ChallengeListComponent implements OnInit {
     selectedStatus: string = 'all';
     selectedType: string = 'all';
 
+    manageChallenge: boolean = false;
+
     showCreateModal: boolean = false;
     newChallenge: any = {
         title: '',
@@ -40,7 +43,8 @@ export class ChallengeListComponent implements OnInit {
 
     constructor(
         private challengeService: ChallengeService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private adminService: AdminService
     ) {
         const tomorrowDate = new Date();
         tomorrowDate.setDate(tomorrowDate.getDate() + 1);
@@ -61,6 +65,19 @@ export class ChallengeListComponent implements OnInit {
                 this.filteredChallenges = challenges;
                 this.filterChallenges();
             });
+        });
+
+        this.fetchPermissions();
+    }
+
+    fetchPermissions() {
+        this.adminService.getPermissions().subscribe({
+            next: (data) => {
+                if (data.includes('manageChallenge')) this.manageChallenge = true;
+            },
+            error: (error) => {
+                console.error('Error fetching permissions:', error);
+            }
         });
     }
 

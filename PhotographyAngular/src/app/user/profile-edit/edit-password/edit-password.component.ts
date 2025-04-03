@@ -46,7 +46,9 @@ export class EditPasswordComponent {
                 if (error.status === 400 && typeof error.error === 'object') {
                     this.fieldErrors = error.error;
                 } else {
-                    this.errorMessage = 'An unexpected error occurred!';
+                    this.errorMessage = 'Wrong password please try again!';
+                    alert("Wrong password please try again!");
+                    window.location.reload();
                 }
             }
         });

@@ -36,20 +36,18 @@ export class AllFollowingComponent implements OnInit {
     filterFollowing() {
         const lowerCaseSearchTerm = this.searchTerm.toLowerCase();
         this.filteredFollowing = this.followings.filter(user =>
-            user.username.toLowerCase().includes(lowerCaseSearchTerm) ||
-            user.email.toLowerCase().includes(lowerCaseSearchTerm)
+            user.username.toLowerCase().includes(lowerCaseSearchTerm)
         );
     }
 
     viewFollowingProfile(followingUser: any) {
-        this.router.navigate(['/profile', followingUser.username]);
+        this.router.navigate(['/profile/username', followingUser.username]);
     }
 
     unfollow(followingUser: any) {
         if (confirm(`Are you sure you want to remove following user ${followingUser.username}?`)) {
             this.profileService.unfollowUser(followingUser.username).subscribe(
                 response => {
-                    console.log('Unfollowed user:', response);
                     this.followings = this.followings.filter(f => f.username !== followingUser.username);
                     this.filterFollowing();
                 }

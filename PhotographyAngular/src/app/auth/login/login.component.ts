@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {HeaderComponent} from '../../core/header/header.component';
 import {FooterComponent} from '../../core/footer/footer.component';
 import {FormsModule, NgForm} from '@angular/forms';
@@ -17,7 +17,7 @@ import {AuthService} from '../../services/auth-service/auth.service';
     templateUrl: './login.component.html',
     styleUrl: './login.component.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
     @ViewChild('loginForm') form: NgForm | undefined;
 
@@ -28,6 +28,12 @@ export class LoginComponent {
     ) {
     }
 
+    ngOnInit(): void {
+        if (this.authService.isAuthenticated()) {
+            this.router.navigate(['home']);
+        }
+    }
+
     // login user
 
     formSubmit() {
@@ -35,7 +41,6 @@ export class LoginComponent {
         const form = this.form!;
 
         if (form?.invalid) {
-            console.log('This form is invalid!');
             return;
         }
 
@@ -43,7 +48,6 @@ export class LoginComponent {
 
         this.apiService.loginUser(formValue).subscribe({
             next: (response) => {
-                console.log(response);
                 if (response.jwtToken) {
                     const jwtToken = response.jwtToken;
                     this.authService.setToken(jwtToken);

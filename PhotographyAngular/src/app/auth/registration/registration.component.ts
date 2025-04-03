@@ -5,6 +5,7 @@ import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {Router} from '@angular/router';
 import {confirmPasswordValidator, dateNotInFutureValidator} from './validators';
 import {FooterComponent} from '../../core/footer/footer.component';
+import {AuthService} from '../../services/auth-service/auth.service';
 
 @Component({
     selector: 'app-registration',
@@ -34,12 +35,16 @@ export class RegistrationComponent implements OnInit {
         {validators: confirmPasswordValidator},
     );
 
-    constructor(private apiService: ApiService, private router: Router,) {
+    constructor(private apiService: ApiService, private router: Router, private authService: AuthService) {
     }
 
     // Get all country names from the BE
 
     ngOnInit() {
+        if (this.authService.isAuthenticated()) {
+            this.router.navigate(['home']);
+        }
+
         this.apiService.getCountries().subscribe((response: any) => {
             if (response && response.countries) {
                 this.countries = response.countries;
@@ -55,7 +60,6 @@ export class RegistrationComponent implements OnInit {
         if (this.registerForm.valid) {
             this.apiService.registerUser(this.registerForm.value).subscribe({
                 next: (response) => {
-                    console.log('Registration successful:', response);
                     this.router.navigate(['users/login']);
                 },
                 error: (error) => {
@@ -77,7 +81,6 @@ export class RegistrationComponent implements OnInit {
                 },
             });
         } else {
-            console.log('Form is invalid');
             this.registerForm.markAllAsTouched();
         }
     }

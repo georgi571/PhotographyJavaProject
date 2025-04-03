@@ -30,12 +30,15 @@ class ReportServiceImplTest {
 
     private UUID reporterId;
     private UUID reportId;
+    private UUID reportId2;
     private Report report;
+    private Report report2;
 
     @BeforeEach
     void setUp() {
         reporterId = UUID.randomUUID();
         reportId = UUID.randomUUID();
+        reportId2 = UUID.randomUUID();
         UUID pictureId = UUID.randomUUID();
         UUID challengeId = UUID.randomUUID();
         UUID commentId = UUID.randomUUID();
@@ -47,6 +50,13 @@ class ReportServiceImplTest {
         report.setPictureId(pictureId);
         report.setChallengeId(challengeId);
         report.setCommentId(commentId);
+        report.setReportReason(reason);
+        report.setReportedBy(reporterId);
+        report.setCreatedAt(createdAt);
+
+        report2 = new Report();
+        report2.setId(reportId2);
+        report2.setUserId(reportId);
         report.setReportReason(reason);
         report.setReportedBy(reporterId);
         report.setCreatedAt(createdAt);
@@ -157,13 +167,14 @@ class ReportServiceImplTest {
 
     @Test
     void testGetAllUserReports() {
-        when(reportRepository.findByUserIdIsNotNull()).thenReturn(List.of(report));
+        when(reportRepository.findByUserIdIsNotNull()).thenReturn(List.of(report2));
 
         UserReportResponse expectedResponse = new UserReportResponse();
-        expectedResponse.setId(report.getId());
-        expectedResponse.setUserId(report.getUserId());
-        expectedResponse.setReason(report.getReportReason());
-        expectedResponse.setReportedBy(report.getReportedBy());
+        expectedResponse.setUserId(report2.getUserId());
+        expectedResponse.setId(report2.getId());
+        expectedResponse.setUserId(report2.getUserId());
+        expectedResponse.setReason(report2.getReportReason());
+        expectedResponse.setReportedBy(report2.getReportedBy());
 
         List<UserReportResponse> responses = reportService.getAllUserReports();
 

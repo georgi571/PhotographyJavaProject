@@ -31,7 +31,6 @@ export class ReceiveFriendRequestComponent implements OnInit {
             next: (data) => {
                 this.receivedFriendRequests = data;
                 this.filterReceivedRequests();
-                console.log(data);
             },
             error: (error) => console.error('Error fetching sent requests:', error)
         });
@@ -45,7 +44,7 @@ export class ReceiveFriendRequestComponent implements OnInit {
     }
 
     viewFriendProfile(friend: any) {
-        this.router.navigate(['/profile', friend.username]);
+        this.router.navigate(['/profile/username', friend.username]);
     }
 
     acceptRequest(friend: any): void {

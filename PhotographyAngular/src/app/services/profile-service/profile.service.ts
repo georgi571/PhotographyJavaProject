@@ -18,11 +18,7 @@ export class ProfileService {
 
     getUserById(userId: string | null) {
         const token = this.authService.getToken();
-        return this.http.get<any>(`${this.apiUrl}/v1/users/${userId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        return this.http.get<any>(`${this.apiUrl}/v1/users/${userId}`);
     }
 
     getUserDetails(username: string) {
@@ -292,6 +288,15 @@ export class ProfileService {
     isUserBlocked(username: string) {
         const token = this.authService.getToken();
         return this.http.get<boolean>(`${this.apiUrl}/v1/users/is-blocked/${username}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
+    isUserBlockedByMe(username: string) {
+        const token = this.authService.getToken();
+        return this.http.get<boolean>(`${this.apiUrl}/v1/users/is-blocked-by-me/${username}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

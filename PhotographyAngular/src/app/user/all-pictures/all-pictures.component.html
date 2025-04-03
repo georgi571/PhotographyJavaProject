@@ -1,95 +1,108 @@
 <app-header/>
 
-<div class="picture-gallery">
-    @if (pictures.length > 0) {
-        @for (picture of pictures; track picture.id) {
-            <div class="picture-item" (click)="selectPicture(picture)">
-                <div class="picture-section">
-                    <div class="picture-info">
-                        <img [src]="picture.imageUrl" alt="User Picture" class="picture-image">
+<body>
+    <div class="picture-gallery">
+        @if (pictures.length > 0) {
+            @for (picture of pictures; track picture.id) {
+                <div class="picture-item" (click)="selectPicture(picture)">
+                    <div class="picture-section">
+                        <div class="picture-info">
+                            <img [src]="picture.imageUrl" alt="User Picture" class="picture-image">
+                        </div>
+                    </div>
+
+                    <div class="like-section">
+                        <button
+                            class="like-btn"
+                            [ngClass]="{'liked': picture.liked, 'unliked': !picture.liked}"
+                            (click)="likePicture($event, picture)">
+                            {{ picture.liked ? 'Unlike' : 'Like' }}
+                        </button>
+                        <p class="likes-count">{{ picture.likes }} Likes</p>
+                        <p class="comment-count">{{ picture.comments?.length }} Comments</p>
                     </div>
                 </div>
+            }
+        } @else {
+            <p>No pictures available.</p>
+        }
+    </div>
 
-                <div class="like-section">
-                    <button
-                        class="like-btn"
-                        [ngClass]="{'liked': picture.liked, 'unliked': !picture.liked}"
-                        (click)="likePicture($event, picture)">
-                        {{ picture.liked ? 'Unlike' : 'Like' }}
-                    </button>
-                    <p class="likes-count">{{ picture.likes }} Likes</p>
-                    <p class="comment-count">{{ picture.comments?.length }} Comments</p>
+    @if (selectedPicture) {
+        <div class="picture-details-content">
+            <div class="left-side">
+                <img [src]="selectedPicture.imageUrl" alt="User Picture" class="picture-image">
+                <div class="picture-info">
+                    <div class="user-info">
+                        <img [src]="selectedPicture.user?.profilePicturePath" alt="User Profile"
+                             class="user-profile">
+                        <p>{{ selectedPicture.user?.username }}</p>
+                        <div class="button-group">
+                            @if (selectedPicture.user.username === currentUser.username || deletePicturePermission) {
+                                <button class="delete-picture-btn"
+                                        (click)="openDeleteConfirmation('picture', selectedPicture)">
+                                    Delete Picture
+                                </button>
+                            }
+                        </div>
+                    </div>
+                    <p><strong>Caption:</strong> {{ selectedPicture.caption }}</p>
+                    <p><strong>Story:</strong> {{ selectedPicture.story }}</p>
+                    <p><strong>Likes:</strong> {{ selectedPicture.likes }}</p>
+                </div>
+            </div>
+
+            <div class="right-side">
+                <h3>Comments</h3>
+                @if (!loading) {
+                    <div class="comments-container">
+                        @if (selectedPicture?.comments?.length > 0) {
+                            @for (comment of selectedComments; track comment.id) {
+                                <div class="comment">
+                                    <div class="comment-header">
+                                        <div class="user-profile-picture">
+                                            <img
+                                                [src]="comment.author?.profilePicturePath || 'default-profile-pic-url'"
+                                                alt="User Profile Picture">
+                                        </div>
+                                        <p><strong>{{ comment.author?.username || 'Anonymous' }}:</strong></p>
+                                        @if (comment.author.username === currentUser.username || deleteCommentPermission) {
+                                            <button class="delete-comment-btn"
+                                                    (click)="openDeleteConfirmation('comment', comment)">Delete
+                                            </button>
+                                        }
+                                    </div>
+
+                                    <div class="comment-text">
+                                        <p>{{ comment.text }}</p>
+                                    </div>
+                                </div>
+                            }
+                        } @else {
+                            <p>No comments yet.</p>
+                        }
+                    </div>
+                }
+                <textarea [(ngModel)]="newComment" placeholder="Add a comment..." rows="4"></textarea>
+                <button (click)="addComment()" class="add-comment-btn">Add Comment</button>
+            </div>
+
+            <button class="close-btn" (click)="closePictureDetails()">X</button>
+        </div>
+
+        @if (showDeleteModal) {
+            <div class="delete-modal-backdrop">
+                <div class="delete-modal">
+                    <h2>Confirm Delete</h2>
+                    <p>Are you sure you want to delete this {{ deleteType }}?</p>
+                    <div class="modal-buttons">
+                        <button class="confirm-delete-btn" (click)="confirmDelete()">Yes, Delete</button>
+                        <button class="cancel-delete-btn" (click)="closeDeleteModal()">Cancel</button>
+                    </div>
                 </div>
             </div>
         }
-    } @else {
-        <p>No pictures available.</p>
     }
-</div>
-
-@if (selectedPicture) {
-    <div class="picture-details-content">
-        <div class="left-side">
-            <img [src]="selectedPicture.imageUrl" alt="User Picture" class="picture-image">
-            <div class="picture-info">
-                <div class="user-info">
-                    <img [src]="selectedPicture.user?.profilePicturePath" alt="User Profile"
-                         class="user-profile">
-                    <p>{{ selectedPicture.user?.username }}</p>
-                    <div class="button-group">
-                        <button class="report-btn" (click)="openReportModalForPicture(selectedPicture)">
-                            Report Picture
-                        </button>
-                        <button class="delete-picture-btn"
-                                (click)="openDeleteConfirmation('picture', selectedPicture)">
-                            Delete Picture
-                        </button>
-                    </div>
-                </div>
-                <p><strong>Caption:</strong> {{ selectedPicture.caption }}</p>
-                <p><strong>Story:</strong> {{ selectedPicture.story }}</p>
-                <p><strong>Likes:</strong> {{ selectedPicture.likes }}</p>
-            </div>
-        </div>
-
-        <div class="right-side">
-            <h3>Comments</h3>
-            @if (!loading) {
-                <div class="comments-container">
-                    @if (selectedPicture?.comments?.length > 0) {
-                        @for (comment of selectedComments; track comment.id) {
-                            <div class="comment">
-                                <div class="comment-header">
-                                    <div class="user-profile-picture">
-                                        <img
-                                            [src]="comment.author?.profilePicturePath || 'default-profile-pic-url'"
-                                            alt="User Profile Picture">
-                                    </div>
-                                    <p><strong>{{ comment.author?.username || 'Anonymous' }}:</strong></p>
-                                    <button class="report-btn" (click)="openReportModalForComment(comment)">
-                                        Report Comment
-                                    </button>
-                                    <button class="delete-comment-btn"
-                                            (click)="openDeleteConfirmation('comment', comment)">Delete
-                                    </button>
-                                </div>
-
-                                <div class="comment-text">
-                                    <p>{{ comment.text }}</p>
-                                </div>
-                            </div>
-                        }
-                    } @else {
-                        <p>No comments yet.</p>
-                    }
-                </div>
-            }
-            <textarea [(ngModel)]="newComment" placeholder="Add a comment..." rows="4"></textarea>
-            <button (click)="addComment()" class="add-comment-btn">Add Comment</button>
-        </div>
-
-        <button class="close-btn" (click)="closePictureDetails()">X</button>
-    </div>
-}
+</body>
 
 <app-footer/>

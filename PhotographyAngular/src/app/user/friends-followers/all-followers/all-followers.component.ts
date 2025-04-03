@@ -29,7 +29,6 @@ export class AllFollowersComponent implements OnInit {
     getAllFollowers(): void {
         this.profileService.getFollowers().subscribe(data => {
             this.followers = data;
-            console.log(data);
             this.filterFollowers();
         });
     }
@@ -37,14 +36,12 @@ export class AllFollowersComponent implements OnInit {
     filterFollowers() {
         const lowerCaseSearchTerm = this.searchTerm.toLowerCase();
         this.filteredFollowers = this.followers.filter(follower =>
-            follower.username.toLowerCase().includes(lowerCaseSearchTerm) ||
-            follower.email.toLowerCase().includes(lowerCaseSearchTerm)
+            follower.username.toLowerCase().includes(lowerCaseSearchTerm)
         );
     }
 
     viewFollowerProfile(follower: any) {
-        // Navigate to the follower's profile
-        this.router.navigate(['/profile', follower.username]); // Navigate to /profile/:username
+        this.router.navigate(['/profile/username', follower.username]);
     }
 
     removeFollower(follower: any) {

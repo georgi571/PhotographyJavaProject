@@ -63,6 +63,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/{userId}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/admin/change-roles").hasAnyAuthority("PERMISSION_changeUserRoles")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/admin/change-roles/{id}").hasAnyAuthority("PERMISSION_changeUserRoles")
                         .requestMatchers(HttpMethod.GET, "/api/v1/admin/ban-users").hasAnyAuthority("PERMISSION_banUsers")

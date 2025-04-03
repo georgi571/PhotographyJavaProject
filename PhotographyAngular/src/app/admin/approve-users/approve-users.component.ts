@@ -34,8 +34,6 @@ export class ApproveUsersComponent implements OnInit {
             user.isApproved = true;
 
             this.users = this.users.filter(u => u.id !== user.id);
-
-            console.log(`User ${user.username} approved.`);
             alert('User was approved.');
         });
     }
@@ -59,7 +57,6 @@ export class ApproveUsersComponent implements OnInit {
 
         this.adminService.rejectUser(this.selectedUser.id, this.rejectReason).subscribe(() => {
             this.users = this.users.filter(u => u.id !== this.selectedUser.id);
-            console.log(`User ${this.selectedUser.username} rejected for reason: ${this.rejectReason}`);
             this.closeRejectModal();
         });
     }

@@ -63,6 +63,15 @@ public class ExceptionAdvice {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 
+    @ExceptionHandler(ChallengeEndDateBeforeStartDateException.class)
+    public ResponseEntity<ErrorResponse> handleChallengeEndDateBeforeStartDateException(ChallengeEndDateBeforeStartDateException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "message: " + ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
     @ExceptionHandler(ChallengeNotStartException.class)
     public ResponseEntity<ErrorResponse> handleChallengeNotStartException(ChallengeNotStartException ex) {
         ErrorResponse errorResponse = new ErrorResponse(

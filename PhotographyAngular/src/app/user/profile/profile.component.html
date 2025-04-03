@@ -19,28 +19,35 @@
                 }
 
                 @if (userDetails.username !== username) {
-                    @if (!isFriend && !hasPendingRequest) {
+                    @if (!isFriend && !hasPendingRequest && !isBlocked) {
                         <button (click)="addFriend()" class="btn btn-primary">Add Friend</button>
                     }
 
-                    @if (isFriend) {
+                    @if (isFriend && !isBlocked) {
                         <button (click)="removeFriend()" class="btn btn-danger">Remove Friend</button>
                     }
 
-                    @if (hasPendingRequest) {
+                    @if (hasPendingRequest && !isBlocked) {
                         <button (click)="cancelFriendRequest()" class="btn btn-warning">Cancel Friend Request</button>
                     }
 
-                    @if (!isFollowing) {
+                    @if (!isFollowing && !isBlocked) {
                         <button (click)="followUser()" class="btn btn-secondary">Follow</button>
 
                     }
 
-                    @if (isFollowing) {
+                    @if (isFollowing && !isBlocked) {
                         <button (click)="unfollowUser()" class="btn btn-danger">Unfollow</button>
-
                     }
-                    <button class="btn block-btn" (click)="confirmBlock(userDetails)">Block</button>
+
+                    @if (!isBlocked) {
+                        <button class="btn btn-danger" (click)="confirmBlock(userDetails)">Block</button>
+                    }
+
+                    @if (isBlocked) {
+                        <button class="btn block-btn" (click)="confirmUnblockBlock(userDetails)">Unblock</button>
+                    }
+
                     <button class="btn report-btn" (click)="openReportUserModal(userDetails)">Report User</button>
                 }
             </div>
@@ -80,9 +87,17 @@
                     }
 
                 </div>
-                <div class="view-all">
-                    <a href="/profile/friends">See All Friends</a>
-                </div>
+
+                @if (userDetails.username !== username) {
+                    <div class="view-all">
+                        <a (click)="openFriendsModal()" class="button">See All Friends</a>
+                    </div>
+                } @else {
+                    <div class="view-all">
+                        <a href="/profile/friends">See All Friends</a>
+                    </div>
+                }
+
                 @if (userDetails.username === username) {
                     <h3>Followers - <span>{{ followers?.length }}</span></h3>
                 }
@@ -107,9 +122,15 @@
                         }
                     }
                 </div>
-                <div class="view-all">
-                    <a href="/profile/followers">See All Followers</a>
-                </div>
+                @if (userDetails.username !== username) {
+                    <div class="view-all">
+                        <a (click)="openFollowerModal()" class="button">See All Friends</a>
+                    </div>
+                } @else {
+                    <div class="view-all">
+                        <a href="/profile/followers">See All Followers</a>
+                    </div>
+                }
             </div>
         </div>
         <div class="main-section">
@@ -140,26 +161,29 @@
                 <h2>Most Liked Pictures</h2>
                 <div class="content">
                     @if (pictures.length === 0) {
-                    <div>
-                        <p>No pictures uploaded yet.</p>
-                    </div>
+                        <div>
+                            <p>No pictures uploaded yet.</p>
+                        </div>
                     }
                     @for (picture of pictures; track picture.id) {
                         <div class="item">
-                            <a (click)="openPicturePopup()">
-                                <img [src]="picture.imageUrl" alt="One of most liked picture for the user" class="profile-picture">
+                            <a (click)="openPicturePopup(picture)">
+                                <img [src]="picture.imageUrl" alt="One of most liked picture for the user"
+                                     class="profile-picture">
                             </a>
                             @if (showPicturePopup) {
                                 <div class="modal" (click)="closePicturePopup()">
                                     <div class="modal-content" (click)="$event.stopPropagation()">
-                                        <img [src]="picture.imageUrl" alt="One of most liked picture for the user" class="modal-picture">
+                                        <img [src]="selectedPicture.imageUrl"
+                                             alt="One of most liked picture for the user" class="modal-picture">
                                     </div>
                                 </div>
                             }
                         </div>
                     }
                 </div>
-                <a [routerLink]="['/profile/username', username, 'all-pictures']" class="button">See All Pictures</a>
+                <a [routerLink]="['/profile/username', userDetails.username, 'all-pictures']" class="button">See All
+                    Pictures</a>
             </div>
         </div>
     </div>
@@ -186,6 +210,73 @@
             </div>
         </div>
     }
+
+    @if (showFriendsModal) {
+        <div class="modal-friends-followers" (click)="closeFriendsModal()">
+            <div class="modal-friends-followers-content" (click)="$event.stopPropagation()">
+                <div class="close-friends">
+                    <h2>All Friends</h2>
+                    <button class="close-modal" (click)="closeFriendsModal()">Close</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Profile Picture</th>
+                            <th>Username</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (friend of currFriends; track friend.id) {
+                            <tr>
+                                <td>
+                                    <img [src]="friend.profilePicturePath" alt="Profile Picture"
+                                         class="profile-picture">
+                                </td>
+                                <td>{{ friend.username }}</td>
+                                <td><a [href]="'/profile/username/' + friend.username" target="_blank">View profile</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+    @if (showFollowerModal) {
+        <div class="modal-friends-followers" (click)="closeFollowerModal()">
+            <div class="modal-friends-followers-content" (click)="$event.stopPropagation()">
+                <div class="close-friends">
+                    <h2>All Followers</h2>
+                    <button class="close-modal" (click)="closeFollowerModal()">Close</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Profile Picture</th>
+                            <th>Username</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (follower of currFollowers; track follower.id) {
+                            <tr>
+                                <td>
+                                    <img [src]="follower.profilePicturePath" alt="Profile Picture"
+                                         class="profile-picture">
+                                </td>
+                                <td>{{ follower.username }}</td>
+                                <td><a [href]="'/profile/username/' + follower.username" target="_blank">View profile</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
 </body>
 
 <app-footer/>

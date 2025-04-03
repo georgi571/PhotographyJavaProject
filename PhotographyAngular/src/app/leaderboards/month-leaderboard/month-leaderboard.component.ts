@@ -3,6 +3,8 @@ import {FooterComponent} from "../../core/footer/footer.component";
 import {HeaderComponent} from "../../core/header/header.component";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {LeaderboardsService} from '../../services/leaderboards-service/leaderboards.service';
+import {ProfileService} from '../../services/profile-service/profile.service';
+import {forkJoin, map} from 'rxjs';
 
 @Component({
   selector: 'app-month-leaderboard',
@@ -30,7 +32,8 @@ export class MonthLeaderboardComponent implements OnInit {
     currentPage: number = 1;
     totalPagesNumber: number = 1;
 
-    constructor(private leaderboardsService: LeaderboardsService) {}
+    constructor(private leaderboardsService: LeaderboardsService,
+                private profileService: ProfileService) {}
 
     ngOnInit(): void {
         const currentYear = new Date().getFullYear();
@@ -48,6 +51,29 @@ export class MonthLeaderboardComponent implements OnInit {
         this.leaderboardsService.getPhotographersOfMonth(year, month).subscribe({
             next: (data: any) => {
                 this.photographersOfMonth = data.slice(0, 10);
+
+                const userRequests = data.map((user: any) =>
+                    this.profileService.getUserById(user.userId).pipe(
+                        map((userData: any) => ({
+                            ...user,
+                            username: userData.username,
+                            profilePic: userData.profilePic,
+                        }))
+                    )
+                );
+
+                forkJoin<any[]>(userRequests).subscribe({
+                    next: (usersWithDetails: any[]) => {
+
+                        this.photographersOfMonth = usersWithDetails.map((user, index) => ({
+                            ...user,
+                            rank: index + 1
+                        }));
+                    },
+                    error: (err: any) => {
+                        console.error('Error fetching user details:', err);
+                    }
+                });
             },
             error: (err) => {
                 console.error(err);

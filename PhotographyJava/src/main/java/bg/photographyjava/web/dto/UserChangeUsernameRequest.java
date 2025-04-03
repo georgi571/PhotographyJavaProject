@@ -11,7 +11,7 @@ public class UserChangeUsernameRequest implements Serializable {
     @NotNull
     private String oldUsername;
 
-    @Size(min = 2, max = 50)
+    @Size(min = 2, max = 50, message = "{username.length}")
     @UniqueUsername
     private String newUsername;
 

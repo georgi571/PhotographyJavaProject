@@ -33,10 +33,10 @@
                         @if (usersByPoints.length === 0) {
                             <td colspan="4" style="text-align: center;">No users from this country!</td>
                         } @else {
-                            @for (user of usersByPoints; track user) {
+                            @for (user of usersByPoints; track user.userId) {
                                 <tr>
                                     <td>{{ user.rank }}</td>
-                                    <td>{{ user.username }}</td>
+                                    <td><a [href]="'/profile/username/' + user.username" target="_blank">{{ user.username }}</a></td>
                                     <td>{{ user.country }}</td>
                                     <td>{{ user.points }}</td>
                                 </tr>
@@ -72,10 +72,10 @@
                         @if (usersByChallenges.length === 0) {
                             <td colspan="4" style="text-align: center;">No users from this country!</td>
                         } @else {
-                            @for (user of usersByChallenges; track user) {
+                            @for (user of usersByChallenges; track user.userId) {
                                 <tr>
                                     <td>{{ user.rank }}</td>
-                                    <td>{{ user.username }}</td>
+                                    <td><a [href]="'/profile/username/' + user.username" target="_blank">{{ user.username }}</a></td>
                                     <td>{{ user.country }}</td>
                                     <td>{{ user.numberOfWinChallenges }}</td>
                                 </tr>
@@ -101,10 +101,10 @@
                         @if (photographersOfMonth.length === 0) {
                             <td colspan="4" style="text-align: center;">No users for gain points for this month!</td>
                         } @else {
-                            @for (user of photographersOfMonth; track user) {
+                            @for (user of photographersOfMonth; track user.userId) {
                                 <tr>
                                     <td>{{ user.rank }}</td>
-                                    <td>{{ user.username }}</td>
+                                    <td><a [href]="'/profile/username/' + user.username" target="_blank">{{ user.username }}</a></td>
                                     <td>{{ user.country }}</td>
                                     <td>{{ user.points }}</td>
                                 </tr>
@@ -130,10 +130,11 @@
                         @if (risingStars.length === 0) {
                             <td colspan="4" style="text-align: center;">No users gain points in last 30 days!</td>
                         } @else {
-                            @for (user of risingStars; track user) {
+                            @for (user of risingStars; track user.userId) {
                                 <tr>
                                     <td>{{ user.rank }}</td>
-                                    <td>{{ user.username }}</td>
+<!--                                    <td>{{ user.username }}</td>-->
+                                    <td><a [href]="'/profile/username/' + user.username" target="_blank">{{ user.username }}</a></td>
                                     <td>{{ user.country }}</td>
                                     <td>{{ user.points }}</td>
                                 </tr>

@@ -52,6 +52,8 @@ export class EditUsernameComponent implements OnInit {
                     this.fieldErrors = error.error;
                 } else {
                     this.errorMessage = 'An unexpected error occurred!';
+                    alert("Wrong password please try again!");
+                    window.location.reload();
                 }
             }
         });

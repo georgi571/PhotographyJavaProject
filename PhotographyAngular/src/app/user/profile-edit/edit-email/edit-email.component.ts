@@ -35,7 +35,6 @@ export class EditEmailComponent implements OnInit {
     ngOnInit(): void {
         this.profile.getUserOldEmailDetails().subscribe({
             next: (data: any) => {
-                console.log(data)
                 this.userDetails = data;
             }
         });
@@ -53,6 +52,8 @@ export class EditEmailComponent implements OnInit {
                     this.fieldErrors = error.error;
                 } else {
                     this.errorMessage = 'An unexpected error occurred!';
+                    alert("Wrong password please try again!");
+                    window.location.reload();
                 }
             }
         });

@@ -44,7 +44,7 @@ export class SendFriendRequestComponent implements OnInit {
     }
 
     viewFriendProfile(friend: any) {
-        this.router.navigate(['/profile', friend.username]);
+        this.router.navigate(['/profile/username', friend.username]);
     }
 
     cancelRequest(friend: any) {

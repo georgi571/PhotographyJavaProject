@@ -18,7 +18,7 @@
                     readonly
                     required
                 />
-                @if (fieldErrors['oldUsername']) {
+                @if (fieldErrors['oldUsername'] || !errorMessage) {
                     <div class="error-message">
                         <small>{{ fieldErrors['oldUsername'] }}</small>
                     </div>
@@ -34,7 +34,7 @@
                     name="newUsername"
                     required
                 />
-                @if (fieldErrors['newUsername']) {
+                @if (fieldErrors['newUsername'] || !errorMessage) {
                     <div class="error-message">
                         <small>{{ fieldErrors['newUsername'] }}</small>
                     </div>
@@ -50,7 +50,7 @@
                     name="currentPassword"
                     required
                 />
-                @if (fieldErrors['currentPassword']) {
+                @if (fieldErrors['currentPassword'] || !errorMessage) {
                     <div class="error-message">
                         <small>{{ fieldErrors['currentPassword'] }}</small>
                     </div>

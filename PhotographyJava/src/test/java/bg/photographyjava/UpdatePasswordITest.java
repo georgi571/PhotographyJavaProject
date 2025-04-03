@@ -44,7 +44,7 @@ public class UpdatePasswordITest {
     private RoleRepository roleRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder; // Injecting PasswordEncoder
+    private PasswordEncoder passwordEncoder;
 
     private UserEntity user;
 

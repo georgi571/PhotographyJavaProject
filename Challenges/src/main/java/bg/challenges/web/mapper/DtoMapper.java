@@ -5,6 +5,7 @@ import bg.challenges.challenge.model.Comment;
 import bg.challenges.challenge.model.Picture;
 import bg.challenges.challenge.model.ChallengeActivity;
 import bg.challenges.challenge.model.ChallengeType;
+import bg.challenges.exception.ChallengeEndDateBeforeStartDateException;
 import bg.challenges.web.dto.*;
 
 import java.time.LocalDateTime;
@@ -104,6 +105,10 @@ public class DtoMapper {
         LocalDateTime startAt = createChallengeRequest.getStartAt().atTime(0, 0, 0);
         LocalDateTime endAt = createChallengeRequest.getEndAt().atTime(23, 59, 59);
 
+        if (endAt.isBefore(startAt)) {
+            throw new ChallengeEndDateBeforeStartDateException("End date cannot be before the start date.");
+        }
+
         Challenge challenge = new Challenge();
         challenge.setTitle(createChallengeRequest.getTitle());
         challenge.setDescription(createChallengeRequest.getDescription());
@@ -119,6 +124,10 @@ public class DtoMapper {
     public static void mapEditChallengeRequestToChallenge(Challenge challenge, EditChallengeRequest editChallengeRequest) {
         LocalDateTime startAt = editChallengeRequest.getStartAt().atTime(0, 0, 0);
         LocalDateTime endAt = editChallengeRequest.getEndAt().atTime(23, 59, 59);
+
+        if (endAt.isBefore(startAt)) {
+            throw new ChallengeEndDateBeforeStartDateException("End date cannot be before the start date.");
+        }
 
         challenge.setTitle(editChallengeRequest.getTitle());
         challenge.setDescription(editChallengeRequest.getDescription());

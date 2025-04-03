@@ -47,6 +47,7 @@ import {ReportCommentsComponent} from './report/report-comments/report-comments.
 import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import {ServerErrorComponent} from './server-error/server-error.component';
 import {AllPicturesComponent} from './user/all-pictures/all-pictures.component';
+import {PrivacyPolicyComponent} from './privacy-policy/privacy-policy.component';
 
 export const routes: Routes = [
     {path: '', component: IntroComponent},
@@ -100,6 +101,7 @@ export const routes: Routes = [
             {path: 'moderator-permission', component: ModeratorPermissionsComponent},
         ]
     },
+    {path: 'privacy-policy', component: PrivacyPolicyComponent},
     {path: 'server-down', component: ServerDownComponent},
     { path: 'reports', component: ReportComponent, children: [
             { path: 'users', component: ReportUsersComponent },

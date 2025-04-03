@@ -4,7 +4,8 @@ import {FooterComponent} from "../core/footer/footer.component";
 import {LeaderboardsService} from '../services/leaderboards-service/leaderboards.service';
 import {FormsModule} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
-import {catchError, of} from 'rxjs';
+import {catchError, forkJoin, map, of} from 'rxjs';
+import {ProfileService} from '../services/profile-service/profile.service';
 
 @Component({
     selector: 'app-leaderboards',
@@ -34,7 +35,8 @@ export class LeaderboardsComponent implements OnInit {
     selectedChallengeType: string = 'all';
 
     constructor(private leaderboardsService: LeaderboardsService,
-                private router: Router) {}
+                private router: Router,
+                private profileService: ProfileService) {}
 
     ngOnInit(): void {
 
@@ -71,6 +73,32 @@ export class LeaderboardsComponent implements OnInit {
         this.leaderboardsService.getTopUsersByPoints('').subscribe({
             next: (data: any) => {
                 this.rawUsersByPoints = data;
+
+                const userRequests = data.map((user: any) =>
+                    this.profileService.getUserById(user.userId).pipe(
+                        map((userData: any) => ({
+                            ...user,
+                            username: userData.username,
+                            profilePic: userData.profilePic,
+                        }))
+                    )
+                );
+
+                forkJoin<any[]>(userRequests).subscribe({
+                    next: (usersWithDetails: any[]) => {
+
+                        this.rawUsersByPoints = usersWithDetails.map((user, index) => ({
+                            ...user,
+                            rank: index + 1
+                        }));
+
+                        this.applyCountryFilter();
+                    },
+                    error: (err: any) => {
+                        console.error('Error fetching user details:', err);
+                    }
+                });
+
                 this.applyCountryFilter();
             },
             error: (err) => {
@@ -83,6 +111,32 @@ export class LeaderboardsComponent implements OnInit {
         this.leaderboardsService.getTopUsersByChallenges('').subscribe({
             next: (data: any) => {
                 this.rawUsersByChallenges = data;
+
+                const userRequests = data.map((user: any) =>
+                    this.profileService.getUserById(user.userId).pipe(
+                        map((userData: any) => ({
+                            ...user,
+                            username: userData.username,
+                            profilePic: userData.profilePic,
+                        }))
+                    )
+                );
+
+                forkJoin<any[]>(userRequests).subscribe({
+                    next: (usersWithDetails: any[]) => {
+
+                        this.rawUsersByChallenges = usersWithDetails.map((user, index) => ({
+                            ...user,
+                            rank: index + 1
+                        }));
+
+                        this.applyChallengeTypeFilter();
+                    },
+                    error: (err: any) => {
+                        console.error('Error fetching user details:', err);
+                    }
+                });
+
                 this.applyChallengeTypeFilter();
             },
             error: (err) => {
@@ -98,6 +152,29 @@ export class LeaderboardsComponent implements OnInit {
         this.leaderboardsService.getPhotographersOfMonth(year, month).subscribe({
             next: (data: any) => {
                 this.photographersOfMonth = data.slice(0, 10);
+
+                const userRequests = data.map((user: any) =>
+                    this.profileService.getUserById(user.userId).pipe(
+                        map((userData: any) => ({
+                            ...user,
+                            username: userData.username,
+                            profilePic: userData.profilePic,
+                        }))
+                    )
+                );
+
+                forkJoin<any[]>(userRequests).subscribe({
+                    next: (usersWithDetails: any[]) => {
+
+                        this.photographersOfMonth = usersWithDetails.map((user, index) => ({
+                            ...user,
+                            rank: index + 1
+                        }));
+                    },
+                    error: (err: any) => {
+                        console.error('Error fetching user details:', err);
+                    }
+                });
             },
             error: (err) => {
                 console.error(err);
@@ -109,6 +186,29 @@ export class LeaderboardsComponent implements OnInit {
         this.leaderboardsService.getRisingStars().subscribe({
             next: (data: any) => {
                 this.risingStars = data.slice(0, 10);
+
+                const userRequests = data.map((user: any) =>
+                    this.profileService.getUserById(user.userId).pipe(
+                        map((userData: any) => ({
+                            ...user,
+                            username: userData.username,
+                            profilePic: userData.profilePic,
+                        }))
+                    )
+                );
+
+                forkJoin<any[]>(userRequests).subscribe({
+                    next: (usersWithDetails: any[]) => {
+
+                        this.risingStars = usersWithDetails.map((user, index) => ({
+                            ...user,
+                            rank: index + 1
+                        }));
+                    },
+                    error: (err: any) => {
+                        console.error('Error fetching user details:', err);
+                    }
+                });
             },
             error: (err) => {
                 console.error(err);

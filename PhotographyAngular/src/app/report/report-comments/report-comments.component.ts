@@ -32,11 +32,9 @@ export class ReportCommentsComponent implements OnInit {
     }
 
     getCommentDetails(commentId: string, reason: string, authorId: string, reportedBy: string) {
-        console.log('Fetching reported comment with ID:', commentId);
 
         this.challengeService.getReportedComment(commentId).subscribe({
             next: (data) => {
-                console.log('Received comment details:', data);
                 this.selectedComment = data;
                 this.reason = reason;
             },
@@ -45,7 +43,6 @@ export class ReportCommentsComponent implements OnInit {
 
         this.profileService.getUserById(authorId).subscribe({
             next: (data) => {
-                console.log('Received comment details:', data);
                 this.authorName = data.username;
             },
             error: (error) => console.error('Error fetching comment details:', error)
@@ -53,7 +50,6 @@ export class ReportCommentsComponent implements OnInit {
 
         this.profileService.getUserById(reportedBy).subscribe({
             next: (data) => {
-                console.log('Received comment details:', data);
                 this.reportedBy = data.username;
             },
             error: (error) => console.error('Error fetching comment details:', error)
@@ -75,7 +71,10 @@ export class ReportCommentsComponent implements OnInit {
     deleteComment(commentId: string) {
         if (confirm('Are you sure you want to delete this comment?')) {
             this.challengeService.deleteComment(commentId).subscribe({
-                next: () => this.fetchCommentReports()
+                next: () => {
+                    this.fetchCommentReports();
+                    alert('Comment deleted successfully.');
+                }
             });
         }
     }

@@ -34,7 +34,6 @@ export class ReportUsersComponent implements OnInit{
     fetchUserReports() {
         this.reportService.getAllUserReports().subscribe({
             next: (data) => this.userReports = data,
-            // next: (data) => console.log(data),
             error: (error) => console.error('Error fetching user reports:', error)
         });
     }
@@ -42,7 +41,6 @@ export class ReportUsersComponent implements OnInit{
     getUserDetails(reason: string, userId: string, reportedBy: string) {
         this.profileService.getUserById(userId).subscribe({
             next: (data) => {
-                console.log('Received picture details:', data);
                 this.userName = data.username;
                 this.userId = userId;
                 this.reason = reason;
@@ -53,7 +51,6 @@ export class ReportUsersComponent implements OnInit{
 
         this.profileService.getUserById(reportedBy).subscribe({
             next: (data) => {
-                console.log('Received picture details:', data);
                 this.reportedBy = data.username;
             },
             error: (error) => console.error('Error fetching picture details:', error)
@@ -74,7 +71,7 @@ export class ReportUsersComponent implements OnInit{
     }
 
     openBanModal(user: any): void {
-        this.selectedUser = user;
+        this.selectedUser = this.userId;
         this.isBanModalOpen = true;
     }
 

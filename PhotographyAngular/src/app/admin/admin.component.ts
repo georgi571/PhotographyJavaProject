@@ -3,6 +3,7 @@ import {HeaderComponent} from "../core/header/header.component";
 import {Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {FooterComponent} from '../core/footer/footer.component';
 import {AdminService} from '../services/admin-service/admin.service';
+import {AuthService} from '../services/auth-service/auth.service';
 
 @Component({
     selector: 'app-admin',
@@ -28,8 +29,9 @@ export class AdminComponent implements OnInit{
 
 
     constructor(private router: Router,
-                private adminService: AdminService) {
-        this.router.events.subscribe(event => console.log(event));
+                private adminService: AdminService,
+                private authService: AuthService) {
+        this.router.events.subscribe();
     }
 
     ngOnInit(): void {
@@ -37,14 +39,24 @@ export class AdminComponent implements OnInit{
     }
 
     fetchPermissions() {
-        console.log('Fetching permissions...');
+
+        if (!this.authService.isAuthenticated()) {
+            this.router.navigate(['page-not-found']);
+        }
+
         this.adminService.getPermissions().subscribe({
             next: (data) => {
+
+                if (data.length === 0) {
+                    console.warn('No permissions found. Redirecting...');
+                    this.router.navigate(['page-not-found']);
+                    return;
+                }
+
                 if (data.includes('approveUsers')) this.approve = true;
                 if (data.includes('changeUserRoles')) this.roles = true;
                 if (data.includes('banUsers')) this.ban = true;
                 if (data.includes('answerFeedback')) this.feedback = true;
-                console.log(data);
             },
             error: (error) => {
                 console.error('Error fetching permissions:', error);

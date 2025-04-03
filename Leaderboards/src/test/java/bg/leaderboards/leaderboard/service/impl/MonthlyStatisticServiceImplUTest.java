@@ -52,7 +52,7 @@ class MonthlyStatisticServiceImplUTest {
 
     @Test
     void testUpdateMonthlyStatistic_NewEntry() {
-        when(monthlyStatisticRepository.findByIdAndYearAndMonth(any(), anyInt(), any())).thenReturn(Optional.empty());
+        when(monthlyStatisticRepository.findByUserIdAndYearAndMonth(any(), anyInt(), any())).thenReturn(Optional.empty());
         when(userStatisticService.getUserRankById(userId)).thenReturn(mockUserStatistic());
 
         MonthlyStatistic newStatistic = new MonthlyStatistic();
@@ -75,7 +75,7 @@ class MonthlyStatisticServiceImplUTest {
         MonthlyStatistic existingStatistic = new MonthlyStatistic();
         existingStatistic.setPointsEarned(200);
 
-        when(monthlyStatisticRepository.findByIdAndYearAndMonth(any(), anyInt(), any()))
+        when(monthlyStatisticRepository.findByUserIdAndYearAndMonth(any(), anyInt(), any()))
                 .thenReturn(Optional.of(existingStatistic));
 
         monthlyStatisticService.updateMonthlyStatistic(winnerRegisterV1);

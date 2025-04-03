@@ -5,9 +5,11 @@
         <div class="challenge-detail-container">
             <div class="challenge-header">
                 <h1>{{ challengeDetails.title }}</h1>
-                <button class="add-picture-btn" (click)="toggleAddPictureModal()">
-                    Add Picture
-                </button>
+                @if (challengeDetails.activity === 'ACTIVE') {
+                    <button class="add-picture-btn" (click)="toggleAddPictureModal()">
+                        Add Picture
+                    </button>
+                }
                 <button class="toggle-btn" (click)="toggleDetails()">
                     {{ showDetails ? 'Show Less' : 'Show More' }}
                 </button>
@@ -20,8 +22,10 @@
                     <p><strong>Start Date:</strong> {{ challengeDetails.startAt | date: 'yyyy-MM-dd HH:mm:ss' }}</p>
                     <p><strong>End Date:</strong> {{ challengeDetails.endAt | date: 'yyyy-MM-dd HH:mm:ss' }}</p>
                     <p><strong>Type:</strong> {{ challengeDetails.type }}</p>
-                    <button class="edit-btn" (click)="openEditModal()">Edit</button>
-                    <button class="delete-btn" (click)="deleteChallenge()">Delete</button>
+                    @if (manageChallenge && challengeDetails.activity !== 'ACTIVE') {
+                        <button class="edit-btn" (click)="openEditModal()">Edit</button>
+                        <button class="delete-btn" (click)="deleteChallenge()">Delete</button>
+                    }
                 </div>
             }
         </div>
@@ -63,13 +67,17 @@
                                  class="user-profile">
                             <p>{{ selectedPicture.user?.username }}</p>
                             <div class="button-group">
-                                <button class="report-btn" (click)="openReportModalForPicture(selectedPicture)">
-                                    Report Picture
-                                </button>
-                                <button class="delete-picture-btn"
-                                        (click)="openDeleteConfirmation('picture', selectedPicture)">
-                                    Delete Picture
-                                </button>
+                                @if (selectedPicture.user.username !== currentUser.username) {
+                                    <button class="report-btn" (click)="openReportModalForPicture(selectedPicture)">
+                                        Report Picture
+                                    </button>
+                                }
+                                @if (selectedPicture.user.username === currentUser.username || deletePicturePermission) {
+                                    <button class="delete-picture-btn"
+                                            (click)="openDeleteConfirmation('picture', selectedPicture)">
+                                        Delete Picture
+                                    </button>
+                                }
                             </div>
                         </div>
                         <p><strong>Caption:</strong> {{ selectedPicture.caption }}</p>
@@ -92,12 +100,16 @@
                                                     alt="User Profile Picture">
                                             </div>
                                             <p><strong>{{ comment.author?.username || 'Anonymous' }}:</strong></p>
-                                            <button class="report-btn" (click)="openReportModalForComment(comment)">
-                                                Report Comment
-                                            </button>
-                                            <button class="delete-comment-btn"
-                                                    (click)="openDeleteConfirmation('comment', comment)">Delete
-                                            </button>
+                                            @if (comment.author.username !== currentUser.username) {
+                                                <button class="report-btn" (click)="openReportModalForComment(comment)">
+                                                    Report Comment
+                                                </button>
+                                            }
+                                            @if (comment.author.username === currentUser.username || deleteCommentPermission) {
+                                                <button class="delete-comment-btn"
+                                                        (click)="openDeleteConfirmation('comment', comment)">Delete
+                                                </button>
+                                            }
                                         </div>
 
                                         <div class="comment-text">
@@ -138,6 +150,10 @@
                     <label for="story">More Information / Story:</label>
                     <textarea id="story" [(ngModel)]="newPicture.story" name="story"
                               placeholder="Tell us a short story about this picture..." rows="4"></textarea>
+
+                    @if (errorMessage) {
+                        <p class="error-message">{{ errorMessage }}</p>
+                    }
 
                     <button type="submit" class="submit-btn">Upload Picture</button>
                     <button type="button" class="cancel-btn" (click)="toggleAddPictureModal()">Cancel</button>

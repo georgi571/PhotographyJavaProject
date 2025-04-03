@@ -38,7 +38,7 @@ public class MonthlyStatisticServiceImpl implements MonthlyStatisticService {
         }
 
         Optional<MonthlyStatistic> optionalMonthlyStatistic = this.monthlyStatisticRepository
-                .findByIdAndYearAndMonth(winnerRegisterV1.getUserId(), currentMonth.getYear(), currentMonth.getMonth());
+                .findByUserIdAndYearAndMonth(winnerRegisterV1.getUserId(), currentMonth.getYear(), currentMonth.getMonth());
 
         MonthlyStatistic monthlyStatistic;
 

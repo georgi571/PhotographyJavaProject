@@ -31,11 +31,9 @@ export class BanUsersComponent implements OnInit {
             next: (data) => {
                 this.users = data;
                 this.filteredUsers = data;
-                console.log('Loaded users:', this.filteredUsers);
             },
             error: (err) => {
                 console.error('Error fetching users:', err);
-                alert('Failed to load users. Please try again later.');
             },
         });
     }
@@ -77,8 +75,7 @@ export class BanUsersComponent implements OnInit {
 
         this.adminService.banUser(this.selectedUser.id, this.banReason).subscribe({
             next: () => {
-                console.log('User banned successfully');
-                this.selectedUser.banned = true;  // Update the banned status locally
+                this.selectedUser.banned = true;
                 this.closeBanModal();
             },
             error: (err) => {
@@ -90,8 +87,7 @@ export class BanUsersComponent implements OnInit {
     unbanUser(): void {
         this.adminService.unbanUser(this.selectedUser.id).subscribe({
             next: () => {
-                console.log('User unbanned successfully');
-                this.selectedUser.banned = false;  // Update the banned status locally
+                this.selectedUser.banned = false;
                 this.closeUnbanModal();
             },
             error: (err) => {

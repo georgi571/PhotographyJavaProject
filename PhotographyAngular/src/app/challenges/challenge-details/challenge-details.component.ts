@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ChallengeService} from '../../services/challenge-service/challenge.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DatePipe, NgClass} from '@angular/common';
@@ -9,6 +9,7 @@ import {JwtService} from '../../services/jwt-service/jwt.service';
 import {AuthService} from '../../services/auth-service/auth.service';
 import {ProfileService} from '../../services/profile-service/profile.service';
 import {forkJoin, map} from 'rxjs';
+import {AdminService} from '../../services/admin-service/admin.service';
 
 @Component({
     selector: 'app-challenge-details',
@@ -39,6 +40,9 @@ export class ChallengeDetailsComponent implements OnInit {
     showDeleteModal = false;
     deleteType = '';
     showEditModal = false;
+    manageChallenge: boolean = false;
+    deletePicturePermission: boolean = false;
+    deleteCommentPermission: boolean = false;
 
     itemToDelete: any = null;
 
@@ -64,7 +68,8 @@ export class ChallengeDetailsComponent implements OnInit {
         private profileService: ProfileService,
         private authService: AuthService,
         private jwtService: JwtService,
-        private router: Router
+        private router: Router,
+        private adminService: AdminService
     ) {
         const tomorrowDate = new Date();
         tomorrowDate.setDate(tomorrowDate.getDate() + 1);
@@ -74,17 +79,22 @@ export class ChallengeDetailsComponent implements OnInit {
     ngOnInit(): void {
         this.challengeId = this.route.snapshot.paramMap.get('id')!;
 
-        this.challengeService.getChallengeDetails(this.challengeId).subscribe(
-            (details) => {
-                    this.challengeDetails = details;
-            }
-        );
-
         const token = this.authService.getToken();
         if (token) {
             const decodedToken = this.jwtService.decodeToken(token);
             this.userId = decodedToken?.userId;
         }
+
+        if (this.userId === null) {
+            this.router.navigate(['auth-required']);
+            return;
+        }
+
+        this.challengeService.getChallengeDetails(this.challengeId).subscribe(
+            (details) => {
+                this.challengeDetails = details;
+            }
+        );
 
         this.profileService.getUserById(this.userId).subscribe(
             (userData) => {
@@ -92,6 +102,21 @@ export class ChallengeDetailsComponent implements OnInit {
             }
         );
 
+        this.fetchPermissions();
+
+    }
+
+    fetchPermissions() {
+        this.adminService.getPermissions().subscribe({
+            next: (data) => {
+                if (data.includes('manageChallenge')) this.manageChallenge = true;
+                if (data.includes('deleteMessage')) this.deleteCommentPermission = true;
+                if (data.includes('deletePicture')) this.deletePicturePermission = true;
+            },
+            error: (error) => {
+                console.error('Error fetching permissions:', error);
+            }
+        });
     }
 
     toggleDetails(): void {
@@ -103,6 +128,11 @@ export class ChallengeDetailsComponent implements OnInit {
     }
 
     onFileSelected(event: any): void {
+        const input = event.target as HTMLInputElement;
+        if (input.files && input.files.length > 0) {
+            this.newPicture.file = input.files[0];
+        }
+
         const file = event.target.files[0];
         if (file) {
             this.newPicture.file = file;
@@ -119,7 +149,6 @@ export class ChallengeDetailsComponent implements OnInit {
             this.challengeService.uploadPicture(this.challengeId, formData).subscribe(
                 (response) => {
                     if (response) {
-                        console.log('Picture uploaded successfully:', response);
                         this.toggleAddPictureModal();
                         window.location.reload();
                     } else {
@@ -155,8 +184,6 @@ export class ChallengeDetailsComponent implements OnInit {
         forkJoin(userRequests).subscribe(
             (updatedComments) => {
                 this.selectedComments = updatedComments;
-                console.log('Comments with user data:', this.selectedComments);
-
                 this.loading = false;
             }
         );
@@ -164,7 +191,6 @@ export class ChallengeDetailsComponent implements OnInit {
         this.profileService.getUserById(picture.authorId).subscribe(
             (userData) => {
                 this.selectedPicture.user = userData;
-                console.log('Author Info:', this.selectedPicture.user);
             }
         );
     }
@@ -172,6 +198,7 @@ export class ChallengeDetailsComponent implements OnInit {
 
     closePictureDetails(): void {
         this.selectedPicture = null;
+        window.location.reload();
     }
 
     likePicture(event: Event, picture: any): void {
@@ -184,13 +211,12 @@ export class ChallengeDetailsComponent implements OnInit {
             (response) => {
                 picture.liked = response.liked;
                 picture.likes = response.likes;
-
-                console.log('Updated like status from server:', response);
             }
         );
     }
 
     addComment() {
+        console.log(this.currentUser.username)
         if (this.newComment.trim()) {
             const newComment = {
                 author: {
@@ -227,6 +253,10 @@ export class ChallengeDetailsComponent implements OnInit {
                         }
 
                         this.newComment = '';
+
+                        if (this.selectedComments.length === 1) {
+                            window.location.reload();
+                        }
                     }
                 }
             );
@@ -282,7 +312,6 @@ export class ChallengeDetailsComponent implements OnInit {
     }
 
     reportComment(comment: any, reason: string): void {
-        console.log(comment)
         if (!this.selectedPicture) {
             console.error('No picture selected');
             return;
@@ -291,7 +320,6 @@ export class ChallengeDetailsComponent implements OnInit {
         const picture = this.selectedPicture;
 
         if (!picture.comments || !picture.comments.some((c: any) => c.id === comment.id)) {
-            console.log(picture)
             console.error('Comment not found in the selected picture');
             return;
         }
@@ -328,12 +356,8 @@ export class ChallengeDetailsComponent implements OnInit {
     }
 
     deletePicture(picture: any): void {
-        console.log('Deleting picture:', picture);
-
         this.challengeService.deletePicture(picture.id).subscribe(
             (response) => {
-                console.log('Picture deleted successfully:', response);
-
                 this.challengeDetails.pictures = this.challengeDetails.pictures.filter(
                     (p: any) => p.id !== picture.id
                 );
@@ -354,7 +378,6 @@ export class ChallengeDetailsComponent implements OnInit {
     }
 
     deleteComment(comment: any): void {
-        console.log('Deleting comment:', comment);
         this.challengeService.deleteComment(comment.id).subscribe(
             (response) => {
                 this.selectedComments = this.selectedComments.filter(
@@ -367,6 +390,7 @@ export class ChallengeDetailsComponent implements OnInit {
                     alert('You do not have permission to delete this comment.');
                 } else {
                     alert('Something went wrong. Please try again later.');
+                    window.location.reload();
                 }
             }
         );
@@ -395,11 +419,11 @@ export class ChallengeDetailsComponent implements OnInit {
 
         this.challengeService.updateChallenge(this.challengeId, updatedDetails).subscribe({
             next: (response) => {
-                console.log('Challenge details updated successfully:', response);
                 this.showEditModal = false;
             },
             error: (error) => {
                 console.error('Error updating challenge details:', error);
+                alert('Failed to edit challenge.');
             },
         });
     }

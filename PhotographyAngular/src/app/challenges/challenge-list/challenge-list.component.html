@@ -20,9 +20,11 @@
             </select>
         </div>
 
-        <div class="create-event">
-            <button class="btn create-event-btn" (click)="openCreateModal()">Create Event</button>
-        </div>
+        @if (manageChallenge) {
+            <div class="create-event">
+                <button class="btn create-event-btn" (click)="openCreateModal()">Create Event</button>
+            </div>
+        }
     </div>
 
     <div class="challenges-list">

@@ -43,6 +43,15 @@ public class ExceptionAdvice {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
+    @ExceptionHandler(BlockedUserException.class)
+    public ResponseEntity<ErrorResponse> handleBlockedUserException(BlockedUserException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
     @ExceptionHandler(OldEmailMismatchException.class)
     public ResponseEntity<ErrorResponse> handleOldEmailMismatchException(OldEmailMismatchException ex) {
         ErrorResponse errorResponse = new ErrorResponse(

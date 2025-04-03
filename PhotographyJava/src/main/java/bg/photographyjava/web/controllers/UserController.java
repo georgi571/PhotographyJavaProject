@@ -251,6 +251,13 @@ public class UserController {
         return ResponseEntity.ok(this.userService.isUserBlocked(authentication.getName(), username));
     }
 
+    @GetMapping("/is-blocked-by-me/{username}")
+    public ResponseEntity<Boolean> isUserBlockedByMe(@PathVariable String username,
+                                                 Authentication authentication) {
+
+        return ResponseEntity.ok(this.userService.isUserBlockedByMe(authentication.getName(), username));
+    }
+
     @GetMapping("/curr/friends")
     public ResponseEntity<Set<FriendsResponse>> getFriends(@RequestParam String username) {
 

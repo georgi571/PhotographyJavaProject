@@ -35,16 +35,14 @@ export class BlockUsersComponent implements OnInit{
     }
 
     filterBlockedUsers() {
-        this.filteredBlockedUsers = this.blockedUsers.filter(user => {
-            return (
-                user.username.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                user.email.toLowerCase().includes(this.searchTerm.toLowerCase())
-            );
-        });
+        const lowerCaseSearchTerm = this.searchTerm.toLowerCase();
+        this.filteredBlockedUsers = this.blockedUsers.filter(user =>
+            user.username.toLowerCase().includes(lowerCaseSearchTerm)
+        );
     }
 
     viewUserProfile(user: any) {
-        this.router.navigate(['/profile', user.username]);
+        this.router.navigate(['/profile/username', user.username]);
     }
 
     unblockUser(user: any) {

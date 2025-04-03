@@ -17,10 +17,10 @@
                     @if (risingStars.length === 0) {
                         <td colspan="4" style="text-align: center;">No users gain points in last 30 days!</td>
                     } @else {
-                        @for (user of paginatedUsers; track user) {
+                        @for (user of paginatedUsers; track user.userId) {
                             <tr>
                                 <td>{{ user.rank }}</td>
-                                <td>{{ user.username }}</td>
+                                <td><a [href]="'/profile/username/' + user.username" target="_blank">{{ user.username }}</a></td>
                                 <td>{{ user.country }}</td>
                                 <td>{{ user.points }}</td>
                             </tr>

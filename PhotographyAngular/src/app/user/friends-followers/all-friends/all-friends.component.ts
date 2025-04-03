@@ -37,20 +37,18 @@ export class AllFriendsComponent implements OnInit {
     filterFriends() {
         const lowerCaseSearchTerm = this.searchTerm.toLowerCase();
         this.filteredFriends = this.friends.filter(friend =>
-            friend.username.toLowerCase().includes(lowerCaseSearchTerm) ||
-            friend.email.toLowerCase().includes(lowerCaseSearchTerm)
+            friend.username.toLowerCase().includes(lowerCaseSearchTerm)
         );
     }
 
     viewFriendProfile(friend: any) {
-        this.router.navigate(['/profile', friend.username]);
+        this.router.navigate(['/profile/username', friend.username]);
     }
 
     unfriend(friend: any) {
         if (confirm(`Are you sure you want to unfriend ${friend.username}?`)) {
             this.profileService.removeFriend(friend.username).subscribe(
                 response => {
-                    console.log('Unfriended:', response);
                     this.friends = this.friends.filter(f => f.username !== friend.username);
                     this.filterFriends(); // Update filtered list
                 }

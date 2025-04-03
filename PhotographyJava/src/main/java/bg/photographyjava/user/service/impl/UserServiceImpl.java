@@ -377,6 +377,13 @@ public class UserServiceImpl implements UserService {
         UserEntity friend = this.getUserByUsername(friendRequest.getUsername()).orElseThrow(() ->
                 new UserNotFoundException("User with username " + friendRequest.getUsername() + " not found"));
 
+        boolean isBlockedByMe = this.isUserBlockedByMe(username, friendRequest.getUsername());
+        boolean isBlockedBy = this.isUserBlocked(username, friendRequest.getUsername());
+
+        if (isBlockedByMe || isBlockedBy) {
+            throw new BlockedUserException("One of the users are block other cannot add as friend");
+        }
+
         user.getSendFriendRequest().add(friend);
         friend.getReceiveFriendRequest().add(user);
 
@@ -394,6 +401,13 @@ public class UserServiceImpl implements UserService {
         UserEntity follower = this.getUserByUsername(followerUserRequest.getUsername()).orElseThrow(() ->
                 new UserNotFoundException("User with username " + followerUserRequest.getUsername() + " not found"));
 
+        boolean isBlockedByMe = this.isUserBlockedByMe(username, followerUserRequest.getUsername());
+        boolean isBlockedBy = this.isUserBlocked(username, followerUserRequest.getUsername());
+
+        if (isBlockedByMe || isBlockedBy) {
+            throw new BlockedUserException("One of the users are block other cannot follow");
+        }
+
         user.getFollowing().add(follower);
         follower.getFollowers().add(user);
 
@@ -410,6 +424,13 @@ public class UserServiceImpl implements UserService {
 
         UserEntity friend = this.getUserByUsername(friendRequest.getUsername()).orElseThrow(() ->
                 new UserNotFoundException("User with username " + friendRequest.getUsername() + " not found"));
+
+        boolean isBlockedByMe = this.isUserBlockedByMe(username, friendRequest.getUsername());
+        boolean isBlockedBy = this.isUserBlocked(username, friendRequest.getUsername());
+
+        if (isBlockedByMe || isBlockedBy) {
+            throw new BlockedUserException("One of the users are block other cannot accept friend request");
+        }
 
         user.getFriends().add(friend);
         friend.getFriends().add(user);
@@ -665,6 +686,17 @@ public class UserServiceImpl implements UserService {
                 new UserNotFoundException("User with username " + blockedUsername + " not found"));
 
         return blockedUser.getBlockedUsers().contains(user);
+    }
+
+    @Override
+    public boolean isUserBlockedByMe(String username, String blockerUsername) {
+        UserEntity user = this.getUserByUsername(username).orElseThrow(() ->
+                new UserNotFoundException("User with username " + username + " not found"));
+
+        UserEntity blocker = this.getUserByUsername(blockerUsername).orElseThrow(() ->
+                new UserNotFoundException("User with username " + blockerUsername + " not found"));
+
+        return user.getBlockedUsers().contains(blocker);
     }
 
     @Override

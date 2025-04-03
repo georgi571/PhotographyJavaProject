@@ -3,6 +3,8 @@ import {FooterComponent} from "../../core/footer/footer.component";
 import {HeaderComponent} from "../../core/header/header.component";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {LeaderboardsService} from '../../services/leaderboards-service/leaderboards.service';
+import {forkJoin, map} from 'rxjs';
+import {ProfileService} from '../../services/profile-service/profile.service';
 
 @Component({
   selector: 'app-challenges-leaderboard',
@@ -26,7 +28,8 @@ export class ChallengesLeaderboardComponent implements OnInit{
     currentPage: number = 1;
     totalPagesNumber: number = 1;
 
-    constructor(private leaderboardsService: LeaderboardsService) {}
+    constructor(private leaderboardsService: LeaderboardsService,
+                private profileService: ProfileService) {}
 
     ngOnInit(): void {
         this.fetchUsersByChallenges();
@@ -43,6 +46,32 @@ export class ChallengesLeaderboardComponent implements OnInit{
         this.leaderboardsService.getTopUsersByChallenges('').subscribe({
             next: (data: any) => {
                 this.rawUsersByChallenges = data;
+
+                const userRequests = data.map((user: any) =>
+                    this.profileService.getUserById(user.userId).pipe(
+                        map((userData: any) => ({
+                            ...user,
+                            username: userData.username,
+                            profilePic: userData.profilePic,
+                        }))
+                    )
+                );
+
+                forkJoin<any[]>(userRequests).subscribe({
+                    next: (usersWithDetails: any[]) => {
+
+                        this.rawUsersByChallenges = usersWithDetails.map((user, index) => ({
+                            ...user,
+                            rank: index + 1
+                        }));
+
+                        this.applyChallengeTypeFilter();
+                    },
+                    error: (err: any) => {
+                        console.error('Error fetching user details:', err);
+                    }
+                });
+
                 this.applyChallengeTypeFilter();
             },
             error: (err) => {

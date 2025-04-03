@@ -44,10 +44,8 @@ export class ContactComponent implements OnInit {
 
 
     ngOnInit(): void {
-        console.log('ContactComponent ngOnInit called');
         this.contactService.getUserInfo().subscribe({
             next: (user) => {
-                console.log(user)
                 this.isUserLoggedIn = true;
                 this.contactForm.patchValue({
                     name: user.realName,
@@ -97,7 +95,6 @@ export class ContactComponent implements OnInit {
                 },
             });
         } else {
-            console.log('Form is invalid');
             this.contactForm.markAllAsTouched();
         }
     }

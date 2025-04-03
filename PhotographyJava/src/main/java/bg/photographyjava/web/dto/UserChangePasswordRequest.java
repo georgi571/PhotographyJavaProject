@@ -11,11 +11,11 @@ public class UserChangePasswordRequest implements Serializable {
     private String oldPassword;
 
     @NotNull
-    @Size(min = 6, max = 20, message = "{password.length}")
+    @Size(min = 5, max = 20, message = "{password.length}")
     private String newPassword;
 
     @NotNull
-    @Size(min = 6, max = 20, message = "{password.length}")
+    @Size(min = 5, max = 20, message = "{password.length}")
     private String confirmPassword;
 
     public String getOldPassword() {

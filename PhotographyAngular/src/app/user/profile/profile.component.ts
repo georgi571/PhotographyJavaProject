@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {HeaderComponent} from '../../core/header/header.component';
 import {FooterComponent} from '../../core/footer/footer.component';
 import {ProfileService} from '../../services/profile-service/profile.service';
-import {ActivatedRoute, RouterLink} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {AuthService} from '../../services/auth-service/auth.service';
 import {JwtService} from '../../services/jwt-service/jwt.service';
 import {FormsModule} from '@angular/forms';
@@ -28,6 +28,9 @@ export class ProfileComponent implements OnInit {
     showPopup: boolean = false;
     showReportModal: boolean = false;
     showPicturePopup: boolean = false;
+    selectedPicture: any = null;
+    showFriendsModal: boolean = false;
+    showFollowerModal: boolean = false;
 
     reportReason: string = '';
     reportTarget: any = null;
@@ -46,6 +49,8 @@ export class ProfileComponent implements OnInit {
     isFriend: boolean = false;
     hasPendingRequest: boolean = false;
     isFollowing: boolean = false;
+    isBlocked: boolean = false;
+    isBlockedMe: boolean = false;
 
     currFriends: any[] = [];
     currFollowers: any[] = [];
@@ -55,7 +60,8 @@ export class ProfileComponent implements OnInit {
                 private route: ActivatedRoute,
                 private authService: AuthService,
                 private jwtService: JwtService,
-                private challengesService: ChallengeService) {
+                private challengesService: ChallengeService,
+                private router: Router) {
     }
 
     ngOnInit() {
@@ -65,20 +71,6 @@ export class ProfileComponent implements OnInit {
         this.getAllFollowers();
         this.getAllFriendsForUser();
         this.getAllFollowersForUser();
-
-        // const username = this.route.snapshot.paramMap.get('username');
-        // if (username) {
-        //     this.getUserInfo(username);
-        // } else {
-        //     this.errorMessage = 'No username provided in the URL.';
-        // }
-        //
-        // const token = this.authService.getToken();
-        // if (token) {
-        //     const decodedToken = this.jwtService.decodeToken(token);
-        //     this.username = decodedToken?.username || null;
-        //     this.role = decodedToken?.role ? decodedToken?.role.replace("ROLE_", "") : null;
-        // }
     }
 
     getAllUsersPicture(userId: string): void {
@@ -91,12 +83,14 @@ export class ProfileComponent implements OnInit {
         });
     }
 
-    openPicturePopup() {
+    openPicturePopup(picture: any) {
+        this.selectedPicture = picture;
         this.showPicturePopup = true;
     }
 
     closePicturePopup() {
         this.showPicturePopup = false;
+        this.selectedPicture = null;
     }
 
     getAllFriends(): void {
@@ -159,21 +153,24 @@ export class ProfileComponent implements OnInit {
                 this.userDetails.city = data.city;
                 this.userDetails.gender = data.gender;
                 this.userDetails.age = data.age;
-                // this.userDetails.rank = data.rank;
-                // this.userDetails.points = data.points;
                 this.userDetails.picture = data.profilePicturePath;
                 this.userDetails.id = data.id;
                 this.trophies = data.trophies;
                 this.events = data.events;
-                this.pictures = data.pictures;
 
                 this.checkFriendshipStatus();
 
-                console.log(this.userDetails.id)
                 if (this.userDetails.id) {
                     this.fetchUserStatistics(this.userDetails.id);
                     this.getAllUsersPicture(this.userDetails.id);
                 }
+
+                this.profileService.isUserBlocked(this.userDetails.username).subscribe((result) => {
+                    this.isBlockedMe = result;
+                    if (result) {
+                        this.router.navigate(['page-not-found']);
+                    }
+                });
             },
             error: (error) => {
                 this.errorMessage = 'Failed to load user information. Please try again later.';
@@ -183,7 +180,6 @@ export class ProfileComponent implements OnInit {
     }
 
     fetchUserStatistics(userId: string) {
-        console.log(userId)
         this.leaderboardsService.getUserStatistics(userId).subscribe({
             next: (data:any) => {
                 this.userDetails.points = data.totalPoints;
@@ -218,14 +214,17 @@ export class ProfileComponent implements OnInit {
         this.profileService.checkIfFollowing(this.userDetails.username).subscribe((result) => {
             this.isFollowing = result;
         });
+
+        this.profileService.isUserBlockedByMe(this.userDetails.username).subscribe((result) => {
+            this.isBlocked = result;
+        });
     }
 
     addFriend() {
         if (this.userDetails.username) {
             this.profileService.addFriend(this.userDetails.username).subscribe({
                 next: (response) => {
-                    console.log('Friend added successfully:', response);
-                    alert('Friend added successfully!');
+                    alert('Friend request send successfully!');
                     this.checkFriendshipStatus();
                 },
                 error: (error) => {
@@ -242,7 +241,6 @@ export class ProfileComponent implements OnInit {
         if (this.userDetails.username) {
             this.profileService.followUser(this.userDetails.username).subscribe({
                 next: (response) => {
-                    console.log('Followed user successfully:', response);
                     alert('Followed user successfully!');
                     this.checkFriendshipStatus();  // Refresh follow status
                 },
@@ -259,7 +257,6 @@ export class ProfileComponent implements OnInit {
     removeFriend() {
         this.profileService.removeFriend(this.userDetails.username).subscribe({
             next: (response) => {
-                console.log('Friend removed successfully:', response);
                 alert('Friend removed successfully!');
                 this.checkFriendshipStatus();  // Refresh friend status
             },
@@ -273,7 +270,6 @@ export class ProfileComponent implements OnInit {
     cancelFriendRequest() {
         this.profileService.cancelFriendRequest(this.userDetails.username).subscribe({
             next: (response) => {
-                console.log('Friend request cancelled successfully:', response);
                 alert('Friend request cancelled successfully!');
                 this.checkFriendshipStatus();  // Refresh friend status
             },
@@ -287,7 +283,6 @@ export class ProfileComponent implements OnInit {
     unfollowUser() {
         this.profileService.unfollowUser(this.userDetails.username).subscribe({
             next: (response) => {
-                console.log('Unfollowed user successfully:', response);
                 alert('Unfollowed user successfully!');
                 this.checkFriendshipStatus();  // Refresh follow status
             },
@@ -302,7 +297,22 @@ export class ProfileComponent implements OnInit {
         if (confirm(`Are you sure you want to block following user ${userDetails.username}?`)) {
             this.profileService.blockUser(userDetails.username).subscribe(
                 response => {
+                    this.isBlocked = true;
+                    this.isFollowing = false;
+                    this.isFriend = false;
+                    this.hasPendingRequest = false;
                     alert('User was successfully blocked.');
+                }
+            );
+        }
+    }
+
+    confirmUnblockBlock(userDetails: any) {
+        if (confirm(`Are you sure you want to unblock following user ${userDetails.username}?`)) {
+            this.profileService.unblockUser(userDetails.username).subscribe(
+                response => {
+                    this.isBlocked = false;
+                    alert('User was successfully unblocked.');
                 }
             );
         }
@@ -333,5 +343,21 @@ export class ProfileComponent implements OnInit {
         );
 
         this.closeReportModal();
+    }
+
+    openFriendsModal(): void {
+        this.showFriendsModal = true;
+    }
+
+    closeFriendsModal(): void {
+        this.showFriendsModal = false;
+    }
+
+    openFollowerModal(): void {
+        this.showFollowerModal = true;
+    }
+
+    closeFollowerModal(): void {
+        this.showFollowerModal = false;
     }
 }

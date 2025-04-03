@@ -1,12 +1,15 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ChallengeService} from '../../services/challenge-service/challenge.service';
 import {ProfileService} from '../../services/profile-service/profile.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {HeaderComponent} from '../../core/header/header.component';
 import {FooterComponent} from '../../core/footer/footer.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NgClass} from '@angular/common';
 import {forkJoin, map} from 'rxjs';
+import {AdminService} from '../../services/admin-service/admin.service';
+import {AuthService} from '../../services/auth-service/auth.service';
+import {JwtService} from '../../services/jwt-service/jwt.service';
 
 @Component({
   selector: 'app-all-pictures',
@@ -24,21 +27,22 @@ export class AllPicturesComponent implements OnInit {
     @Input() profileUsername!: string;
 
     userDetails: any = {};
+    userId: string | null = null;
 
     pictures: any[] = [];
     selectedComments: any[] = [];
     newComment: string = '';
     selectedPicture: any = null;
     showPicturePopup: boolean = false;
+    isBlockedMe: boolean = false;
 
     errorMessage: string | null = null;
-    showReportModal: boolean = false;
-    reportReason: string = '';
-    reportType: string = '';
-    reportTarget: any = null;
     showDeleteModal = false;
     deleteType = '';
     itemToDelete: any = null;
+
+    deletePicturePermission: boolean = false;
+    deleteCommentPermission: boolean = false;
 
     loading: boolean = true;
 
@@ -50,11 +54,29 @@ export class AllPicturesComponent implements OnInit {
 
     constructor(private challengeService: ChallengeService,
                 private route: ActivatedRoute,
-                private profileService: ProfileService ) {
+                private profileService: ProfileService,
+                private adminService: AdminService,
+                private authService: AuthService,
+                private jwtService: JwtService,
+                private router: Router) {
     }
 
     ngOnInit(): void {
         this.loadUserProfile();
+
+        const token = this.authService.getToken();
+        if (token) {
+            const decodedToken = this.jwtService.decodeToken(token);
+            this.userId = decodedToken?.userId;
+        }
+
+        this.profileService.getUserById(this.userId).subscribe(
+            (userData) => {
+                this.currentUser = userData;
+            }
+        );
+
+        this.fetchPermissions();
     }
 
     loadUserProfile() {
@@ -66,6 +88,18 @@ export class AllPicturesComponent implements OnInit {
         }
     }
 
+    fetchPermissions() {
+        this.adminService.getPermissions().subscribe({
+            next: (data) => {
+                if (data.includes('deleteMessage')) this.deleteCommentPermission = true;
+                if (data.includes('deletePicture')) this.deletePicturePermission = true;
+            },
+            error: (error) => {
+                console.error('Error fetching permissions:', error);
+            }
+        });
+    }
+
     getUserInfo(username: string) {
         this.profileService.getUserDetails(username).subscribe({
             next: (data: any) => {
@@ -74,6 +108,13 @@ export class AllPicturesComponent implements OnInit {
                 if (this.userDetails.id) {
                     this.getAllUsersPicture(this.userDetails.id);
                 }
+
+                this.profileService.isUserBlocked(username).subscribe((result) => {
+                    this.isBlockedMe = result;
+                    if (result) {
+                        this.router.navigate(['page-not-found']);
+                    }
+                });
             },
             error: (error) => {
                 this.errorMessage = 'Failed to load user information. Please try again later.';
@@ -116,26 +157,6 @@ export class AllPicturesComponent implements OnInit {
                 console.log('Updated like status from server:', response);
             }
         );
-    }
-
-    openReportModalForPicture(picture: any): void {
-        this.showReportModal = true;
-        this.reportType = 'Picture';
-        this.reportTarget = picture;
-        this.reportReason = '';
-    }
-
-    openReportModalForComment(comment: any): void {
-        this.showReportModal = true;
-        this.reportType = 'Comment';
-        this.reportTarget = comment;
-        this.reportReason = '';
-    }
-
-    closeReportModal(): void {
-        this.showReportModal = false;
-        this.reportReason = '';
-        this.reportTarget = null;
     }
 
     selectPicture(picture: any): void {
@@ -212,6 +233,10 @@ export class AllPicturesComponent implements OnInit {
                         }
 
                         this.newComment = '';
+
+                        if (this.selectedComments.length === 1) {
+                            window.location.reload();
+                        }
                     }
                 }
             );
@@ -278,6 +303,7 @@ export class AllPicturesComponent implements OnInit {
                     alert('You do not have permission to delete this comment.');
                 } else {
                     alert('Something went wrong. Please try again later.');
+                    window.location.reload();
                 }
             }
         );
@@ -285,5 +311,6 @@ export class AllPicturesComponent implements OnInit {
 
     closePictureDetails(): void {
         this.selectedPicture = null;
+        window.location.reload();
     }
 }

@@ -41,7 +41,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    @Scheduled(cron = "00 02 01 * * *")
+    @Scheduled(cron = "00 00 00 * * *")
     public void startDailyChallenge() {
         LocalDateTime now = LocalDateTime.now();
 

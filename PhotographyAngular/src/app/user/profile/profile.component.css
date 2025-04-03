@@ -382,3 +382,96 @@ body {
     background-color: #d31f1f;
 }
 
+/* Modal background */
+.modal-friends-followers {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal content */
+.modal-friends-followers-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 80%;  /* Make it 80% of the screen width */
+    max-width: 800px;  /* You can adjust the max-width based on your design */
+    max-height: 80vh;  /* Make the modal's max height 80% of the viewport height */
+    overflow-y: auto;  /* Enable vertical scrolling if content overflows */
+}
+
+/* Close button */
+.close-modal {
+    background-color: #f44336;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.close-modal:hover {
+    background-color: #d32f2f;
+}
+
+/* Table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+/* Profile picture styling */
+.profile-picture {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+}
+
+/* Link styling */
+a {
+    text-decoration: none;
+    color: #007BFF;
+}
+
+a:hover {
+    color: #0056b3;
+}
+
+.close-friends {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.view-all {
+    cursor: pointer;
+}
+
+.btn-danger,
+.btn-warning {
+    background-color: red;
+}
+
+.btn-danger:hover,
+.btn-warning:hover {
+    background-color: #d31f1f;
+}
+

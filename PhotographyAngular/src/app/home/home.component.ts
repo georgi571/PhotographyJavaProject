@@ -26,15 +26,10 @@ export class HomeComponent implements OnInit {
         const token = this.authService.getToken();
 
         if (token) {
-            const payload = token.split('.')[1]; // Get the payload part of the token
-            const decodedPayload = atob(payload); // Decode it using atob (base64 to string)
-            this.decodedToken = JSON.parse(decodedPayload); // Parse it to JSON
-
-            console.log(this.decodedToken); // Show the decoded payload
-        } else {
-            console.log('No token found');
+            const payload = token.split('.')[1];
+            const decodedPayload = atob(payload);
+            this.decodedToken = JSON.parse(decodedPayload);
         }
-        console.log(this.authService.getToken()?.valueOf());
     }
 
 

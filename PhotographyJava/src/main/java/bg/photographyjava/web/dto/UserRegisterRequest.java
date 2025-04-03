@@ -25,7 +25,7 @@ public class UserRegisterRequest implements Serializable {
     private String email;
 
     @NotEmpty(message = "{password.empty}")
-    @Size(min = 6, max = 20, message = "{password.length}")
+    @Size(min = 5, max = 20, message = "{password.length}")
     private String password;
 
     @NotEmpty(message = "{confirm.password.empty}")

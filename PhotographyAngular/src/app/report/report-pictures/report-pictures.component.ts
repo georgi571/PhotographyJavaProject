@@ -33,11 +33,9 @@ export class ReportPicturesComponent implements OnInit{
     }
 
     getPictureDetails(pictureId: string, reason: string, authorId: string, reportedBy: string) {
-        console.log('Fetching reported picture with ID:', pictureId);
 
         this.challengeService.getReportedPicture(pictureId).subscribe({
             next: (data) => {
-                console.log('Received picture details:', data);
                 this.selectedPicture = data;
                 this.reason = reason;
             },
@@ -46,7 +44,6 @@ export class ReportPicturesComponent implements OnInit{
 
         this.profileService.getUserById(authorId).subscribe({
             next: (data) => {
-                console.log('Received picture details:', data);
                 this.authorName = data.username;
             },
             error: (error) => console.error('Error fetching picture details:', error)
@@ -54,7 +51,6 @@ export class ReportPicturesComponent implements OnInit{
 
         this.profileService.getUserById(reportedBy).subscribe({
             next: (data) => {
-                console.log('Received picture details:', data);
                 this.reportedBy = data.username;
             },
             error: (error) => console.error('Error fetching picture details:', error)
@@ -77,7 +73,10 @@ export class ReportPicturesComponent implements OnInit{
     deletePicture(pictureId: string) {
         if (confirm('Are you sure you want to delete this picture?')) {
             this.challengeService.deletePicture(pictureId).subscribe({
-                next: () => this.fetchPictureReports()
+                next: () => {
+                    this.fetchPictureReports();
+                    alert('Picture deleted successfully.');
+                }
             });
         }
     }

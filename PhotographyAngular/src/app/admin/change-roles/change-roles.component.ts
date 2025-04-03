@@ -32,7 +32,6 @@ export class ChangeRolesComponent implements OnInit {
             },
             error: (err) => {
                 console.error('Error fetching users:', err);
-                alert('Failed to load users. Please try again later.');
             }
         });
     }
